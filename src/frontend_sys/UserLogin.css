@@ -1,0 +1,45 @@
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    #loginBtn {
+        width: 32%;
+        font-size: 25px;
+        font-weight: bolder;
+        border: none;
+        border-radius: 5px;
+        background-color: #D6BDE3;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    #loginBtn {
+        width: 32%;
+        font-size: 25px;
+        font-weight: bolder;
+        border: none;
+        border-radius: 5px;
+        background-color: #D6BDE3;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1500px) {
+    .usr_info{
+        width: 50vh;
+    }
+
+    .switch_toggle,
+    .loginBtnContainer {
+        display: inline-block;
+    }
+
+    #loginBtn {
+        display: inline-block;
+        width: 15vh;
+        font-size: 25px;
+        font-weight: bolder;
+        border: none;
+        border-radius: 5px;
+        background-color: #D6BDE3;
+    }
+}
