@@ -6,7 +6,6 @@ function LoginForm() {
     const [password, setPassword] = useState('');
     const [keepLogin, setkeepLogin] = useState(1);
 
-
     return (
         <form className='loginForm'>
             <div className='inputText'>
@@ -31,9 +30,9 @@ function LoginForm() {
                     }}
                     required />
             </div>
-            <div>
+            <div className='BtnContainter'>
                 <div className='switch_toggle'>
-                    <p id='keepLoginText'>保持登入</p>
+                    
                     <label className="switch">
                         <input
                             type="checkbox"
@@ -44,7 +43,7 @@ function LoginForm() {
                             }} />
                         <span className='slider round'></span>
                     </label>
-
+                    <p id='keepLoginText'>保持登入</p>
 
                 </div>
                 <div className='loginBtnContainer'>
@@ -56,4 +55,13 @@ function LoginForm() {
         </form>
     )
 }
+
+function CreateVideoForm(){
+    return(
+        <form className='loginForm'>
+            
+        </form>
+    )
+}
+
 export default LoginForm

@@ -1,5 +1,5 @@
 import LoginForm from "../shared/form";
-import './UserLogin.css'
+import '../shared/formRWD.css';
 
 function UserLoginForm() {
     return (
@@ -8,4 +8,5 @@ function UserLoginForm() {
         </div>
     )
 }
+
 export default UserLoginForm
