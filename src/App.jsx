@@ -1,35 +1,24 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import React from "react";
+import { HashRouter, Route, Routes } from "react-router-dom";
+import UserLoginForm from "./client/UserLogin";
+import ExamForm from "./managed/Form/Exam/CreateExamVideoForm";
+import PageTitle from "./shared/Title";
+// import PraticeForm from "./managed/components/CreatePraticeVideoForm";
+// import ExamForm from "./managed/components/CreateExamVideoForm";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    // <HashRouter>
+    //   <Routes>
+    //     <Route exact path="/" element={<UserLoginForm />} />
+    //     <Route path="/Pratice" element={<PraticeForm />} />
+    //     <Route path="/Exam" element={<ExamForm />} />
+    //   </Routes>
+    // </HashRouter>
+    <>
+      <ExamForm />
+    </>
+  );
 }
 
-// 匯出檔案
-export default App
+export default App;

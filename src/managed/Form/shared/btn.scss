@@ -1,0 +1,134 @@
+$bottom-position: 15px;
+
+.BtnDiv {
+  display: block;
+  width: inherit;
+  height: 10vh;
+}
+
+.addQuestion,
+.delQuestion,
+.nextstep,
+.prestep {
+  display: inline-block;
+  position: relative;
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
+
+@media (min-width: 576px) {
+  .addQuestion,
+  .delQuestion,
+  .nextstep,
+  .prestep {
+    margin-top: 0.5rem;
+    margin-left: 0.5rem;
+    position: relative;
+  }
+  .BtnDiv {
+    display: inline-block;
+  }
+}
+@media (min-width: 768px) {
+  .addQuestion,
+  .delQuestion,
+  .nextstep,
+  .prestep {
+    position: absolute;
+  }
+
+  .addQuestion,
+  .delQuestion {
+    margin-left: 0.5rem;
+  }
+
+  .prestep,
+  .nextstep {
+    margin-right: 0.5rem;
+  }
+
+  .nextstep {
+    right: 0px;
+    bottom: $bottom-position;
+  }
+
+  .prestep {
+    right: 130px;
+    bottom: $bottom-position;
+  }
+
+  .addQuestion {
+    left: 0px;
+    bottom: $bottom-position;
+  }
+  .delQuestion {
+    left: 130px;
+    bottom: $bottom-position;
+  }
+}
+@media (min-width: 992px) {
+  .addQuestion,
+  .delQuestion {
+    margin-left: 0.5rem;
+  }
+
+  .prestep,
+  .nextstep {
+    margin-right: 0.5rem;
+  }
+
+  .nextstep {
+    right: 0px;
+    bottom: $bottom-position;
+  }
+
+  .prestep {
+    right: 130px;
+    bottom: $bottom-position;
+  }
+
+  .addQuestion {
+    left: 0px;
+    bottom: $bottom-position;
+  }
+  .delQuestion {
+    left: 130px;
+    bottom: $bottom-position;
+  }
+}
+@media (min-width: 1200px) {
+  .addQuestion,
+  .delQuestion,
+  .nextstep,
+  .prestep {
+    position: absolute;
+  }
+  .addQuestion,
+  .delQuestion {
+    margin-left: 1rem;
+  }
+
+  .prestep,
+  .nextstep {
+    margin-right: 1rem;
+  }
+
+  .nextstep {
+    right: 0px;
+    bottom: $bottom-position;
+  }
+
+  .prestep {
+    right: 130px;
+    bottom: $bottom-position;
+  }
+
+  .addQuestion {
+    left: 0px;
+    bottom: $bottom-position;
+  }
+  .delQuestion {
+    left: 130px;
+    bottom: $bottom-position;
+  }
+}
