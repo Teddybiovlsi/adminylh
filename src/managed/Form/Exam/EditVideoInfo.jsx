@@ -42,11 +42,12 @@ class EditVideoInfo extends Component {
             <Card.Body>
               <Form.Label>
                 <h2>
-                  <strong>請匯入衛教測驗用影片語言</strong>
+                  <strong>請點選衛教測驗用影片語言</strong>
                 </h2>
               </Form.Label>
               <FloatingLabel controlId="floatingSelect" label="請選擇影片語言">
                 <Form.Select
+                  name="videoFileLanguage"
                   aria-label="Default select example"
                   size="lg"
                   onChange={handleChange("videoLanguage")}

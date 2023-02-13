@@ -1,8 +1,15 @@
 import React, { Component } from "react";
 import PageTitle from "../../../shared/Title";
 import PropTypes from "prop-types";
-import { Form, Card, InputGroup, FloatingLabel } from "react-bootstrap";
+import {
+  Form,
+  Card,
+  InputGroup,
+  FloatingLabel,
+  FormLabel,
+} from "react-bootstrap";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import styles from "./FormStyles.module.scss";
 
 class InputVideoQuestion extends Component {
@@ -68,12 +75,34 @@ class InputVideoQuestion extends Component {
                 >
                   <Form.Select aria-label="Floating label select example">
                     <option>請點擊開啟選單</option>
-                    <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                   </Form.Select>
                 </FloatingLabel>
+                {/* <button className="trashBtn">
+                  <i className="bi bi-trash3">刪除</i>
+                </button> */}
+                <btn.Secondary Text={<i className="bi bi-trash3">刪除</i>} />
+              </InputGroup>
+              <Form.Label className="mt-3">
+                <p>
+                  <strong>若下列填寫問題為必答問題請點選○</strong>
+                </p>
+              </Form.Label>
+              <InputGroup>
+                <InputGroup.Radio aria-label="若此為正確答案請點選" />
+                <InputGroup.Text>A</InputGroup.Text>
+                <Form.Control aria-label="請輸入問題1 A選項的答案" placeholder="請填入A選項的答案" />
+                <InputGroup.Radio aria-label="若此為正確答案請點選" />
+                <InputGroup.Text>B</InputGroup.Text>
+                <Form.Control aria-label="請輸入問題1 B選項的答案" placeholder="請填入B選項的答案"/>
+                <InputGroup.Radio aria-label="若此為正確答案請點選" />
+                <InputGroup.Text>C</InputGroup.Text>
+                <Form.Control aria-label="請輸入問題1 C選項的答案" placeholder="請填入C選項的答案"/>
+                <InputGroup.Radio aria-label="若此為正確答案請點選" />
+                <InputGroup.Text>D</InputGroup.Text>
+                <Form.Control aria-label="請輸入問題1 D選項的答案" placeholder="請填入D選項的答案"/>
               </InputGroup>
               <div className="BtnDiv">
                 <div className="QuestionBtnGroup">

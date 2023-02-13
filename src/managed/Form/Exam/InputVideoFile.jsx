@@ -44,6 +44,7 @@ export class InputVideoFile extends Component {
 
                 <Form.Control
                   type="file"
+                  name="videoFileInput"
                   accept="video/*"
                   onChange={handleClick("videoFile", "videoName")}
                   required
