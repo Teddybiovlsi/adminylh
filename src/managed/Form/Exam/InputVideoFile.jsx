@@ -59,8 +59,8 @@ export class InputVideoFile extends Component {
               </Form.Group>
               <div className={`${styles.nextstep}`}>
                 <btn.PrimaryBtn
-                  Text={"下一步"}
-                  EventName={this.continue}
+                  text={"下一步"}
+                  eventName={this.continue}
                   disabled={!values.videoName}
                 />
               </div>

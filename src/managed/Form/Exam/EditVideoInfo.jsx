@@ -66,13 +66,13 @@ class EditVideoInfo extends Component {
               </FloatingLabel>
               <div className="BtnDiv">
                 <div className={`${styles.prestep}`}>
-                  <btn.Danger Text={"上一步"} onClickEventName={this.back} />
+                  <btn.Danger text={"上一步"} onClickEventName={this.back} />
                 </div>
 
                 <div className={`${styles.nextstep}`}>
                   <btn.PrimaryBtn
-                    Text={"下一步"}
-                    EventName={this.continue}
+                    text={"下一步"}
+                    eventName={this.continue}
                     disabled={!values.videoLanguage}
                   />
                 </div>

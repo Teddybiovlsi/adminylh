@@ -11,6 +11,7 @@ import {
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import styles from "./FormStyles.module.scss";
+import { DynamicInput, DynamicChoice } from "../shared/DynamicInput";
 
 class InputVideoQuestion extends Component {
   static get propTypes() {
@@ -80,9 +81,11 @@ class InputVideoQuestion extends Component {
                     <option value="4">4</option>
                   </Form.Select>
                 </FloatingLabel>
+
                 {/* <button className="trashBtn">
                   <i className="bi bi-trash3">刪除</i>
                 </button> */}
+
                 <btn.Secondary Text={<i className="bi bi-trash3">刪除</i>} />
               </InputGroup>
               <Form.Label className="mt-3">
@@ -91,18 +94,10 @@ class InputVideoQuestion extends Component {
                 </p>
               </Form.Label>
               <InputGroup>
-                <InputGroup.Radio aria-label="若此為正確答案請點選" />
-                <InputGroup.Text>A</InputGroup.Text>
-                <Form.Control aria-label="請輸入問題1 A選項的答案" placeholder="請填入A選項的答案" />
-                <InputGroup.Radio aria-label="若此為正確答案請點選" />
-                <InputGroup.Text>B</InputGroup.Text>
-                <Form.Control aria-label="請輸入問題1 B選項的答案" placeholder="請填入B選項的答案"/>
-                <InputGroup.Radio aria-label="若此為正確答案請點選" />
-                <InputGroup.Text>C</InputGroup.Text>
-                <Form.Control aria-label="請輸入問題1 C選項的答案" placeholder="請填入C選項的答案"/>
-                <InputGroup.Radio aria-label="若此為正確答案請點選" />
-                <InputGroup.Text>D</InputGroup.Text>
-                <Form.Control aria-label="請輸入問題1 D選項的答案" placeholder="請填入D選項的答案"/>
+                {/* 編修中
+                {values.map((choiceValue) => {
+                  return <div></div>;
+                })} */}
               </InputGroup>
               <div className="BtnDiv">
                 <div className="QuestionBtnGroup">

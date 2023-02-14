@@ -25,6 +25,8 @@ export class ExamForm extends Component {
       videoName: "",
       videoLanguage: "",
       questionNum: "",
+      // 整修中
+      // choice: { choiceValue: 1, A: "", B: "", C: "", D: "" },
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -45,6 +47,11 @@ export class ExamForm extends Component {
       step: step - 1,
     });
   };
+
+  // 編修中
+  // addChoiceField = () => {
+  //   let choiceObj = {};
+  // };
 
   // handle field change
   handleChange = (input) => (e) => {

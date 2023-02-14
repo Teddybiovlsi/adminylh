@@ -2,85 +2,99 @@ import React, { Component } from "react";
 import Button from "react-bootstrap/Button";
 
 export class BtnBootstrap extends Component {
-  PrimaryBtn = ({ BtnPosition = "float-end", EventName, Text, disabled }) => {
-    return (
-      <Button
-        size="lg"
-        className={BtnPosition}
-        variant="outline-primary"
-        onClick={EventName}
-        disabled={disabled}
-      >
-        {Text}
-      </Button>
-    );
-  };
-
-  Secondary = ({ BtnPosition = "float-end", EventName, Text, disabled }) => {
-    return (
-      <Button
-        size="lg"
-        className={BtnPosition}
-        variant="outline-secondary"
-        onClick={EventName}
-        disabled={disabled}
-      >
-        {Text}
-      </Button>
-    );
-  };
-  Success = ({
-    BtnPosition = "float-end",
-    onClickEventName,
-    Text,
+  PrimaryBtn = ({
+    btnPosition = "float-end",
+    btnType = "button",
+    eventName,
+    text,
     disabled,
   }) => {
     return (
       <Button
         size="lg"
-        className={BtnPosition}
+        className={btnPosition}
+        type={btnType}
+        variant="outline-primary"
+        onClick={eventName}
+        disabled={disabled}
+      >
+        {text}
+      </Button>
+    );
+  };
+
+  Secondary = ({
+    btnPosition = "float-end",
+    btnType = "button",
+    eventName,
+    text,
+    disabled,
+  }) => {
+    return (
+      <Button
+        size="lg"
+        className={btnPosition}
+        type={btnType}
+        variant="outline-secondary"
+        onClick={eventName}
+        disabled={disabled}
+      >
+        {text}
+      </Button>
+    );
+  };
+  Success = ({
+    btnPosition = "float-end",
+    onClickEventName,
+    text,
+    disabled,
+  }) => {
+    return (
+      <Button
+        size="lg"
+        className={btnPosition}
         variant="outline-success"
         onClick={onClickEventName}
         disabled={disabled}
       >
-        {Text}
+        {text}
       </Button>
     );
   };
 
   Danger = ({
-    BtnPosition = "float-end",
+    btnPosition = "float-end",
     onClickEventName,
-    Text,
+    text,
     disabled,
   }) => {
     return (
       <Button
         size="lg"
-        className={BtnPosition}
+        className={btnPosition}
         variant="outline-danger"
         onClick={onClickEventName}
         disabled={disabled}
       >
-        {Text}
+        {text}
       </Button>
     );
   };
   Warning = ({
-    BtnPosition = "float-end",
+    btnPosition = "float-end",
     onClickEventName,
-    Text,
+    text,
     disabled,
   }) => {
     return (
       <Button
         size="lg"
-        className={BtnPosition}
+        className={btnPosition}
         variant="outline-warning"
         onClick={onClickEventName}
         disabled={disabled}
       >
-        {Text}
+        {text}
       </Button>
     );
   };
