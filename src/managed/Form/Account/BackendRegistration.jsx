@@ -54,7 +54,6 @@ export default function BackendRegistration() {
         });
         const pw = zxcvbn(passwordValue);
         pwdScore = pw.score;
-        console.log(pwdScore);
         switch (pwdScore) {
           case 1:
             setPasswordErr({ ...passwordError, pwdError: "密碼強度為：極弱" });
@@ -75,10 +74,21 @@ export default function BackendRegistration() {
       }
     }
   };
-
-  // function name(params) {
-
-  // }
+  const validatePwd = (e) => {
+    if (!e.target.value) {
+      setPasswordErr({ ...passwordError, confirmPwdError: "請再次輸入密碼" });
+    } else if (input.password && e.target.value !== input.password) {
+      setPasswordErr({
+        ...passwordError,
+        confirmPwdError: "輸入密碼與再次確認密碼不符，請重新嘗試",
+      })
+    }else{
+      setPasswordErr({
+        ...passwordError,
+        confirmPwdError: "",
+      })
+    }
+  };
 
   return (
     <>
@@ -129,6 +139,7 @@ export default function BackendRegistration() {
                   name="confirmPassword"
                   id="checkInputPassword"
                   onChange={handlInputChange}
+                  onBlur={validatePwd}
                   value={input.confirmPassword}
                   aria-describedby="passwordHelpBlock"
                 />
