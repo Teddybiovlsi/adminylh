@@ -1,75 +1,84 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormGroup, Form, InputGroup } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import PageTitle from "../../../shared/Title";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "./Registration.module.scss";
+import zxcvbn from "zxcvbn";
+import { func } from "prop-types";
 
 export default function BackendRegistration() {
   const btn = new BtnBootstrap();
 
-  const [email, setEmail] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [poorPassword, setPoorPassword] = useState(false);
-  const [weakPassword, setWeakPassword] = useState(false);
-  const [strongPassword, setStrongPassword] = useState(false);
-  const [passwordError, setPasswordErr] = useState("");
+  const [input, setInput] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [passwordError, setPasswordErr] = useState({
+    pwdError:
+      "您的密碼長度至少要8-20字元以上，包含數字、英文組合。但不能包含空白或表情符號",
+    confirmPwdError: "",
+  });
 
-  const handlePassword = (event) => {
-    setPasswordInput(event.target.value);
+  const handlInputChange = (e) => {
+    setInput({
+      ...input,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const passwordStrength = (event) => {
-    const passwordValue = event.target.value;
-    const passwordLength = event.target.value;
+  const passwordStrength = (e) => {
+    let pwdScore = 0;
 
-    const poorRegExp = /[a-z]/;
-    const weakRegExp = /(?=.*?[0-9])/;
-    const strongRegExp = /(?=.*?[#?!@$%^&*-])/;
+    const passwordValue = e.target.value;
     const whitespaceRegExp = /^$|\s+/;
-
-    const poorPassword = poorRegExp.test(passwordValue);
-    const weakPassword = weakRegExp.test(passwordValue);
-    const strongPassword = strongRegExp.test(passwordValue);
     const whiteSpace = whitespaceRegExp.test(passwordValue);
 
     if (passwordValue === "") {
-      setPasswordErr("密碼欄位不得為空");
+      setPasswordErr({
+        ...passwordError,
+        pwdError: "密碼欄位不得為空",
+      });
     } else {
       if (whiteSpace) {
-        setPasswordErr("密碼欄位不得有空白鍵");
-      }
-      if (
-        passwordLength <= 6 &&
-        (poorPassword || weakPassword || strongPassword)
-      ) {
-        setPoorPassword(true);
-        setPasswordErr("密碼強度為：弱");
-      }
-      if (
-        passwordLength >= 8 &&
-        poorPassword &&
-        (weakPassword || strongPassword)
-      ) {
-        setWeakPassword(true);
-        setPasswordErr("密碼強度為：中等");
+        setPasswordErr({
+          ...passwordError,
+          pwdError: "密碼欄位不得有空白鍵",
+        });
       } else {
-        setWeakPassword(false);
-      }
-      if (
-        passwordLength >= 10 &&
-        poorPassword &&
-        weakPassword &&
-        strongPassword
-      ) {
-        setStrongPassword(true);
-        setPasswordErr("密碼強度為：強");
-      } else {
-        setStrongPassword(false);
+        setPasswordErr({
+          ...passwordError,
+          pwdError: "",
+        });
+        const pw = zxcvbn(passwordValue);
+        pwdScore = pw.score;
+        console.log(pwdScore);
+        switch (pwdScore) {
+          case 1:
+            setPasswordErr({ ...passwordError, pwdError: "密碼強度為：極弱" });
+            break;
+          case 2:
+            setPasswordErr({ ...passwordError, pwdError: "密碼強度為：偏弱" });
+            break;
+          case 3:
+            setPasswordErr({ ...passwordError, pwdError: "密碼強度為：普通" });
+            break;
+          case 4:
+            setPasswordErr({ ...passwordError, pwdError: "密碼強度為：強" });
+            break;
+          case 5:
+            setPasswordErr({ ...passwordError, pwdError: "密碼強度為：極強" });
+            break;
+        }
       }
     }
   };
+
+  // function name(params) {
+
+  // }
 
   return (
     <>
@@ -90,32 +99,41 @@ export default function BackendRegistration() {
                 <Form.Label>請輸入Email：</Form.Label>
                 <Form.Control
                   type="email"
+                  name="email"
                   placeholder="name@example.com"
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handlInputChange}
+                  value={input.email}
                 />
               </Form.Group>
               <FormGroup>
                 <Form.Label htmlFor="inputPassword">請輸入密碼：</Form.Label>
                 <Form.Control
                   type="password"
+                  name="password"
                   id="inputPassword"
+                  maxLength={20}
                   aria-describedby="passwordHelpBlock"
+                  onChange={handlInputChange}
+                  onInput={passwordStrength}
+                  value={input.password}
                 />
                 <Form.Text id="passwordHelpBlock" muted>
-                  您的密碼長度至少要8-20字元以上，包含數字、英文組合。但不能包含空白或表情符號
+                  <strong>{passwordError.pwdError}</strong>
                 </Form.Text>
                 <br />
                 <Form.Label htmlFor="checkInputPassword">
-                  請再次確認密碼：
+                  請確認輸入密碼：
                 </Form.Label>
                 <Form.Control
                   type="password"
+                  name="confirmPassword"
                   id="checkInputPassword"
+                  onChange={handlInputChange}
+                  value={input.confirmPassword}
                   aria-describedby="passwordHelpBlock"
                 />
               </FormGroup>
-
-              <div className={`${styles.nextstep}`}>
+              <div className="d-grid gap-2 mt-5">
                 <btn.PrimaryBtn text={"送出"} />
               </div>
             </Form>
