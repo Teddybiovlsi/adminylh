@@ -29,7 +29,7 @@ const PwdStrengthMeter = ({ pwdScore }) => {
       case 2:
         return "orange";
       case 3:
-        return "#A25188";
+        return "blue";
       case 4:
         return "Green";
       default:
@@ -47,7 +47,13 @@ const PwdStrengthMeter = ({ pwdScore }) => {
       <div className="progress" style={{ height: "7px" }}>
         <div className="progress-bar" style={changeStrengthBarColor()}></div>
       </div>
-      <p style={{ color: funcProgressColor(pwdScore), textAlign: "right" }}>
+      <p
+        style={{
+          color: funcProgressColor(pwdScore),
+          textAlign: "right",
+          margin: 0,
+        }}
+      >
         {createPassLabel(pwdScore)}
       </p>
     </>
