@@ -75,6 +75,7 @@ export default function BackendRegistration() {
                     ErrorMessage={errors.email}
                   />
                   <FormPwd
+                    GroupClassName="mb-1"
                     SetStrengthMeter={true}
                     StrengthMeterPwdScore={pwdScore}
                     ChangeEvent={handleChange}
