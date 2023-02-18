@@ -1,36 +1,50 @@
-import React from "react";
+import React, { Component } from "react";
+import { Form } from "react-bootstrap";
 
-function FormEmail(
+function FormEmail({
   GroupClassName = "mb-3",
-  GroupControlID = "exampleForm.ControlInput1",
   LabelClassName = "fs-3",
   FeedBackClassName = "fs-5",
-  ChangeEvent = null,
-  BlurEvent = null,
-  EmailValue = null,
-  InValidCheck = null,
-  ErrorMessage = null
-) {
+  ControlName = "email",
+  ChangeEvent,
+  BlurEvent,
+  EmailValue = "",
+  ValidCheck,
+  InValidCheck,
+  FormControlPlaceHolder = "name@example.com",
+  LabelMessage = "請輸入Email:",
+  CorrectMessage = "信箱格式輸入正確",
+  ErrorMessage = "",
+}) {
   return (
-    <Form.Group className={GroupClassName} controlId={GroupControlID}>
-      <Form.Label className={LabelClassName} style={{ cursor: "pointer" }}>
-        請輸入Email：
-      </Form.Label>
-      <Form.Control
-        type="email"
-        name="email"
-        placeholder="name@example.com"
-        onChange={ChangeEvent}
-        onBlur={BlurEvent}
-        value={EmailValue}
-
-        isInvalid={!!InValidCheck}
-      />
-
-      <Form.Control.Feedback type="invalid" className={FeedBackClassName}>
-        {ErrorMessage}
-      </Form.Control.Feedback>
-    </Form.Group>
+    <>
+      <Form.Group
+        className={GroupClassName}
+        controlId="exampleForm.ControlInput1"
+      >
+        <Form.Label className={LabelClassName} style={{ cursor: "pointer" }}>
+          {LabelMessage}
+        </Form.Label>
+        <Form.Control
+          type="email"
+          name={ControlName}
+          placeholder={FormControlPlaceHolder}
+          onChange={ChangeEvent}
+          onBlur={BlurEvent}
+          value={EmailValue}
+          isValid={ValidCheck}
+          isInvalid={!!InValidCheck}
+        />
+        {/* 格式正確訊息 */}
+        <Form.Control.Feedback className={FeedBackClassName}>
+          {CorrectMessage}
+        </Form.Control.Feedback>
+        {/* 格式錯誤訊息 */}
+        <Form.Control.Feedback type="invalid" className={FeedBackClassName}>
+          {ErrorMessage}
+        </Form.Control.Feedback>
+      </Form.Group>{" "}
+    </>
   );
 }
 

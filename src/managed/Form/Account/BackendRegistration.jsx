@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import useBoolean from "../shared/useBoolean";
 import PwdStrengthMeter from "../shared/PwdStrengthMeter";
+import FormEmail from "../shared/FormEmail";
 import styles from "./scss/Registration.module.scss";
 import zxcvbn from "zxcvbn";
 
@@ -16,8 +17,6 @@ export default function BackendRegistration() {
   // 實例化btn元件
   const btn = new BtnBootstrap();
 
-  const pwdHint =
-    "密碼長度至少要8-20字元以上，包含數字、英文組合。但不能包含空白";
   const checkPwdHint = "請再次輸入您的密碼";
 
   const [pwdScore, setPwdScore] = useState(0);
@@ -64,34 +63,16 @@ export default function BackendRegistration() {
                 values,
                 errors,
                 touched,
-                isValid,
-                isSubmitting,
               }) => (
                 <Form noValidate onSubmit={handleSubmit}>
-                  <Form.Group
-                    className="mb-3"
-                    controlId="exampleForm.ControlInput1"
-                  >
-                    <Form.Label className="fs-3" style={{ cursor: "pointer" }}>
-                      請輸入Email：
-                    </Form.Label>
-                    <Form.Control
-                      type="email"
-                      name="email"
-                      placeholder="name@example.com"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.email}
-                      isValid={touched.email && !errors.email}
-                      isInvalid={!!errors.email}
-                    />
-                    <Form.Control.Feedback className="fs-5">
-                      信箱格式輸入正確
-                    </Form.Control.Feedback>
-                    <Form.Control.Feedback type="invalid" className="fs-5">
-                      {errors.email}
-                    </Form.Control.Feedback>
-                  </Form.Group>
+                  <FormEmail
+                    ChangeEvent={handleChange}
+                    BlurEvent={handleBlur}
+                    EmailValue={values.email}
+                    ValidCheck={touched.email && !errors.email}
+                    InValidCheck={!!errors.email}
+                    ErrorMessage={errors.email}
+                  />
 
                   <Form.Group className="mb-1">
                     <Form.Label
@@ -154,7 +135,9 @@ export default function BackendRegistration() {
                         value={values.confirmPassword}
                         placeholder={checkPwdHint}
                         aria-describedby="passwordHelpBlock"
-                        isValid={touched.confirmPassword & !errors.confirmPassword}
+                        isValid={
+                          touched.confirmPassword & !errors.confirmPassword
+                        }
                         isInvalid={!!errors.confirmPassword}
                       />
                       <span className="input-group-text">
