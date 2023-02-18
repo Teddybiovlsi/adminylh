@@ -10,6 +10,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import useBoolean from "../shared/useBoolean";
 import PwdStrengthMeter from "../shared/PwdStrengthMeter";
 import FormEmail from "../shared/FormEmail";
+import FormPwd from "../shared/FormPwd";
 import styles from "./scss/Registration.module.scss";
 import zxcvbn from "zxcvbn";
 
@@ -73,89 +74,40 @@ export default function BackendRegistration() {
                     InValidCheck={!!errors.email}
                     ErrorMessage={errors.email}
                   />
-
-                  <Form.Group className="mb-1">
-                    <Form.Label
-                      htmlFor="inputPassword"
-                      className="fs-3"
-                      style={{ cursor: "pointer" }}
-                    >
-                      請輸入密碼：
-                    </Form.Label>
-                    <InputGroup className="mb-1">
-                      <Form.Control
-                        type={showPwd ? "Text" : "Password"}
-                        name="password"
-                        id="inputPassword"
-                        maxLength={20}
-                        aria-describedby="passwordHelpBlock"
-                        placeholder={"請在這裡輸入密碼"}
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        onInput={(e) => {
-                          setPwdScore(zxcvbn(e.target.value).score);
-                        }}
-                        value={values.password}
-                        isValid={touched.password & !errors.password}
-                        isInvalid={!!errors.password}
-                      />
-                      <span className="input-group-text">
-                        <FontAwesomeIcon
-                          id="showPass"
-                          style={{ cursor: "pointer" }}
-                          onClick={setShowPwd}
-                          icon={showPwd ? faEyeSlash : faEye}
-                        />
-                      </span>
-                      <Form.Control.Feedback className="fs-5">
-                        密碼格式輸入正確
-                      </Form.Control.Feedback>
-                      <Form.Control.Feedback type="invalid" className="fs-5">
-                        {errors.password}
-                      </Form.Control.Feedback>
-                    </InputGroup>
-                    <PwdStrengthMeter pwdScore={pwdScore} />
-                  </Form.Group>
-
-                  <Form.Group>
-                    <Form.Label
-                      htmlFor="checkInputPassword"
-                      className="fs-3"
-                      style={{ cursor: "pointer" }}
-                    >
-                      請確認輸入密碼：
-                    </Form.Label>
-                    <InputGroup>
-                      <Form.Control
-                        type={showPwd ? "Text" : "Password"}
-                        name="confirmPassword"
-                        id="checkInputPassword"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.confirmPassword}
-                        placeholder={checkPwdHint}
-                        aria-describedby="passwordHelpBlock"
-                        isValid={
-                          touched.confirmPassword & !errors.confirmPassword
-                        }
-                        isInvalid={!!errors.confirmPassword}
-                      />
-                      <span className="input-group-text">
-                        <FontAwesomeIcon
-                          id="showConfirmPass"
-                          style={{ cursor: "pointer" }}
-                          onClick={setShowPwd}
-                          icon={showPwd ? faEyeSlash : faEye}
-                        />
-                      </span>
-                      <Form.Control.Feedback className="fs-5">
-                        確認密碼與輸入密碼相符
-                      </Form.Control.Feedback>
-                      <Form.Control.Feedback type="invalid" className="fs-5">
-                        {errors.confirmPassword}
-                      </Form.Control.Feedback>
-                    </InputGroup>
-                  </Form.Group>
+                  <FormPwd
+                    SetStrengthMeter={true}
+                    StrengthMeterPwdScore={pwdScore}
+                    ChangeEvent={handleChange}
+                    BlurEvent={handleBlur}
+                    InputEvent={(e) => {
+                      setPwdScore(zxcvbn(e.target.value).score);
+                    }}
+                    PwdValue={values.password}
+                    ValidCheck={touched.password & !errors.password}
+                    InValidCheck={!!errors.password}
+                    ControlID={"inputPassword"}
+                    IconID={"showPass"}
+                    SetShowPwdCondition={setShowPwd}
+                    ShowPwdCondition={showPwd}
+                    ErrorMessage={errors.password}
+                  />
+                  <FormPwd
+                    LabelForName="checkInputPassword"
+                    ControlName="confirmPassword"
+                    LabelMessage="請再次確認輸入密碼"
+                    FormControlPlaceHolder={checkPwdHint}
+                    BlurEvent={handleBlur}
+                    ChangeEvent={handleChange}
+                    PwdValue={values.confirmPassword}
+                    SetShowPwdCondition={setShowPwd}
+                    ShowPwdCondition={showPwd}
+                    ValidCheck={
+                      touched.confirmPassword & !errors.confirmPassword
+                    }
+                    InValidCheck={!!errors.confirmPassword}
+                    CorrectMessage="確認密碼與輸入密碼相符"
+                    ErrorMessage={errors.confirmPassword}
+                  />
                   <div className={`${styles.btnPosition} d-grid gap-2 p-2`}>
                     <btn.PrimaryBtn text={"送出"} btnType={"submit"} />
                   </div>
