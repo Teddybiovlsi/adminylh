@@ -1,0 +1,30 @@
+@media only screen and (max-width: 576px) {
+  .RegisterCard {
+    height: 58vh;
+    width: 95vw;
+  }
+}
+@media (min-width: 576px) {
+  .RegisterCard {
+    height: 58vh;
+    width: 60vw;
+  }
+}
+@media (min-width: 768px) {
+  .RegisterCard {
+    height: 58vh;
+    width: 55vw;
+  }
+}
+@media (min-width: 992px) {
+  .RegisterCard {
+    height: 58vh;
+    width: 50vw;
+  }
+}
+@media (min-width: 1200px) {
+  .RegisterCard {
+    height: 58vh;
+    width: 35vw;
+  }
+}

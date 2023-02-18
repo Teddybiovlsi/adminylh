@@ -1,0 +1,26 @@
+@use "../../shared/btn.module.scss";
+@use "./RegistrationRWD.module.scss";
+
+.RegisterCard {
+  border-radius: 20px;
+  box-shadow: 3px 5px 5px #771852;
+}
+
+.FormTitle {
+  border-radius: 20px 20px 0px 0px;
+  padding: 10px 20px 0px 15px;
+  background-color: #b2568e;
+}
+
+.FormTitle h1 strong {
+  color: #fff;
+}
+.btnPosition {
+  position: absolute;
+  bottom: 0;
+  right: 0.8vw;
+}
+
+div > h1 {
+  text-align: center;
+}
