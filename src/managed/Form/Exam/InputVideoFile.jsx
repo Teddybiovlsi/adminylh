@@ -4,7 +4,7 @@ import Card from "react-bootstrap/Card";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import PageTitle from "../../../shared/Title";
 import PropTypes from "prop-types";
-import styles from "./FormStyles.module.scss";
+// import styles from "./FormStyles.module.scss";
 
 export class InputVideoFile extends Component {
   static get propTypes() {

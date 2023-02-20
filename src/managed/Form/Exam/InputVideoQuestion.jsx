@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import styles from "./FormStyles.module.scss";
+// import styles from "./FormStyles.module.scss";
 import { DynamicInput, DynamicChoice } from "../shared/DynamicInput";
 
 class InputVideoQuestion extends Component {

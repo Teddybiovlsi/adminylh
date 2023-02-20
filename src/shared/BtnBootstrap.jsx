@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 
 export class BtnBootstrap extends Component {
   PrimaryBtn = ({
+    btnName = "",
     btnPosition = "float-end",
     btnType = "button",
     eventName,
@@ -11,6 +12,7 @@ export class BtnBootstrap extends Component {
   }) => {
     return (
       <Button
+        name={btnName}
         size="lg"
         className={btnPosition}
         type={btnType}

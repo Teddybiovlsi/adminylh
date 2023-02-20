@@ -18,7 +18,7 @@ export class ExamForm extends Component {
     // 設定初始條件
     this.state = {
       // 控制表單當前頁數
-      step: 3,
+      step: 1,
       // 測驗用表單預設1
       watchMode: 1,
       videoFile: "",

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import { Form, Card } from "react-bootstrap";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
-import styles from "./FormStyles.module.scss";
+// import styles from "./FormStyles.module.scss";
 
 class EditVideoInfo extends Component {
   static get propTypes() {

@@ -2,7 +2,9 @@ import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import UserLoginForm from "./client/UserLogin";
 import ExamForm from "./managed/Form/Exam/CreateExamVideoForm";
+import CreateVideoForm from "./managed/Form/Exam/CreateVideoForm";
 import BackendRegistration from "./managed/Form/Account/BackendRegistration";
+import InputVideoFileFunction from "./managed/Form/shared/InputVideoFileFunction";
 
 function App() {
   return (
@@ -11,13 +13,11 @@ function App() {
       <Routes>
         <Route exact path="/" element={<UserLoginForm />} />
         <Route path="/Register" element={<BackendRegistration />} />
-        {/* <Route path="/Pratice" element={<PraticeForm />} />
-        <Route path="/Exam" element={<ExamForm />} /> */}
+        {/* <Route path="/Pratice" element={<PraticeForm />} /> */}
+        <Route path="/ExamTest" element={<ExamForm />} />
+        <Route path="/Exam" element={<CreateVideoForm VideoMode={true} />} />
       </Routes>
     </HashRouter>
-    // <>
-    //   <ExamForm />
-    // </>
   );
 }
 
