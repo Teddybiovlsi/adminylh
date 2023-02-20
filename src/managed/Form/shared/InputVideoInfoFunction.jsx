@@ -6,7 +6,7 @@ import BtnBootstrap from "../../../shared/BtnBootstrap";
 import styles from "./scss/FormStyles.module.scss";
 
 function InputVideoInfoFunction({
-  FormMode = 0,
+  FormMode = false,
   ChangeEvent = null,
   VideoLanguage = "",
   GoPrevEvent = null,
@@ -30,7 +30,9 @@ function InputVideoInfoFunction({
         <Card.Body>
           <Form.Label>
             <h2>
-              <strong>請點選衛教測驗用影片語言</strong>
+              <strong>
+                請點選衛教{FormMode ? "測驗用" : "練習用"}影片語言
+              </strong>
             </h2>
           </Form.Label>
           <FloatingLabel controlId="floatingSelect" label="請選擇影片語言">
@@ -38,8 +40,11 @@ function InputVideoInfoFunction({
               name="videoFileLanguage"
               aria-label="Default select example"
               size="lg"
-              onChange={handleChange("videoLanguage")}
-              defaultValue={values.videoLanguage}
+              onChange={ChangeEvent}
+              defaultValue={VideoLanguage}
+              style={{
+                paddingBottom: 0,
+              }}
             >
               <option>請點擊開啟語言選單</option>
               <option value="1">國語</option>
@@ -52,6 +57,24 @@ function InputVideoInfoFunction({
               <option value="8">菲律賓語</option>
             </Form.Select>
           </FloatingLabel>
+          <div className="BtnDiv">
+            <div className={`${styles.prestep}`}>
+              <btn.Danger
+                btnName={"formStep"}
+                text={"上一步"}
+                onClickEventName={GoPrevEvent}
+              />
+            </div>
+
+            <div className={`${styles.nextstep}`}>
+              <btn.PrimaryBtn
+                btnName={"formStep"}
+                text={"下一步"}
+                eventName={GoNextEvent}
+                disabled={!VideoLanguage}
+              />
+            </div>
+          </div>
         </Card.Body>
       </Card>
     </div>

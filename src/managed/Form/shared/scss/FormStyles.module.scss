@@ -1,5 +1,9 @@
 @use "../btn.module.scss";
 
+div > h1 {
+  text-align: center;
+}
+
 .ExamCard {
   width: 100%;
   height: 35vh;
@@ -16,7 +20,7 @@
 
 .FormTitle {
   border-radius: 20px 20px 0px 0px;
-  padding: 10px 20px 0px 15px;
+  padding: 10px 20px 0px 0px;
   background-color: #989dcc;
 }
 
@@ -27,8 +31,4 @@
 .trashBtn {
   border: none;
   border-radius: 0px 5px 5px 0px;
-}
-
-div>h1 {
-  text-align: center;
 }

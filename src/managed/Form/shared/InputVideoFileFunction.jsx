@@ -6,7 +6,7 @@ import BtnBootstrap from "../../../shared/BtnBootstrap";
 import styles from "./scss/FormStyles.module.scss";
 
 function InputVideoFileFunction({
-  FormMode = 0,
+  FormMode = false,
   ChangeEvent = null,
   VidoeName = "",
   GoNextEvent = null,

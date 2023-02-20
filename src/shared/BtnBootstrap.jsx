@@ -65,6 +65,7 @@ export class BtnBootstrap extends Component {
   };
 
   Danger = ({
+    btnName = "",
     btnPosition = "float-end",
     onClickEventName,
     text,
@@ -72,6 +73,7 @@ export class BtnBootstrap extends Component {
   }) => {
     return (
       <Button
+        name={btnName}
         size="lg"
         className={btnPosition}
         variant="outline-danger"

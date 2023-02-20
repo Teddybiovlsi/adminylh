@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import InputVideoFile from "./InputVideoFile";
-import EditVideoInfo from "./EditVideoInfo";
 import InputVideoQuestion from "./InputVideoQuestion";
 import "bootstrap/dist/css/bootstrap.min.css";
 
