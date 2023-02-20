@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { Form, InputGroup } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import PageTitle from "../../../shared/Title";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import useBoolean from "../shared/useBoolean";
-import PwdStrengthMeter from "../shared/PwdStrengthMeter";
 import FormEmail from "../shared/FormEmail";
 import FormPwd from "../shared/FormPwd";
 import styles from "./scss/Registration.module.scss";
@@ -50,7 +47,11 @@ export default function BackendRegistration() {
           <Card.Body>
             <Formik
               validationSchema={schema}
-              onSubmit={console.log}
+              onSubmit={(values, { resetForm }) => {
+                console.log(values);
+                resetForm();
+                setPwdScore(0);
+              }}
               initialValues={{
                 email: "",
                 password: "",
