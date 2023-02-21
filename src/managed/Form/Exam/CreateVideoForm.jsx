@@ -45,8 +45,6 @@ function CreateVideoForm(VideoMode = false) {
         />
       );
     case 2:
-      return <InputVideoQAFunction FormMode={true} VideoFile={videoSource} />;
-    case 3:
       return (
         <InputVideoInfoFunction
           FormMode={VideoMode}
@@ -61,6 +59,8 @@ function CreateVideoForm(VideoMode = false) {
           GoNextEvent={nextStep}
         />
       );
+    case 3:
+      return <InputVideoQAFunction FormMode={true} VideoFile={videoSource} />;
   }
 }
 

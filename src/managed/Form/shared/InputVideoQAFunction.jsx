@@ -18,12 +18,13 @@ function InputVideoQAFunction({
     setNumOptions(parseInt(event.target.value));
   };
 
+  // 動態答案生成
   const answerInputs = [];
 
   for (let i = 0; i < numOptions; i++) {
     const answer = String.fromCharCode(65 + i); // answerNumber為1~4的數字
     answerInputs.push(
-      <InputGroup key={i} className="ps-2 pe-2">
+      <InputGroup key={i} className="mb-2">
         <InputGroup.Radio aria-label="若此為該問題答案請點選○" />
         <Form.Floating>
           <Form.Control
@@ -34,10 +35,6 @@ function InputVideoQAFunction({
           <label htmlFor="floatingInput">{`請輸入答案 ${answer}`}</label>
         </Form.Floating>
       </InputGroup>
-      // <div key={i}>
-      //   <label>Answer {answer}:</label>
-      //   <input type="text" name={`answer-${answer}`} />
-      // </div>
     );
   }
 
@@ -58,46 +55,50 @@ function InputVideoQAFunction({
             src={VideoFile}
             className="VideoInput"
             width="100%"
-            height={VideoHeight}
+            height="600px"
             controls
           />
-          <InputGroup className="ps-2 pe-2">
-            <Form.Label>
+          <Card>
+            <Card.Title className="ps-2 pe-2">
               <h2>
                 <strong>請填寫衛教測驗用影片問題</strong>
               </h2>
               <p>
                 <strong>若下列填寫問題為必答問題請點選○</strong>
+                <br />
+                <strong>若此為該問題答案請點選○</strong>
               </p>
-            </Form.Label>
-          </InputGroup>
-          <InputGroup className="ps-2 pe-2 pb-2">
-            <InputGroup.Radio aria-label="若此為必對問題請點選" />
-            <Form.Floating>
-              <Form.Control
-                id="floatingInput"
-                type="text"
-                placeholder="請輸入問題"
-              />
-              <label htmlFor="floatingInput">請輸入問題</label>
-            </Form.Floating>
-            <FloatingLabel
-              controlId="floatingSelectGrid"
-              label="請選擇問答題目數"
-            >
-              <Form.Select
-                aria-label="Floating label select example"
-                value={numOptions}
-                onChange={handleOptionChange}
-              >
-                <option>請點擊開啟選單</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-              </Form.Select>
-            </FloatingLabel>
-          </InputGroup>
-          {answerInputs}
+            </Card.Title>
+            <Card.Body>
+              <InputGroup className="pb-2">
+                <InputGroup.Radio aria-label="若此為必對問題請點選" />
+                <Form.Floating>
+                  <Form.Control
+                    id="floatingInput"
+                    type="text"
+                    placeholder="請輸入問題"
+                  />
+                  <label htmlFor="floatingInput">請輸入問題</label>
+                </Form.Floating>
+                <FloatingLabel
+                  controlId="floatingSelectGrid"
+                  label="請選擇問答題目數"
+                >
+                  <Form.Select
+                    aria-label="Floating label select example"
+                    value={numOptions}
+                    onChange={handleOptionChange}
+                  >
+                    <option value="">請點擊開啟選單</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </Form.Select>
+                </FloatingLabel>
+              </InputGroup>
+              {answerInputs}
+            </Card.Body>
+          </Card>
         </Card.Body>
       </Card>
     </div>
