@@ -40,11 +40,18 @@ function InputVideoQAFunction({
       setVideoQA(newVideoQA);
     }
   };
+  // if radio box is checked then the information of the Question mustCorrect will be true
+  const handleGetQuestionMustCorrect = (index, e) => {
+    const newVideoQA = [...VideoQA];
+    newVideoQA[index].mustCorrectQuestion = !newVideoQA[index].mustCorrectQuestion;
+    setVideoQA(newVideoQA);
+  };
 
   // 增加輸入欄位
   const handleAddQuestion = () => {
-    setVideoQA([...VideoQA, { currentTime: 0 }]);
+    setVideoQA([...VideoQA, { currentTime: 0,  mustCorrectQuestion: false}]);
   };
+  
   // 刪減輸入欄位
   const handleDelQAMessage = (index) => {
     const newVideoQA = [...VideoQA];
@@ -108,7 +115,7 @@ function InputVideoQAFunction({
           </Stack>
 
           {VideoQA.map((info, index) => (
-            <Card key={index} style={{ position: "relative" }}>
+            <Card key={index} style={{ position: "relative" }} className="mb-2">
               {index > 0 && (
                 <CloseButton
                   className={`${styles.deleteQAMessage}`}
@@ -128,12 +135,15 @@ function InputVideoQAFunction({
                 </p>
               </Card.Title>
               <Card.Body>
+                {/* Get Current Video Question Time */}
                 <InputGroup className="mb-2">
+                  {/* Btn Get Current Time */}
                   <btn.Secondary
                     btnID={"button-addon1"}
                     eventName={(e) => handleGetVideoTime(index, e)}
                     text={"取得當前時間"}
                   />
+                  {/* After get current Time of the Video frame show in the cintrol box */}
                   <Form.Control
                     name="currentTime"
                     placeholder="請點選左方按鍵取得影片當前時間"
@@ -143,6 +153,37 @@ function InputVideoQAFunction({
                     disabled
                   />
                   <InputGroup.Text>秒</InputGroup.Text>
+                </InputGroup>
+                {/* In this inputGroup is about Question and Answer Select */}
+                <InputGroup className="pb-2">
+                  <InputGroup.Checkbox  
+                    aria-label="若此為必對問題請點選"
+                    onChange={() => {handleGetQuestionMustCorrect(index)}}
+                  />
+                  <Form.Floating>
+                    <Form.Control
+                      name=""
+                      id="floatingInput"
+                      type="text"
+                      placeholder={`請輸入問題${index + 1}`}
+                    />
+                    <label htmlFor="floatingInput">{`請輸入問題${index + 1}`}</label>
+                  </Form.Floating>
+                  <FloatingLabel
+                    controlId="floatingSelectGrid"
+                    label="請選擇問答題目數"
+                  >
+                    <Form.Select
+                      aria-label="Floating label select example"
+                      value={numOptions}
+                      onChange={handleOptionChange}
+                    >
+                      <option value="0">請點擊開啟選單</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                    </Form.Select>
+                  </FloatingLabel>
                 </InputGroup>
               </Card.Body>
             </Card>

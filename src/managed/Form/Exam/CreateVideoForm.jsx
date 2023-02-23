@@ -7,20 +7,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 function CreateVideoForm(VideoMode = false) {
   // const [currentTime, setCurrentTime] = useState(0);
   // const [videoInfo, setVideoInfo] = useState([{ currentTime: 0 }]);
-  const [videoInfo, setVideoInfo] = useState([{ currentTime: 0 }]);
+  const [videoInfo, setVideoInfo] = useState([
+    { currentTime: 0, mustCorrectQuestion: false },
+  ]);
 
-  const [formType, setFormType] = useState(
-    {
-      Type: { VideoMode },
-      formStep: 1,
-      videoFile: "",
-      videoSource: "",
-      videoFileName: "",
-      videoLanguage: "",
-      questionNum: 1,
-    },
-  
-  );
+  const [formType, setFormType] = useState({
+    Type: { VideoMode },
+    formStep: 1,
+    videoFile: "",
+    videoSource: "",
+    videoFileName: "",
+    videoLanguage: "",
+    questionNum: 1,
+  });
 
   const prevStep = (e) => {
     setFormType({ ...formType, [e.target.name]: formType.formStep - 1 });
