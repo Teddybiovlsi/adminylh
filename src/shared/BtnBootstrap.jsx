@@ -26,6 +26,7 @@ export class BtnBootstrap extends Component {
   };
 
   Secondary = ({
+    btnID = "",
     btnPosition = "float-end",
     btnType = "button",
     eventName,
@@ -34,6 +35,7 @@ export class BtnBootstrap extends Component {
   }) => {
     return (
       <Button
+        id={btnID}
         size="lg"
         className={btnPosition}
         type={btnType}
