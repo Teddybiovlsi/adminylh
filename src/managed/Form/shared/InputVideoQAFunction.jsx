@@ -1,5 +1,12 @@
-import React, { useContext, useState, useRef } from "react";
-import { Card, Form, InputGroup, FloatingLabel } from "react-bootstrap";
+import React, { useState, useRef } from "react";
+import {
+  Card,
+  Form,
+  InputGroup,
+  FloatingLabel,
+  CloseButton,
+  Stack,
+} from "react-bootstrap";
 import PageTitle from "../../../shared/Title";
 import CardTitleFunction from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
@@ -16,7 +23,7 @@ function InputVideoQAFunction({
   const btn = new BtnBootstrap();
 
   const [numOptions, setNumOptions] = useState(2);
-  
+
   // 影片時間參考欄位
   const videoRef = useRef(null);
 
@@ -33,9 +40,16 @@ function InputVideoQAFunction({
       setVideoQA(newVideoQA);
     }
   };
+
   // 增加輸入欄位
   const handleAddQuestion = () => {
     setVideoQA([...VideoQA, { currentTime: 0 }]);
+  };
+  // 刪減輸入欄位
+  const handleDelQAMessage = (index) => {
+    const newVideoQA = [...VideoQA];
+    newVideoQA.splice(index, 1);
+    setVideoQA(newVideoQA);
   };
 
   // 動態答案生成
@@ -79,23 +93,39 @@ function InputVideoQAFunction({
             height="600px"
             controls
           />
-          <Card.Title className="ps-2 pe-2">
-            <h2>
-              <strong>{`請填寫衛教${
-                FormMode ? "測驗用" : "練習用"
-              }影片問題`}</strong>
-            </h2>
-            <p>
-              <strong>若下列填寫問題為必答問題請點選○</strong>
-              <br />
-              <strong>若此為該問題答案請點選○</strong>
-            </p>
-          </Card.Title>
+          <Stack direction="horizontal" className="ms-2 mt-3 mb-3 me-2">
+            <div>
+              <h2>
+                <strong>{`請填寫衛教${
+                  FormMode ? "測驗用" : "練習用"
+                }影片問題`}</strong>
+              </h2>
+            </div>
+
+            <div className="ms-auto">
+              <btn.Secondary text={"新增問題"} eventName={handleAddQuestion} />
+            </div>
+          </Stack>
 
           {VideoQA.map((info, index) => (
-            <Card key={index}>
+            <Card key={index} style={{ position: "relative" }}>
+              {index > 0 && (
+                <CloseButton
+                  className={`${styles.deleteQAMessage}`}
+                  onClick={() => {
+                    handleDelQAMessage(index);
+                  }}
+                />
+              )}
+
               <Card.Title className="pt-3 ps-3 pe-3 pb-0">
                 <h3>問題 {index + 1}</h3>
+                <p className={`${styles.noticficationMessage}`}>
+                  <strong>若下列填寫問題為必答問題請點選○</strong>
+                </p>
+                <p className={`${styles.noticficationMessage}`}>
+                  <strong>若此為該問題答案請點選○</strong>
+                </p>
               </Card.Title>
               <Card.Body>
                 <InputGroup className="mb-2">
@@ -117,8 +147,6 @@ function InputVideoQAFunction({
               </Card.Body>
             </Card>
           ))}
-         <btn.Secondary Text={"新增問題"} onClickEventName={handleAddQuestion} />
-          
 
           {/* <InputGroup className="pb-2">
                   <InputGroup.Radio aria-label="若此為必對問題請點選" />
