@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Card,
   Form,
@@ -22,14 +22,27 @@ function InputVideoQAFunction({
   // 將製作的元件庫 button實例化
   const btn = new BtnBootstrap();
 
-  const [numOptions, setNumOptions] = useState(2);
-
   // 影片時間參考欄位
   const videoRef = useRef(null);
-
   // 影片資訊欄位
-  const handleOptionChange = (event) => {
-    setNumOptions(parseInt(event.target.value));
+  const handleOptionChange = (index, event) => {
+    const numOfChoice = parseInt(event.target.value);
+    const newVideoQA = [...VideoQA];
+    switch (numOfChoice) {
+      case 2:
+        newVideoQA[index].answerContent = ["", ""];
+        break;
+      case 3:
+        newVideoQA[index].answerContent = ["", "", ""];
+        break;
+      case 4:
+        newVideoQA[index].answerContent = ["", "", "", ""];
+        break;
+      default:
+        break;
+    }
+    newVideoQA[index].numofOptions = numOfChoice;
+    setVideoQA(newVideoQA);
   };
 
   // 若該欄位之index取得時間有變動
@@ -43,15 +56,32 @@ function InputVideoQAFunction({
   // if radio box is checked then the information of the Question mustCorrect will be true
   const handleGetQuestionMustCorrect = (index, e) => {
     const newVideoQA = [...VideoQA];
-    newVideoQA[index].mustCorrectQuestion = !newVideoQA[index].mustCorrectQuestion;
+    newVideoQA[index].mustCorrectQuestion =
+      !newVideoQA[index].mustCorrectQuestion;
     setVideoQA(newVideoQA);
   };
 
+  const handleGetQuestionContent = (index, e) => {
+    const newVideoQA = [...VideoQA];
+    newVideoQA[index].questionContent = e.target.value;
+    setVideoQA(newVideoQA);
+  };
+
+  // 增加/刪減 影片問題輸入框...
   // 增加輸入欄位
   const handleAddQuestion = () => {
-    setVideoQA([...VideoQA, { currentTime: 0,  mustCorrectQuestion: false}]);
+    setVideoQA([
+      ...VideoQA,
+      {
+        currentTime: 0,
+        mustCorrectQuestion: false,
+        questionContent: "",
+        numofOptions: 2,
+        answerContent: [],
+      },
+    ]);
   };
-  
+
   // 刪減輸入欄位
   const handleDelQAMessage = (index) => {
     const newVideoQA = [...VideoQA];
@@ -59,25 +89,25 @@ function InputVideoQAFunction({
     setVideoQA(newVideoQA);
   };
 
-  // 動態答案生成
+  // 動態影片答案生成
   const answerInputs = [];
 
-  for (let i = 0; i < numOptions; i++) {
-    const answer = String.fromCharCode(65 + i); // answerNumber為1~4的數字
-    answerInputs.push(
-      <InputGroup key={i} className="mb-2">
-        <InputGroup.Radio aria-label="若此為該問題答案請點選○" />
-        <Form.Floating>
-          <Form.Control
-            id="floatingInput"
-            type="text"
-            placeholder={`請輸入答案 ${answer}`}
-          />
-          <label htmlFor="floatingInput">{`請輸入答案 ${answer}`}</label>
-        </Form.Floating>
-      </InputGroup>
-    );
-  }
+  // for (let i = 0; i < numOptions; i++) {
+  //   const answer = String.fromCharCode(65 + i); // answerNumber為1~4的數字
+  //   answerInputs.push(
+  //     <InputGroup key={i} className="mb-2">
+  //       <InputGroup.Radio aria-label="若此為該問題答案請點選○" />
+  //       <Form.Floating>
+  //         <Form.Control
+  //           id="floatingInput"
+  //           type="text"
+  //           placeholder={`請輸入答案 ${answer}`}
+  //         />
+  //         <label htmlFor="floatingInput">{`請輸入答案 ${answer}`}</label>
+  //       </Form.Floating>
+  //     </InputGroup>
+  //   );
+  // }
 
   return (
     <div className="FormStyle d-flex align-items-center justify-content-center">
@@ -156,18 +186,25 @@ function InputVideoQAFunction({
                 </InputGroup>
                 {/* In this inputGroup is about Question and Answer Select */}
                 <InputGroup className="pb-2">
-                  <InputGroup.Checkbox  
+                  <InputGroup.Checkbox
                     aria-label="若此為必對問題請點選"
-                    onChange={() => {handleGetQuestionMustCorrect(index)}}
+                    onChange={() => {
+                      handleGetQuestionMustCorrect(index);
+                    }}
                   />
                   <Form.Floating>
                     <Form.Control
-                      name=""
+                      name="questionContent"
                       id="floatingInput"
                       type="text"
                       placeholder={`請輸入問題${index + 1}`}
+                      onChange={(e) => {
+                        handleGetQuestionContent(index, e);
+                      }}
                     />
-                    <label htmlFor="floatingInput">{`請輸入問題${index + 1}`}</label>
+                    <label htmlFor="floatingInput">{`請輸入問題${
+                      index + 1
+                    }`}</label>
                   </Form.Floating>
                   <FloatingLabel
                     controlId="floatingSelectGrid"
@@ -175,8 +212,10 @@ function InputVideoQAFunction({
                   >
                     <Form.Select
                       aria-label="Floating label select example"
-                      value={numOptions}
-                      onChange={handleOptionChange}
+                      value={info.numofOptions}
+                      onChange={(e) => {
+                        handleOptionChange(index, e);
+                      }}
                     >
                       <option value="0">請點擊開啟選單</option>
                       <option value="2">2</option>
@@ -185,6 +224,7 @@ function InputVideoQAFunction({
                     </Form.Select>
                   </FloatingLabel>
                 </InputGroup>
+                {answerInputs}
               </Card.Body>
             </Card>
           ))}

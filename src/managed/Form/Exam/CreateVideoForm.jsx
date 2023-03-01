@@ -8,7 +8,13 @@ function CreateVideoForm(VideoMode = false) {
   // const [currentTime, setCurrentTime] = useState(0);
   // const [videoInfo, setVideoInfo] = useState([{ currentTime: 0 }]);
   const [videoInfo, setVideoInfo] = useState([
-    { currentTime: 0, mustCorrectQuestion: false },
+    {
+      currentTime: 0,
+      mustCorrectQuestion: false,
+      questionContent: "",
+      numofOptions: 2,
+      answerContent: [],
+    },
   ]);
 
   const [formType, setFormType] = useState({
