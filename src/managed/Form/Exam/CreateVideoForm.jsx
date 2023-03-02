@@ -12,7 +12,7 @@ function CreateVideoForm(VideoMode = false) {
       currentTime: 0,
       mustCorrectQuestion: false,
       questionContent: "",
-      numofOptions: 2,
+      numofOptions: 0,
       answerContent: [],
     },
   ]);

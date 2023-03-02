@@ -24,9 +24,31 @@ function InputVideoQAFunction({
 
   // 影片時間參考欄位
   const videoRef = useRef(null);
-  // 影片資訊欄位
-  const handleOptionChange = (index, event) => {
-    const numOfChoice = parseInt(event.target.value);
+  // 以下是跟影片問題/選項/答案填寫有關的欄位
+  // 若該欄位之index取得時間有變動
+  const handleGetVideoTime = (index, e) => {
+    if (videoRef.current) {
+      const newVideoQA = [...VideoQA];
+      newVideoQA[index].currentTime = videoRef.current.currentTime;
+      setVideoQA(newVideoQA);
+    }
+  };
+  // if radio box is checked then the information of the Question mustCorrect will be true
+  const handleGetQuestionMustCorrect = (index, e) => {
+    const newVideoQA = [...VideoQA];
+    newVideoQA[index].mustCorrectQuestion =
+      !newVideoQA[index].mustCorrectQuestion;
+    setVideoQA(newVideoQA);
+  };
+  //取得問題內容變動
+  const handleGetQuestionContent = (index, e) => {
+    const newVideoQA = [...VideoQA];
+    newVideoQA[index].questionContent = e.target.value;
+    setVideoQA(newVideoQA);
+  };
+  // 取得答題選項數目變動
+  const handleOptionChange = (index, e) => {
+    const numOfChoice = parseInt(e.target.value);
     const newVideoQA = [...VideoQA];
     switch (numOfChoice) {
       case 2:
@@ -45,27 +67,11 @@ function InputVideoQAFunction({
     setVideoQA(newVideoQA);
   };
 
-  // 若該欄位之index取得時間有變動
-  const handleGetVideoTime = (index, e) => {
-    if (videoRef.current) {
-      const newVideoQA = [...VideoQA];
-      newVideoQA[index].currentTime = videoRef.current.currentTime;
-      setVideoQA(newVideoQA);
-    }
-  };
-  // if radio box is checked then the information of the Question mustCorrect will be true
-  const handleGetQuestionMustCorrect = (index, e) => {
+  const handleAnswerChange = (index, answerContentIndex, e)=>{
     const newVideoQA = [...VideoQA];
-    newVideoQA[index].mustCorrectQuestion =
-      !newVideoQA[index].mustCorrectQuestion;
+    newVideoQA[index].answerContent[answerContentIndex] = e.target.value;
     setVideoQA(newVideoQA);
-  };
-
-  const handleGetQuestionContent = (index, e) => {
-    const newVideoQA = [...VideoQA];
-    newVideoQA[index].questionContent = e.target.value;
-    setVideoQA(newVideoQA);
-  };
+  }
 
   // 增加/刪減 影片問題輸入框...
   // 增加輸入欄位
@@ -76,7 +82,7 @@ function InputVideoQAFunction({
         currentTime: 0,
         mustCorrectQuestion: false,
         questionContent: "",
-        numofOptions: 2,
+        numofOptions: 0,
         answerContent: [],
       },
     ]);
@@ -88,26 +94,6 @@ function InputVideoQAFunction({
     newVideoQA.splice(index, 1);
     setVideoQA(newVideoQA);
   };
-
-  // 動態影片答案生成
-  const answerInputs = [];
-
-  // for (let i = 0; i < numOptions; i++) {
-  //   const answer = String.fromCharCode(65 + i); // answerNumber為1~4的數字
-  //   answerInputs.push(
-  //     <InputGroup key={i} className="mb-2">
-  //       <InputGroup.Radio aria-label="若此為該問題答案請點選○" />
-  //       <Form.Floating>
-  //         <Form.Control
-  //           id="floatingInput"
-  //           type="text"
-  //           placeholder={`請輸入答案 ${answer}`}
-  //         />
-  //         <label htmlFor="floatingInput">{`請輸入答案 ${answer}`}</label>
-  //       </Form.Floating>
-  //     </InputGroup>
-  //   );
-  // }
 
   return (
     <div className="FormStyle d-flex align-items-center justify-content-center">
@@ -224,7 +210,32 @@ function InputVideoQAFunction({
                     </Form.Select>
                   </FloatingLabel>
                 </InputGroup>
-                {answerInputs}
+                {/* 以下是動態答案控制欄位 */}
+                {info.answerContent.map((answerContent, answerContentIndex) => (
+                  <InputGroup
+                    key={`${index}-${answerContentIndex}`}
+                    className="mb-2"
+                  >
+                    <InputGroup.Radio aria-label="若此為該問題答案請點選○" />
+                    <Form.Floating>
+                      <Form.Control
+                        id="floatingInput"
+                        type="text"
+                        placeholder={`請在這裡輸入答案${String.fromCharCode(
+                          65 + answerContentIndex
+                        )}`}
+                        value={answerContent}
+                        onChange={(e) => {
+                          handleAnswerChange(index, answerContentIndex, e);
+                        }}
+                      />
+                      <label htmlFor="floatingInput">{`請輸入答案${String.fromCharCode(
+                        65 + answerContentIndex
+                      )}`}</label>
+                    </Form.Floating>
+                  </InputGroup>
+                ))}
+                {/* {answerInputs} */}
               </Card.Body>
             </Card>
           ))}
