@@ -15,7 +15,6 @@ function InputVideoInfoFunction({
   const btn = new BtnBootstrap();
   return (
     <div className="FormStyle d-flex align-items-center justify-content-center">
-      <PageTitle title="台大分院雲林分院｜測驗用表單" />
       <PageTitle
         title={`台大分院雲林分院｜ ${FormMode ? "測驗用表單" : "練習用表單"}`}
       />

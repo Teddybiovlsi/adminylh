@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import InputVideoFileFunction from "../shared/InputVideoFileFunction";
 import InputVideoInfoFunction from "../shared/InputVideoInfoFunction";
 import InputVideoQAFunction from "../shared/InputVideoQAFunction";
+import InputFormPreviewFunction from "../shared/InputFormPreviewFunction";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function CreateVideoForm(VideoMode = false) {
@@ -103,7 +104,11 @@ function CreateVideoForm(VideoMode = false) {
       );
     case 4:
       return(
-        <div>驗證表單</div>
+        <InputFormPreviewFunction
+          FormMode={true}
+          GoPrevEvent={prevStep}
+          GoNextEvent={nextStep}
+        />
       );
   }
 }

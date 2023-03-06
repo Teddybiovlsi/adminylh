@@ -128,7 +128,9 @@ function InputVideoQAFunction({
 
   return (
     <div className="FormStyle d-flex align-items-center justify-content-center">
-      <PageTitle title="台大分院雲林分院｜測驗用表單" />
+      <PageTitle
+        title={`台大分院雲林分院｜ ${FormMode ? "測驗用表單" : "練習用表單"}`}
+      />
       <Card className={`${styles.ExamQusetionCard}`}>
         <Card.Title className={styles.FormTitle} style={{ margin: 0 }}>
           <CardTitleFunction
@@ -187,7 +189,7 @@ function InputVideoQAFunction({
                   {/* Btn Get Current Time */}
                   <btn.Secondary
                     btnID={"button-addon1"}
-                    eventName={(e) => handleGetVideoTime(index, e)}
+                    onClickEventName={(e) => handleGetVideoTime(index, e)}
                     text={"取得當前時間"}
                   />
                   {/* After get current Time of the Video frame show in the cintrol box */}
