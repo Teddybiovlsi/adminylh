@@ -94,7 +94,7 @@ function CreateVideoForm(VideoMode = false) {
     case 3:
       return (
         <InputVideoQAFunction
-          FormMode={true}
+          FormMode={VideoMode}
           VideoFile={formType.videoSource}
           VideoQA={videoInfo}
           setVideoQA={setVideoInfo}
@@ -103,13 +103,17 @@ function CreateVideoForm(VideoMode = false) {
         />
       );
     case 4:
-      return(
+      return (
         <InputFormPreviewFunction
-          FormMode={true}
+          FormMode={VideoMode}
+          VideoName={formType.videoFileName}
+          VideoLanguage={formType.videoLanguage}
           GoPrevEvent={prevStep}
           GoNextEvent={nextStep}
         />
       );
+    default:
+      return <div>success</div>;
   }
 }
 
