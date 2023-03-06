@@ -70,7 +70,7 @@ function InputVideoInfoFunction({
               <btn.PrimaryBtn
                 btnName={"formStep"}
                 text={"下一步"}
-                eventName={GoNextEvent}
+                onClickEventName={GoNextEvent}
                 disabled={!VideoLanguage}
               />
             </div>

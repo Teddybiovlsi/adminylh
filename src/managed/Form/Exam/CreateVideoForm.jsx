@@ -45,6 +45,19 @@ function CreateVideoForm(VideoMode = false) {
       });
     }
   };
+  // 增加輸入欄位
+  // const handleAddQuestion = () => {
+  //   setVideoInfo([
+  //     ...videoInfo,
+  //     {
+  //       currentTime: 0,
+  //       mustCorrectQuestion: false,
+  //       questionContent: "",
+  //       numofOptions: 0,
+  //       answerContent: [],
+  //     },
+  //   ]);
+  // };
 
   // const handleVideoInfoChange = (index, e) => {
   //   const newVideoInfo = [...videoInfo];
@@ -64,20 +77,6 @@ function CreateVideoForm(VideoMode = false) {
       );
     case 2:
       return (
-        <InputVideoQAFunction
-          FormMode={true}
-          VideoFile={formType.videoSource}
-          VideoQA={videoInfo}
-          setVideoQA={setVideoInfo}
-
-          // ChangeVideoTimeEvent={(e) => {
-          //   setCurrentTime(e.target.value);
-          // }}
-          // GetVideoTimeEvent={handleGetVideoTimeClick}
-        />
-      );
-    case 3:
-      return (
         <InputVideoInfoFunction
           FormMode={VideoMode}
           ChangeEvent={(e) => {
@@ -90,6 +89,21 @@ function CreateVideoForm(VideoMode = false) {
           GoPrevEvent={prevStep}
           GoNextEvent={nextStep}
         />
+      );
+    case 3:
+      return (
+        <InputVideoQAFunction
+          FormMode={true}
+          VideoFile={formType.videoSource}
+          VideoQA={videoInfo}
+          setVideoQA={setVideoInfo}
+          GoPrevEvent={prevStep}
+          GoNextEvent={nextStep}
+        />
+      );
+    case 4:
+      return(
+        <div>驗證表單</div>
       );
   }
 }

@@ -6,7 +6,7 @@ export class BtnBootstrap extends Component {
     btnName = "",
     btnPosition = "float-end",
     btnType = "button",
-    eventName,
+    onClickEventName,
     text,
     disabled,
   }) => {
@@ -17,7 +17,7 @@ export class BtnBootstrap extends Component {
         className={btnPosition}
         type={btnType}
         variant="outline-primary"
-        onClick={eventName}
+        onClick={onClickEventName}
         disabled={disabled}
       >
         {text}
@@ -29,7 +29,7 @@ export class BtnBootstrap extends Component {
     btnID = "",
     btnPosition = "float-end",
     btnType = "button",
-    eventName,
+    onClickEventName,
     text,
     disabled,
   }) => {
@@ -40,7 +40,7 @@ export class BtnBootstrap extends Component {
         className={btnPosition}
         type={btnType}
         variant="outline-secondary"
-        onClick={eventName}
+        onClick={onClickEventName}
         disabled={disabled}
       >
         {text}

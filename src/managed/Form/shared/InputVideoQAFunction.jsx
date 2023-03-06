@@ -11,6 +11,7 @@ import PageTitle from "../../../shared/Title";
 import CardTitleFunction from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import styles from "./scss/FormStyles.module.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function InputVideoQAFunction({
   FormMode = false,
@@ -18,6 +19,8 @@ function InputVideoQAFunction({
   VideoHeight = "500px",
   VideoQA,
   setVideoQA,
+  GoPrevEvent = null,
+  GoNextEvent = null,
 }) {
   // 將製作的元件庫 button實例化
   const btn = new BtnBootstrap();
@@ -52,13 +55,25 @@ function InputVideoQAFunction({
     const newVideoQA = [...VideoQA];
     switch (numOfChoice) {
       case 2:
-        newVideoQA[index].answerContent = ["", ""];
+        newVideoQA[index].answerContent = [
+          [false, ""],
+          [false, ""],
+        ];
         break;
       case 3:
-        newVideoQA[index].answerContent = ["", "", ""];
+        newVideoQA[index].answerContent = [
+          [false, ""],
+          [false, ""],
+          [false, ""],
+        ];
         break;
       case 4:
-        newVideoQA[index].answerContent = ["", "", "", ""];
+        newVideoQA[index].answerContent = [
+          [false, ""],
+          [false, ""],
+          [false, ""],
+          [false, ""],
+        ];
         break;
       default:
         break;
@@ -67,11 +82,27 @@ function InputVideoQAFunction({
     setVideoQA(newVideoQA);
   };
 
-  const handleAnswerChange = (index, answerContentIndex, e)=>{
+  const handleIsCorrectOption = (questionindex, answerOptionIndex) => {
     const newVideoQA = [...VideoQA];
-    newVideoQA[index].answerContent[answerContentIndex] = e.target.value;
+    const currentOption = newVideoQA[questionindex].answerContent;
+
+    // console.log(currentOption);
+    const updateAnswerOption = currentOption.map((answer, index) => {
+      if (index === answerOptionIndex) {
+        // console.log([!answer[0], answer[1]]);
+        return [!answer[0], answer[1]];
+      }
+      return [false, answer[1]];
+    });
+    newVideoQA[questionindex].answerContent = updateAnswerOption;
     setVideoQA(newVideoQA);
-  }
+  };
+
+  const handleAnswerChange = (index, answerContentIndex, e) => {
+    const newVideoQA = [...VideoQA];
+    newVideoQA[index].answerContent[answerContentIndex][1] = e.target.value;
+    setVideoQA(newVideoQA);
+  };
 
   // 增加/刪減 影片問題輸入框...
   // 增加輸入欄位
@@ -126,7 +157,7 @@ function InputVideoQAFunction({
             </div>
 
             <div className="ms-auto">
-              <btn.Secondary text={"新增問題"} eventName={handleAddQuestion} />
+              <btn.Secondary text={"新增問題"} onClickEventName={handleAddQuestion} />
             </div>
           </Stack>
 
@@ -216,7 +247,13 @@ function InputVideoQAFunction({
                     key={`${index}-${answerContentIndex}`}
                     className="mb-2"
                   >
-                    <InputGroup.Radio aria-label="若此為該問題答案請點選○" />
+                    <InputGroup.Checkbox
+                      aria-label="若此為該問題答案請點選○"
+                      checked={answerContent[0]}
+                      onChange={(e) => {
+                        handleIsCorrectOption(index, answerContentIndex);
+                      }}
+                    />
                     <Form.Floating>
                       <Form.Control
                         id="floatingInput"
@@ -224,7 +261,7 @@ function InputVideoQAFunction({
                         placeholder={`請在這裡輸入答案${String.fromCharCode(
                           65 + answerContentIndex
                         )}`}
-                        value={answerContent}
+                        value={answerContent[1]}
                         onChange={(e) => {
                           handleAnswerChange(index, answerContentIndex, e);
                         }}
@@ -235,43 +272,24 @@ function InputVideoQAFunction({
                     </Form.Floating>
                   </InputGroup>
                 ))}
-                {/* {answerInputs} */}
               </Card.Body>
             </Card>
           ))}
-
-          {/* <InputGroup className="pb-2">
-                  <InputGroup.Radio aria-label="若此為必對問題請點選" />
-                  <Form.Floating>
-                    <Form.Control
-                      name=""
-                      id="floatingInput"
-                      type="text"
-                      placeholder="請輸入問題"
-
-                    />
-                    <label htmlFor="floatingInput">請輸入問題</label>
-                  </Form.Floating>
-                  <FloatingLabel
-                    controlId="floatingSelectGrid"
-                    label="請選擇問答題目數"
-                  >
-                    <Form.Select
-                      aria-label="Floating label select example"
-                      value={numOptions}
-                      onChange={handleOptionChange}
-                    >
-                      <option value="0">請點擊開啟選單</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                    </Form.Select>
-                  </FloatingLabel>
-                </InputGroup>
-                {answerInputs} */}
-          {/* </Card.Body>
-             </Card>; */}
         </Card.Body>
+        <Card.Footer>
+          <btn.PrimaryBtn
+            className="ms-2"
+            btnName={"formStep"}
+            text={"預覽表單"}
+            onClickEventName={GoNextEvent}
+          />
+          <btn.Danger
+            btnPosition="me-2 float-end"
+            btnName={"formStep"}
+            text={"上一步"}
+            onClickEventName={GoPrevEvent}
+          />
+        </Card.Footer>
       </Card>
     </div>
   );
