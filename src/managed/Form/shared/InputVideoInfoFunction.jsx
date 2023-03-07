@@ -8,7 +8,7 @@ import styles from "./scss/FormStyles.module.scss";
 function InputVideoInfoFunction({
   FormMode = false,
   ChangeEvent = null,
-  VideoLanguage = "",
+  VideoLanguage = 0,
   GoPrevEvent = null,
   GoNextEvent = null,
 }) {
@@ -46,14 +46,14 @@ function InputVideoInfoFunction({
               }}
             >
               <option>請點擊開啟語言選單</option>
-              <option value="1">國語</option>
-              <option value="2">台語</option>
-              <option value="3">英文</option>
-              <option value="4">日文</option>
-              <option value="5">越南文</option>
-              <option value="6">泰文</option>
-              <option value="7">印尼語</option>
-              <option value="8">菲律賓語</option>
+              <option value={1}>國語</option>
+              <option value={2}>台語</option>
+              <option value={3}>英文</option>
+              <option value={4}>日文</option>
+              <option value={5}>越南文</option>
+              <option value={6}>泰文</option>
+              <option value={7}>印尼語</option>
+              <option value={8}>菲律賓語</option>
             </Form.Select>
           </FloatingLabel>
           <div className="BtnDiv">

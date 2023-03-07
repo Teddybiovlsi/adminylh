@@ -46,25 +46,6 @@ function CreateVideoForm(VideoMode = false) {
       });
     }
   };
-  // 增加輸入欄位
-  // const handleAddQuestion = () => {
-  //   setVideoInfo([
-  //     ...videoInfo,
-  //     {
-  //       currentTime: 0,
-  //       mustCorrectQuestion: false,
-  //       questionContent: "",
-  //       numofOptions: 0,
-  //       answerContent: [],
-  //     },
-  //   ]);
-  // };
-
-  // const handleVideoInfoChange = (index, e) => {
-  //   const newVideoInfo = [...videoInfo];
-  //   newVideoInfo[index].name = e.target.value;
-  //   setVideoInfo(newVideoInfo);
-  // };
 
   switch (formType.formStep) {
     case 1:
@@ -108,6 +89,7 @@ function CreateVideoForm(VideoMode = false) {
           FormMode={VideoMode}
           VideoName={formType.videoFileName}
           VideoLanguage={formType.videoLanguage}
+          videoQA={videoInfo}
           GoPrevEvent={prevStep}
           GoNextEvent={nextStep}
         />
