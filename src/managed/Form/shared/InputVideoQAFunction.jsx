@@ -58,7 +58,6 @@ function InputVideoQAFunction({
     const newVideoQA = [...VideoQA];
     const currentOption = newVideoQA[questionindex].answerContent;
 
-    // console.log(currentOption);
     const updateAnswerOption = currentOption.map((answer, index) => {
       if (index === answerOptionIndex) {
         // console.log([!answer[0], answer[1]]);
@@ -98,26 +97,23 @@ function InputVideoQAFunction({
     setVideoQA(newVideoQA);
   };
 
-  const validateQA = (event) => {
-    // 確認問題是否有被填入
-    const questionIsEmpty = VideoQA.map((info) => info.questionContent).some(
-      (value) => !value
-    );
-    // 確認答案選項是否有點選
-    const ifAnswerOptionEmptyArray = VideoQA.map(
-      (info) => info.answerContent
-    ).map((array, index) => {
-      const isEmpty = array.length === 0;
-      return { index, isEmpty };
-    });
-    // 確認是哪一個index的選項未被點選
-    const ifAnyArrayOptionIndicesIsEmpty = ifAnswerOptionEmptyArray
-      .filter((item) => item.isEmpty)
-      .map((item) => item.index);
+  // 驗證問題/選項/答案是否為空
+  const validateQA = () => {
+    let ifAnyAnswerContentIsEmpty = false;
 
-    const ifAnyAnswerContentIsEmpty = VideoQA.map((info) => info.answerContent)
-      .map((arr) => arr.some((value) => value[1] === ""))
-      .some(Boolean);
+    const questionIsEmpty = VideoQA.some((info) => !info.questionContent);
+
+    const ifAnyArrayOptionIndicesIsEmpty = VideoQA.reduce(
+      (acc, curr, index) => {
+        if (curr.answerContent.length === 0) {
+          acc.push(index);
+        } else if (curr.answerContent.some((value) => value[1] === "")) {
+          ifAnyAnswerContentIsEmpty = true;
+        }
+        return acc;
+      },
+      []
+    );
 
     if (
       questionIsEmpty ||
@@ -126,7 +122,6 @@ function InputVideoQAFunction({
     ) {
       setIfBtnDisable(true);
     } else {
-      // 所有爛位皆都不為空，執行對應的處理邏輯
       setIfBtnDisable(false);
     }
   };
