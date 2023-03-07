@@ -89,7 +89,7 @@ function CreateVideoForm(VideoMode = false) {
           FormMode={VideoMode}
           VideoName={formType.videoFileName}
           VideoLanguage={formType.videoLanguage}
-          videoQA={videoInfo}
+          VideoQA={videoInfo}
           GoPrevEvent={prevStep}
           GoNextEvent={nextStep}
         />

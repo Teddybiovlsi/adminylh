@@ -5,6 +5,7 @@ import CardTitleFunction from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import SwitchNumToLanguage from "./func/switchNumToLanguage";
 import styles from "./scss/FormStyles.module.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const SwitchLanguage = (languageNum) => {
   switch (languageNum) {
@@ -57,19 +58,41 @@ function InputFormPreviewFunction({
           <Card.Text>{VideoName}</Card.Text>
           <Card.Title>影片語言:</Card.Title>
           <Card.Text>{SwitchLanguage(parseInt(VideoLanguage))}</Card.Text>
-          {VideoQA.map((questionInfo, questionIndex) => (
-            <>
-              <Card.Title>問題 {questionIndex + 1}:</Card.Title>
-              <Card.Title>中斷時間:</Card.Title>
-              <Card.Text>{questionInfo.currentTime}</Card.Text>
-              <Card.Title>問題內容:</Card.Title>
-              <Card.Text>{questionInfo.questionContent}</Card.Text>
-              <Card.Title>是否為必定答對問題?</Card.Title>
-              <Card.Text>
+          {VideoQA?.map((questionInfo, questionIndex) => (
+            <Card key={questionIndex} className="mb-2">
+              <Card.Title className="mb-2 ms-1">
+                問題 {questionIndex + 1}:
+              </Card.Title>
+
+              <Card.Title className="ms-2">中斷時間:</Card.Title>
+              <Card.Text className="ms-4">
+                {questionInfo.currentTime}秒
+              </Card.Text>
+
+              <Card.Title className="ms-2">問題內容:</Card.Title>
+              <Card.Text className="ms-4">
+                {questionInfo.questionContent}
+              </Card.Text>
+
+              <Card.Title className="ms-2">是否為必定答對問題?</Card.Title>
+              <Card.Text className="ms-4">
                 {questionInfo.mustCorrectQuestion ? "是" : "否"}
               </Card.Text>
-              <Card.Title>答案選項:</Card.Title>
-            </>
+
+              {questionInfo.answerContent.map(
+                (answerContent, answerContentIndex) => (
+                  <div key={`${questionIndex}-${answerContentIndex}`}>
+                    <Card.Title className="ms-2">{`答案${String.fromCharCode(
+                      65 + answerContentIndex
+                    )}:`}</Card.Title>
+                    <Card.Text className="ms-4">{`${answerContent[1]}-答案為${
+                      answerContent[0] ? "正確" : "錯誤"
+                    }`}</Card.Text>
+                  </div>
+                )
+              )}
+              <Card.Text></Card.Text>
+            </Card>
           ))}
         </Card.Body>
         <Card.Footer>
