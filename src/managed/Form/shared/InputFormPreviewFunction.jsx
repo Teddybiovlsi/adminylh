@@ -3,9 +3,8 @@ import PageTitle from "../../../shared/Title";
 import { Card } from "react-bootstrap";
 import { CardTitleFunction } from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
-import SwitchNumToLanguage from "./func/switchNumToLanguage";
+import SwitchNumToLanguage from "./func/SwitchNumToLanguage";
 import styles from "./scss/FormStyles.module.scss";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 function InputFormPreviewFunction({
   FormMode = false,
@@ -13,10 +12,8 @@ function InputFormPreviewFunction({
   VideoLanguage = "",
   VideoQA,
   GoPrevEvent = null,
-  GoNextEvent = null,
+  SubmitEvent = null,
 }) {
-  // 將製作的元件庫 button實例化
-  const btn = new BtnBootstrap();
   return (
     <div className="FormStyle d-flex align-items-center justify-content-center">
       <PageTitle
@@ -67,20 +64,21 @@ function InputFormPreviewFunction({
                   </div>
                 )
               )}
-              <Card.Text></Card.Text>
             </Card>
           ))}
         </Card.Body>
         <Card.Footer>
-          <btn.PrimaryBtn
+          <BtnBootstrap
             btnName={"formStep"}
             text={"送出表單"}
-            onClickEventName={GoNextEvent}
+            onClickEventName={SubmitEvent}
+            variant={"primary"}
           />
-          <btn.Danger
+          <BtnBootstrap
             btnName={"formStep"}
             text={"上一步"}
             onClickEventName={GoPrevEvent}
+            variant={"danger"}
           />
         </Card.Footer>
       </Card>

@@ -5,28 +5,11 @@ div {
   }
 }
 
-.ExamCard {
-  width: 100%;
-  height: 35vh;
-  border-radius: 20px;
-  box-shadow: 10px 5px 5px black;
-  overflow: auto;
-}
-
-.ExamVideoInputCard
-.ExamVideoInfoCard {
+.ExamVideoInputCard,
+.ExamVideoInfoCard,
+.ExamQusetionCard {
   border-radius: 20px;
   box-shadow: 10px 5px 5px #464d90;
-  overflow: auto;
-}
-
-
-
-.ExamQusetionCard {
-  width: 50vw;
-  height: 90vh;
-  border-radius: 20px;
-  box-shadow: 10px 5px 5px black;
   overflow: auto;
 }
 
@@ -56,10 +39,6 @@ div {
   position: absolute;
   right: 1vw;
   top: 1vh;
-}
-
-.videoInput {
-  position: fixed;
 }
 
 .noticficationMessage {

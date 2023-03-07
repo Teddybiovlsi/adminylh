@@ -21,7 +21,7 @@ function InputVideoInfoFunction({
       <PageTitle
         title={`台大分院雲林分院｜ ${FormMode ? "測驗用表單" : "練習用表單"}`}
       />
-      <Card className={`${styles.ExamCard}`}>
+      <Card className={`${styles.ExamVideoInfoCard}`}>
         <Card.Title className={`${styles.FormTitle}`}>
           <CardTitleFunction TitleName={`台大醫院雲林分院`} />
           <CardTitleFunction
@@ -59,19 +59,19 @@ function InputVideoInfoFunction({
         </Card.Body>
         <Card.Footer>
           <BtnBootstrap
+            btnPosition="ms-2"
+            btnName="formStep"
+            variant="danger"
+            text={"上一步"}
+            onClickEventName={GoPrevEvent}
+          />
+          <BtnBootstrap
             btnPosition="ms-2 float-end"
             btnName="formStep"
             variant="primary"
             text={"下一步"}
             onClickEventName={GoNextEvent}
             disabled={VideoLanguage ? false : true}
-          />
-          <BtnBootstrap
-            btnPosition="ms-2 float-end"
-            btnName="formStep"
-            variant="danger"
-            text={"上一步"}
-            onClickEventName={GoPrevEvent}
           />
         </Card.Footer>
       </Card>

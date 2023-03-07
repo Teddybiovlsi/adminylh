@@ -71,16 +71,21 @@ function DynamicQuestionandAnswer({
                 onChange={() => {
                   handleGetQuestionMustCorrect(index);
                 }}
+                checked={info.mustCorrectQuestion}
               />
               <Form.Floating>
                 <Form.Control
                   name="questionContent"
                   id="floatingInput"
                   type="text"
-                  placeholder={`請輸入問題${index + 1}`}
+                  placeholder={`請在這裡輸入答案${String.fromCharCode(
+                    65 + index
+                  )}`}
+                  value={info.questionContent}
                   onChange={(e) => {
                     handleGetQuestionContent(index, e);
                   }}
+                  
                 />
                 <label htmlFor="floatingInput">{`請輸入問題${
                   index + 1
@@ -97,7 +102,7 @@ function DynamicQuestionandAnswer({
                     handleOptionChange(index, e);
                   }}
                 >
-                  <option value="0">請點擊開啟選單</option>
+                  <option value="">請點擊開啟選單</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
                   <option value="4">4</option>

@@ -26,14 +26,6 @@ function CreateVideoForm(VideoMode = false) {
     questionNum: 1,
   });
 
-  const prevStep = (e) => {
-    setFormType({ ...formType, [e.target.name]: formType.formStep - 1 });
-  };
-
-  const nextStep = (e) => {
-    setFormType({ ...formType, [e.target.name]: formType.formStep + 1 });
-  };
-
   const hadleVideoFileIsUpload = (e) => {
     if (e.target.files.length !== 0) {
       setFormType({
@@ -43,6 +35,18 @@ function CreateVideoForm(VideoMode = false) {
         videoSource: URL.createObjectURL(e.target.files[0]),
       });
     }
+  };
+
+  const prevStep = (e) => {
+    setFormType({ ...formType, [e.target.name]: formType.formStep - 1 });
+  };
+
+  const nextStep = (e) => {
+    setFormType({ ...formType, [e.target.name]: formType.formStep + 1 });
+  };
+
+  const submitAction = () => {
+    console.log(`${formType}-${videoInfo} `);
   };
 
   switch (formType.formStep) {
@@ -74,6 +78,7 @@ function CreateVideoForm(VideoMode = false) {
       return (
         <InputVideoQAFunction
           FormMode={VideoMode}
+          FormStep={formType.formStep}
           VideoFile={formType.videoSource}
           VideoQA={videoInfo}
           setVideoQA={setVideoInfo}
@@ -89,11 +94,11 @@ function CreateVideoForm(VideoMode = false) {
           VideoLanguage={formType.videoLanguage}
           VideoQA={videoInfo}
           GoPrevEvent={prevStep}
-          GoNextEvent={nextStep}
+          SubmitEvent={submitAction}
         />
       );
     default:
-      return <div>success</div>;
+      return;
   }
 }
 

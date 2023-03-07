@@ -17,7 +17,7 @@ function InputVideoFileFunction({
         title={`台大分院雲林分院｜ ${FormMode ? "測驗用表單" : "練習用表單"}`}
       />
       <div className="FormStyle d-flex align-items-center justify-content-center">
-        <Card className={`${styles.ExamCard}`}>
+        <Card className={`${styles.ExamVideoInputCard}`}>
           <Card.Title className={`${styles.FormTitle}`}>
             <CardTitleFunction TitleName={`台大醫院雲林分院`} />
             <CardTitleFunction
@@ -40,8 +40,8 @@ function InputVideoFileFunction({
                 accept="video/*"
                 onChange={ChangeEvent}
               />
-              <Form.Label className="mt-3">
-                <h5>{VidoeName && <strong>目前檔案為：{VidoeName}</strong>}</h5>
+              <Form.Label className={`mt-3 ${styles.ExamVideoFileNameContainer}`}>
+                <h5>{VidoeName && <strong>目前檔案為：<br /> {VidoeName}</strong>}</h5>
               </Form.Label>
             </Form.Group>
           </Card.Body>

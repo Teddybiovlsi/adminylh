@@ -6,16 +6,18 @@ import BtnBootstrap from "../../../shared/BtnBootstrap";
 import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
 import styles from "./scss/FormStyles.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { array } from "prop-types";
 
 function InputVideoQAFunction({
   FormMode = false,
+  FormStep = 0,
   VideoFile = "",
-  VideoHeight = "500px",
   VideoQA,
   setVideoQA,
   GoPrevEvent = null,
   GoNextEvent = null,
 }) {
+  const [ifBtnDisable, setIfBtnDisable] = useState(true);
   // 影片時間參考欄位
   const videoRef = useRef(null);
   // 以下是跟影片問題/選項/答案填寫有關的欄位
@@ -96,6 +98,39 @@ function InputVideoQAFunction({
     setVideoQA(newVideoQA);
   };
 
+  const validateQA = (event) => {
+    // 確認問題是否有被填入
+    const questionIsEmpty = VideoQA.map((info) => info.questionContent).some(
+      (value) => !value
+    );
+    // 確認答案選項是否有點選
+    const ifAnswerOptionEmptyArray = VideoQA.map(
+      (info) => info.answerContent
+    ).map((array, index) => {
+      const isEmpty = array.length === 0;
+      return { index, isEmpty };
+    });
+    // 確認是哪一個index的選項未被點選
+    const ifAnyArrayOptionIndicesIsEmpty = ifAnswerOptionEmptyArray
+      .filter((item) => item.isEmpty)
+      .map((item) => item.index);
+
+    const ifAnyAnswerContentIsEmpty = VideoQA.map((info) => info.answerContent)
+      .map((arr) => arr.some((value) => value[1] === ""))
+      .some(Boolean);
+
+    if (
+      questionIsEmpty ||
+      ifAnyArrayOptionIndicesIsEmpty.length > 0 ||
+      ifAnyAnswerContentIsEmpty
+    ) {
+      setIfBtnDisable(true);
+    } else {
+      // 所有爛位皆都不為空，執行對應的處理邏輯
+      setIfBtnDisable(false);
+    }
+  };
+
   return (
     <div className="FormStyle d-flex align-items-center justify-content-center">
       <PageTitle
@@ -103,10 +138,9 @@ function InputVideoQAFunction({
       />
       <Card className={`${styles.ExamQusetionCard}`}>
         <Card.Title className={styles.FormTitle} style={{ margin: 0 }}>
+          <CardTitleFunction TitleName={`台大醫院雲林分院`} />
           <CardTitleFunction
-            TitleName={`台大醫院雲林分院 ${
-              FormMode ? "測驗用" : "練習用"
-            }表單系統`}
+            TitleName={`${FormMode ? "測驗用" : "練習用"}表單系統`}
           />
         </Card.Title>
 
@@ -114,9 +148,8 @@ function InputVideoQAFunction({
           <video
             ref={videoRef}
             src={VideoFile}
-            className="VideoInput"
+            className={`${styles.VideoPriview}`}
             width="100%"
-            height="600px"
             controls
           />
           <Stack direction="horizontal" className="ms-2 mt-3 mb-3 me-2">
@@ -156,12 +189,21 @@ function InputVideoQAFunction({
             onClickEventName={GoPrevEvent}
             variant="danger"
           />
+
           <BtnBootstrap
             btnPosition="ms-2  float-end"
             btnName={"formStep"}
             text={"預覽表單"}
             onClickEventName={GoNextEvent}
             variant="primary"
+            disabled={ifBtnDisable}
+          />
+          <BtnBootstrap
+            btnPosition="ms-2  float-end"
+            btnName={"formStep"}
+            text={"驗證此頁面表單"}
+            onClickEventName={validateQA}
+            variant="success"
           />
         </Card.Footer>
       </Card>

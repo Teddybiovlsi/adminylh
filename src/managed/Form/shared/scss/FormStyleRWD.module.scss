@@ -1,0 +1,89 @@
+@media only screen and (max-width: 576px) {
+  .ExamVideoInputCard,
+  .ExamVideoInfoCard {
+    width: 100vw;
+    height: 50vh;
+  }
+  .ExamQusetionCard{
+    width: 90vw;
+    height: 90vh;
+  }
+}
+@media (min-width: 576px) {
+  .ExamVideoInputCard,
+  .ExamVideoInfoCard {
+    width: 60vw;
+    height: 50vh;
+  }
+
+  .ExamQusetionCard{
+    width: 60vw;
+    height: 90vh;
+  }
+
+  .ExamVideoFileNameContainer {
+    width: 55vw;
+  }
+}
+@media (min-width: 768px) {
+  .ExamVideoInputCard,
+  .ExamVideoInfoCard {
+    width: 55vw;
+    height: 50vh;
+  }
+
+  .ExamQusetionCard{
+    width: 55vw;
+    height: 90vh;
+  }
+
+  .ExamVideoFileNameContainer {
+    width: 50vw;
+  }
+}
+@media (min-width: 992px) {
+  .ExamVideoInputCard,
+  .ExamVideoInfoCard {
+    width: 50vw;
+    height: 50vh;
+  }
+
+  .ExamQusetionCard {
+    width: 50vw;
+    height: 90vh;
+  }
+
+  .ExamVideoFileNameContainer {
+    width: 45vw;
+  }
+}
+@media (min-width: 1200px) {
+  .ExamVideoInputCard,
+  .ExamVideoInfoCard {
+    width: 45vw;
+    height: 50vh;
+  }
+
+  .ExamQusetionCard {
+    width: 45vw;
+    height: 90vh;
+  }
+
+  .ExamVideoFileNameContainer {
+    width: 40vw;
+  }
+}
+@media (min-width: 1500px) {
+  .ExamVideoInputCard,
+  .ExamVideoInfoCard {
+    width: 40vw;
+    height: 50vh;
+  }
+  .ExamQusetionCard {
+    width: 40vw;
+    height: 90vh;
+  }
+  .ExamVideoFileNameContainer {
+    width: 35vw;
+  }
+}
