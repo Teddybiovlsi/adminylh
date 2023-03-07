@@ -1,15 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  Card,
-  Form,
-  InputGroup,
-  FloatingLabel,
-  CloseButton,
-  Stack,
-} from "react-bootstrap";
+import { Card, Stack } from "react-bootstrap";
 import PageTitle from "../../../shared/Title";
-import CardTitleFunction from "./CardTitleFunction";
+import { CardTitleFunction } from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
+import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
 import styles from "./scss/FormStyles.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -22,9 +16,6 @@ function InputVideoQAFunction({
   GoPrevEvent = null,
   GoNextEvent = null,
 }) {
-  // 將製作的元件庫 button實例化
-  const btn = new BtnBootstrap();
-
   // 影片時間參考欄位
   const videoRef = useRef(null);
   // 以下是跟影片問題/選項/答案填寫有關的欄位
@@ -53,31 +44,10 @@ function InputVideoQAFunction({
   const handleOptionChange = (index, e) => {
     const numOfChoice = parseInt(e.target.value);
     const newVideoQA = [...VideoQA];
-    switch (numOfChoice) {
-      case 2:
-        newVideoQA[index].answerContent = [
-          [false, ""],
-          [false, ""],
-        ];
-        break;
-      case 3:
-        newVideoQA[index].answerContent = [
-          [false, ""],
-          [false, ""],
-          [false, ""],
-        ];
-        break;
-      case 4:
-        newVideoQA[index].answerContent = [
-          [false, ""],
-          [false, ""],
-          [false, ""],
-          [false, ""],
-        ];
-        break;
-      default:
-        break;
-    }
+    newVideoQA[index].answerContent = Array.from(
+      { length: numOfChoice },
+      () => [false, ""]
+    );
     newVideoQA[index].numofOptions = numOfChoice;
     setVideoQA(newVideoQA);
   };
@@ -159,137 +129,39 @@ function InputVideoQAFunction({
             </div>
 
             <div className="ms-auto">
-              <btn.Secondary text={"新增問題"} onClickEventName={handleAddQuestion} />
+              <BtnBootstrap
+                text={"新增問題"}
+                onClickEventName={handleAddQuestion}
+                variant="secondary"
+              />
             </div>
           </Stack>
 
-          {VideoQA.map((info, index) => (
-            <Card key={index} style={{ position: "relative" }} className="mb-2">
-              {index > 0 && (
-                <CloseButton
-                  className={`${styles.deleteQAMessage}`}
-                  onClick={() => {
-                    handleDelQAMessage(index);
-                  }}
-                />
-              )}
-
-              <Card.Title className="pt-3 ps-3 pe-3 pb-0">
-                <h3>問題 {index + 1}</h3>
-                <p className={`${styles.noticficationMessage}`}>
-                  <strong>若下列填寫問題為必答問題請點選○</strong>
-                </p>
-                <p className={`${styles.noticficationMessage}`}>
-                  <strong>若此為該問題答案請點選○</strong>
-                </p>
-              </Card.Title>
-              <Card.Body>
-                {/* Get Current Video Question Time */}
-                <InputGroup className="mb-2">
-                  {/* Btn Get Current Time */}
-                  <btn.Secondary
-                    btnID={"button-addon1"}
-                    onClickEventName={(e) => handleGetVideoTime(index, e)}
-                    text={"取得當前時間"}
-                  />
-                  {/* After get current Time of the Video frame show in the cintrol box */}
-                  <Form.Control
-                    name="currentTime"
-                    placeholder="請點選左方按鍵取得影片當前時間"
-                    aria-label="Example text with button addon"
-                    aria-describedby="basic-addon1"
-                    value={info.currentTime}
-                    disabled
-                  />
-                  <InputGroup.Text>秒</InputGroup.Text>
-                </InputGroup>
-                {/* In this inputGroup is about Question and Answer Select */}
-                <InputGroup className="pb-2">
-                  <InputGroup.Checkbox
-                    aria-label="若此為必對問題請點選"
-                    onChange={() => {
-                      handleGetQuestionMustCorrect(index);
-                    }}
-                  />
-                  <Form.Floating>
-                    <Form.Control
-                      name="questionContent"
-                      id="floatingInput"
-                      type="text"
-                      placeholder={`請輸入問題${index + 1}`}
-                      onChange={(e) => {
-                        handleGetQuestionContent(index, e);
-                      }}
-                    />
-                    <label htmlFor="floatingInput">{`請輸入問題${
-                      index + 1
-                    }`}</label>
-                  </Form.Floating>
-                  <FloatingLabel
-                    controlId="floatingSelectGrid"
-                    label="請選擇問答題目數"
-                  >
-                    <Form.Select
-                      aria-label="Floating label select example"
-                      value={info.numofOptions}
-                      onChange={(e) => {
-                        handleOptionChange(index, e);
-                      }}
-                    >
-                      <option value="0">請點擊開啟選單</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                    </Form.Select>
-                  </FloatingLabel>
-                </InputGroup>
-                {/* 以下是動態答案控制欄位 */}
-                {info.answerContent.map((answerContent, answerContentIndex) => (
-                  <InputGroup
-                    key={`${index}-${answerContentIndex}`}
-                    className="mb-2"
-                  >
-                    <InputGroup.Checkbox
-                      aria-label="若此為該問題答案請點選○"
-                      checked={answerContent[0]}
-                      onChange={(e) => {
-                        handleIsCorrectOption(index, answerContentIndex);
-                      }}
-                    />
-                    <Form.Floating>
-                      <Form.Control
-                        id="floatingInput"
-                        type="text"
-                        placeholder={`請在這裡輸入答案${String.fromCharCode(
-                          65 + answerContentIndex
-                        )}`}
-                        value={answerContent[1]}
-                        onChange={(e) => {
-                          handleAnswerChange(index, answerContentIndex, e);
-                        }}
-                      />
-                      <label htmlFor="floatingInput">{`請輸入答案${String.fromCharCode(
-                        65 + answerContentIndex
-                      )}`}</label>
-                    </Form.Floating>
-                  </InputGroup>
-                ))}
-              </Card.Body>
-            </Card>
-          ))}
+          <DynamicQuestionandAnswer
+            VideoQA={VideoQA}
+            handleDelQAMessage={handleDelQAMessage}
+            handleGetVideoTime={handleGetVideoTime}
+            handleGetQuestionMustCorrect={handleGetQuestionMustCorrect}
+            handleGetQuestionContent={handleGetQuestionContent}
+            handleOptionChange={handleOptionChange}
+            handleIsCorrectOption={handleIsCorrectOption}
+            handleAnswerChange={handleAnswerChange}
+          />
         </Card.Body>
         <Card.Footer>
-          <btn.PrimaryBtn
-            className="ms-2"
-            btnName={"formStep"}
-            text={"預覽表單"}
-            onClickEventName={GoNextEvent}
-          />
-          <btn.Danger
-            btnPosition="me-2 float-end"
+          <BtnBootstrap
+            btnPosition="me-2"
             btnName={"formStep"}
             text={"上一步"}
             onClickEventName={GoPrevEvent}
+            variant="danger"
+          />
+          <BtnBootstrap
+            btnPosition="ms-2  float-end"
+            btnName={"formStep"}
+            text={"預覽表單"}
+            onClickEventName={GoNextEvent}
+            variant="primary"
           />
         </Card.Footer>
       </Card>

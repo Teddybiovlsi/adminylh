@@ -1,7 +1,5 @@
-import React from "react";
-
-export default function SwitchNumToLanguage(num = 1) {
-  switch (num) {
+export default SwitchNumToLanguage = (languageNum) => {
+  switch (languageNum) {
     case 1:
       return "國語";
     case 2:
@@ -21,5 +19,4 @@ export default function SwitchNumToLanguage(num = 1) {
     default:
       return "";
   }
-  
-}
+};

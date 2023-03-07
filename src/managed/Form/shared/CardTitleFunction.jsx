@@ -7,5 +7,12 @@ function CardTitleFunction({ TitleName = "" }) {
     </h1>
   );
 }
+function CardSecondTitleFunction({ TitleName = "" }) {
+  return (
+    <h2>
+      <strong>{TitleName}</strong>
+    </h2>
+  );
+}
 
-export default CardTitleFunction;
+export { CardTitleFunction, CardSecondTitleFunction };

@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Card } from "react-bootstrap";
 import PageTitle from "../../../shared/Title";
-import CardTitleFunction from "./CardTitleFunction";
+import { CardTitleFunction } from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import styles from "./scss/FormStyles.module.scss";
 
@@ -11,7 +11,6 @@ function InputVideoFileFunction({
   VidoeName = "",
   GoNextEvent = null,
 }) {
-  const btn = new BtnBootstrap();
   return (
     <>
       <PageTitle
@@ -20,10 +19,9 @@ function InputVideoFileFunction({
       <div className="FormStyle d-flex align-items-center justify-content-center">
         <Card className={`${styles.ExamCard}`}>
           <Card.Title className={`${styles.FormTitle}`}>
+            <CardTitleFunction TitleName={`台大醫院雲林分院`} />
             <CardTitleFunction
-              TitleName={`台大醫院雲林分院 ${
-                FormMode ? "測驗用" : "練習用"
-              }表單系統`}
+              TitleName={`${FormMode ? "測驗用" : "練習用"}表單系統`}
             />
           </Card.Title>
           <Card.Body>
@@ -46,15 +44,16 @@ function InputVideoFileFunction({
                 <h5>{VidoeName && <strong>目前檔案為：{VidoeName}</strong>}</h5>
               </Form.Label>
             </Form.Group>
-            <div className={`${styles.nextstep}`}>
-              <btn.PrimaryBtn
-                btnName={"formStep"}
-                text={"下一步"}
-                onClickEventName={GoNextEvent}
-                disabled={!VidoeName}
-              />
-            </div>
           </Card.Body>
+          <Card.Footer>
+            <BtnBootstrap
+              btnName="formStep"
+              variant="primary"
+              text={"下一步"}
+              onClickEventName={GoNextEvent}
+              disabled={!VidoeName}
+            />
+          </Card.Footer>
         </Card>
       </div>
     </>

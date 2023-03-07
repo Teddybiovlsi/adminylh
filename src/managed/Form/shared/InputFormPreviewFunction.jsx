@@ -1,34 +1,11 @@
 import React from "react";
 import PageTitle from "../../../shared/Title";
-import { Form, Card } from "react-bootstrap";
-import CardTitleFunction from "./CardTitleFunction";
+import { Card } from "react-bootstrap";
+import { CardTitleFunction } from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import SwitchNumToLanguage from "./func/switchNumToLanguage";
 import styles from "./scss/FormStyles.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-const SwitchLanguage = (languageNum) => {
-  switch (languageNum) {
-    case 1:
-      return "國語";
-    case 2:
-      return "台語";
-    case 3:
-      return "英文";
-    case 4:
-      return "英文";
-    case 5:
-      return "越南文";
-    case 6:
-      return "泰文";
-    case 7:
-      return "印尼語";
-    case 8:
-      return "菲律賓語";
-    default:
-      return "";
-  }
-};
 
 function InputFormPreviewFunction({
   FormMode = false,
@@ -45,19 +22,18 @@ function InputFormPreviewFunction({
       <PageTitle
         title={`台大分院雲林分院｜ ${FormMode ? "測驗用表單" : "練習用表單"}`}
       />
-      <Card className={`${styles.ExamCard}`}>
+      <Card className={`${styles.PreviewCard}`}>
         <Card.Title className={`${styles.FormTitle}`}>
+          <CardTitleFunction TitleName={`台大醫院雲林分院`} />
           <CardTitleFunction
-            TitleName={`台大醫院雲林分院 ${
-              FormMode ? "測驗用" : "練習用"
-            }表單系統`}
+            TitleName={`${FormMode ? "測驗用" : "練習用"}表單系統`}
           />
         </Card.Title>
         <Card.Body>
           <Card.Title>影片名稱:</Card.Title>
           <Card.Text>{VideoName}</Card.Text>
           <Card.Title>影片語言:</Card.Title>
-          <Card.Text>{SwitchLanguage(parseInt(VideoLanguage))}</Card.Text>
+          <Card.Text>{SwitchNumToLanguage(parseInt(VideoLanguage))}</Card.Text>
           {VideoQA?.map((questionInfo, questionIndex) => (
             <Card key={questionIndex} className="mb-2">
               <Card.Title className="mb-2 ms-1">

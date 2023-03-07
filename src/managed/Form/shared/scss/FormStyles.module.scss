@@ -1,7 +1,7 @@
-@use "../btn.module.scss";
-
-div > h1 {
-  text-align: center;
+div {
+  h1 {
+    text-align: center;
+  }
 }
 
 .ExamCard {
@@ -20,14 +20,26 @@ div > h1 {
   overflow: auto;
 }
 
+.PreviewCard {
+  width: 50vw;
+  height: 90vh;
+  border-radius: 20px;
+  box-shadow: 10px 5px 5px black;
+  overflow: auto;
+}
+
 .FormTitle {
   border-radius: 20px 20px 0px 0px;
   padding: 10px 20px 0px 0px;
   background-color: #989dcc;
 }
 
-.FormTitle h1 strong {
-  color: #ffe3cf;
+.FormTitle {
+  h1{
+    strong{
+      color: #ffe3cf;
+    }
+  } 
 }
 
 .deleteQAMessage {

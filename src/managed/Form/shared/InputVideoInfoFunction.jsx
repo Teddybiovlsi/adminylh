@@ -1,9 +1,13 @@
 import React from "react";
 import PageTitle from "../../../shared/Title";
 import { Form, Card, FloatingLabel } from "react-bootstrap";
-import CardTitleFunction from "./CardTitleFunction";
+import {
+  CardTitleFunction,
+  CardSecondTitleFunction,
+} from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import styles from "./scss/FormStyles.module.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function InputVideoInfoFunction({
   FormMode = false,
@@ -12,7 +16,6 @@ function InputVideoInfoFunction({
   GoPrevEvent = null,
   GoNextEvent = null,
 }) {
-  const btn = new BtnBootstrap();
   return (
     <div className="FormStyle d-flex align-items-center justify-content-center">
       <PageTitle
@@ -20,19 +23,16 @@ function InputVideoInfoFunction({
       />
       <Card className={`${styles.ExamCard}`}>
         <Card.Title className={`${styles.FormTitle}`}>
+          <CardTitleFunction TitleName={`台大醫院雲林分院`} />
           <CardTitleFunction
-            TitleName={`台大醫院雲林分院 ${
-              FormMode ? "測驗用" : "練習用"
-            }表單系統`}
+            TitleName={`${FormMode ? "測驗用" : "練習用"}表單系統`}
           />
         </Card.Title>
         <Card.Body>
           <Form.Label>
-            <h2>
-              <strong>
-                請點選衛教{FormMode ? "測驗用" : "練習用"}影片語言
-              </strong>
-            </h2>
+            <CardSecondTitleFunction
+              TitleName={`請點選衛教${FormMode ? "測驗用" : "練習用"}影片語言`}
+            />
           </Form.Label>
           <FloatingLabel controlId="floatingSelect" label="請選擇影片語言">
             <Form.Select
@@ -45,7 +45,7 @@ function InputVideoInfoFunction({
                 paddingBottom: 0,
               }}
             >
-              <option>請點擊開啟語言選單</option>
+              <option value={""}>請點擊開啟語言選單</option>
               <option value={1}>國語</option>
               <option value={2}>台語</option>
               <option value={3}>英文</option>
@@ -56,25 +56,24 @@ function InputVideoInfoFunction({
               <option value={8}>菲律賓語</option>
             </Form.Select>
           </FloatingLabel>
-          <div className="BtnDiv">
-            <div className={`${styles.prestep}`}>
-              <btn.Danger
-                btnName={"formStep"}
-                text={"上一步"}
-                onClickEventName={GoPrevEvent}
-              />
-            </div>
-
-            <div className={`${styles.nextstep}`}>
-              <btn.PrimaryBtn
-                btnName={"formStep"}
-                text={"下一步"}
-                onClickEventName={GoNextEvent}
-                disabled={!VideoLanguage}
-              />
-            </div>
-          </div>
         </Card.Body>
+        <Card.Footer>
+          <BtnBootstrap
+            btnPosition="ms-2 float-end"
+            btnName="formStep"
+            variant="primary"
+            text={"下一步"}
+            onClickEventName={GoNextEvent}
+            disabled={VideoLanguage ? false : true}
+          />
+          <BtnBootstrap
+            btnPosition="ms-2 float-end"
+            btnName="formStep"
+            variant="danger"
+            text={"上一步"}
+            onClickEventName={GoPrevEvent}
+          />
+        </Card.Footer>
       </Card>
     </div>
   );

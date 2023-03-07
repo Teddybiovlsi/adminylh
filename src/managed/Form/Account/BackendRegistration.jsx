@@ -12,9 +12,6 @@ import styles from "./scss/Registration.module.scss";
 import zxcvbn from "zxcvbn";
 
 export default function BackendRegistration() {
-  // 實例化btn元件
-  const btn = new BtnBootstrap();
-
   const checkPwdHint = "請再次輸入您的密碼";
 
   const [pwdScore, setPwdScore] = useState(0);
@@ -111,7 +108,11 @@ export default function BackendRegistration() {
                     ErrorMessage={errors.confirmPassword}
                   />
                   <div className={`${styles.btnPosition} d-grid gap-2 p-2`}>
-                    <btn.PrimaryBtn text={"送出"} btnType={"submit"} />
+                    <BtnBootstrap
+                      text={"送出"}
+                      btnType={"submit"}
+                      variant={"primary"}
+                    />
                   </div>
                 </Form>
               )}

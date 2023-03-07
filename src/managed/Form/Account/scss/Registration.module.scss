@@ -1,8 +1,9 @@
-@use "../../shared/btn.module.scss";
 @use "./RegistrationRWD.module.scss";
 
-div > h1 {
-  text-align: center;
+div {
+  h1 {
+    text-align: center;
+  }
 }
 
 .RegisterCard {
@@ -17,7 +18,11 @@ div > h1 {
 }
 
 .FormTitle h1 strong {
-  color: #fff;
+  h1 {
+    strong {
+      color: #fff;
+    }
+  }
 }
 
 .btnPosition {
