@@ -1,3 +1,4 @@
+@use "./FormStyleRWD.module.scss";
 div {
   h1 {
     text-align: center;
@@ -11,6 +12,15 @@ div {
   box-shadow: 10px 5px 5px black;
   overflow: auto;
 }
+
+.ExamVideoInputCard
+.ExamVideoInfoCard {
+  border-radius: 20px;
+  box-shadow: 10px 5px 5px #464d90;
+  overflow: auto;
+}
+
+
 
 .ExamQusetionCard {
   width: 50vw;
@@ -35,11 +45,11 @@ div {
 }
 
 .FormTitle {
-  h1{
-    strong{
+  h1 {
+    strong {
       color: #ffe3cf;
     }
-  } 
+  }
 }
 
 .deleteQAMessage {
