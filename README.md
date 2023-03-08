@@ -18,7 +18,7 @@
 ## 專案注意事項：
 
 <font color=#FF0000>專案底下的兩個檔案請勿直接進行修改!!，該檔案是由下載套件時自動生成</font><br/>
-**第一次使用時，請透過[github 連結](https://github.com/Teddybiovlsi/ntuh_ReactVersion)下載後透過使用指令下載對應套件**
+**第一次使用時，請透過[github 連結](https://github.com/Teddybiovlsi/ntuh_ReactVersion)下載 zip 檔案後，透過使用指令下載對應版本的套件**
 
 ```Terminal
 npm run dev
