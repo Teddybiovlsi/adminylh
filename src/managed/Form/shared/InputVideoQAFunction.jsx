@@ -6,7 +6,6 @@ import BtnBootstrap from "../../../shared/BtnBootstrap";
 import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
 import styles from "./scss/FormStyles.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { array } from "prop-types";
 
 function InputVideoQAFunction({
   FormMode = false,
