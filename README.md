@@ -14,3 +14,17 @@
   - **[shared](./src/shared/):** 整個專案頻繁調用的元件庫
   - **[App.jsx](./src/App.jsx):** 路由功能(以後會由導覽列 Nav 實現)(尚未實作)
   - **[main.jsx](./src/main.jsx):** [主頁](./index.html)所調用的 React 檔案，**此專案底下使用嚴謹模式**
+
+## 專案注意事項：
+
+<font color=#FF0000>專案底下的兩個檔案請勿直接進行修改!!，該檔案是由下載套件時自動生成</font><br/>
+**第一次使用時，請透過[github 連結](https://github.com/Teddybiovlsi/ntuh_ReactVersion)下載後透過使用指令下載對應套件**
+
+```Terminal
+npm run dev
+```
+
+兩個檔案內的資訊主要包含了當前使用 node 專案，如 vite、以及當前下載套件的版本號
+
+- **[package-lock.json]**
+- **[package.json]**
