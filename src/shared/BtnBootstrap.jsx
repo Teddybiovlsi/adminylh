@@ -1,4 +1,14 @@
-import React, { Component } from "react";
+// 這個component主要使用於React版本的Bootstrap當中的button
+// 參數一共有8個：btnID, btnName, btnPosition, btnType, onClickEventName, text, disabled, variant
+// btnID: 該按鍵的ID名稱
+// btnName: 該按鍵的name名稱 通常使用於表單中識別
+// btnPosition: 可不填寫，在此定義為按鍵的class名稱並搭配React-BootStrap的spacing參數進行調整按鍵位置，可參考：https://mdbootstrap.com/docs/react/layout/float/
+// onClickEventName: 該按鍵的點擊事件
+// text: 該按鍵要顯示於畫面上的文字
+// disabled：預設為false，可配合一些條件運算讓按鍵無法被按下
+// variant: 在此有八種樣式primary, secondary, success, warning, danger, info, light, dark，可參考：https://react-bootstrap.github.io/components/buttons/
+
+import React from "react";
 import Button from "react-bootstrap/Button";
 
 const BtnBootstrap = ({
@@ -8,7 +18,7 @@ const BtnBootstrap = ({
   btnType = "button",
   onClickEventName,
   text,
-  disabled,
+  disabled = false,
   variant,
 }) => {
   return (
@@ -28,110 +38,3 @@ const BtnBootstrap = ({
 };
 
 export default BtnBootstrap;
-
-// export class BtnBootstrap extends Component {
-//   PrimaryBtn = ({
-//     btnName = "",
-//     btnPosition = "float-end",
-//     btnType = "button",
-//     onClickEventName,
-//     text,
-//     disabled,
-//   }) => {
-//     return (
-//       <Button
-//         name={btnName}
-//         size="lg"
-//         className={btnPosition}
-//         type={btnType}
-//         variant="outline-primary"
-//         onClick={onClickEventName}
-//         disabled={disabled}
-//       >
-//         {text}
-//       </Button>
-//     );
-//   };
-
-//   Secondary = ({
-//     btnID = "",
-//     btnPosition = "float-end",
-//     btnType = "button",
-//     onClickEventName,
-//     text,
-//     disabled,
-//   }) => {
-//     return (
-//       <Button
-//         id={btnID}
-//         size="lg"
-//         className={btnPosition}
-//         type={btnType}
-//         variant="outline-secondary"
-//         onClick={onClickEventName}
-//         disabled={disabled}
-//       >
-//         {text}
-//       </Button>
-//     );
-//   };
-//   Success = ({
-//     btnPosition = "float-end",
-//     onClickEventName,
-//     text,
-//     disabled,
-//   }) => {
-//     return (
-//       <Button
-//         size="lg"
-//         className={btnPosition}
-//         variant="outline-success"
-//         onClick={onClickEventName}
-//         disabled={disabled}
-//       >
-//         {text}
-//       </Button>
-//     );
-//   };
-
-//   Danger = ({
-//     btnName = "",
-//     btnPosition = "float-end",
-//     onClickEventName,
-//     text,
-//     disabled,
-//   }) => {
-//     return (
-//       <Button
-//         name={btnName}
-//         size="lg"
-//         className={btnPosition}
-//         variant="outline-danger"
-//         onClick={onClickEventName}
-//         disabled={disabled}
-//       >
-//         {text}
-//       </Button>
-//     );
-//   };
-//   Warning = ({
-//     btnPosition = "float-end",
-//     onClickEventName,
-//     text,
-//     disabled,
-//   }) => {
-//     return (
-//       <Button
-//         size="lg"
-//         className={btnPosition}
-//         variant="outline-warning"
-//         onClick={onClickEventName}
-//         disabled={disabled}
-//       >
-//         {text}
-//       </Button>
-//     );
-//   };
-// }
-
-// export default BtnBootstrap;
