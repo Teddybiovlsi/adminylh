@@ -1,7 +1,7 @@
 import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import UserLoginForm from "./client/UserLogin";
-import CreateVideoForm from "./managed/Form/Exam/CreateVideoForm";
+import CreateVideoForm from "./managed/Form/CreateVideoForm/CreateVideoForm";
 import BackendRegistration from "./managed/Form/Account/BackendRegistration";
 
 function App() {
