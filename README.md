@@ -1,3 +1,5 @@
-# [台大衛教系統 React版本-ntuh_ReactVersion]
+# [台大衛教系統 React version]
 
-
+台大衛教系統中主要包含兩大主軸：
+* **客戶端**
+* **後臺管理端**
