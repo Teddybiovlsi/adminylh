@@ -5,7 +5,7 @@ import InputVideoQAFunction from "../shared/InputVideoQAFunction";
 import InputFormPreviewFunction from "../shared/InputFormPreviewFunction";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-function CreateVideoForm(VideoMode = false) {
+function CreateVideoForm({ VideoMode = false }) {
   const [videoInfo, setVideoInfo] = useState([
     {
       currentTime: 0,

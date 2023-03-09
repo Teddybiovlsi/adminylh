@@ -1,8 +1,9 @@
 import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import UserLoginForm from "./client/UserLogin";
-import CreateVideoForm from "./managed/Form/CreateVideoForm/CreateVideoForm";
+import ExamForm from "./managed/components/ExamForm";
 import BackendRegistration from "./managed/Form/Account/BackendRegistration";
+import Home from "./managed/components/Home";
 
 function App() {
   return (
@@ -10,8 +11,9 @@ function App() {
     <HashRouter>
       <Routes>
         <Route exact path="/" element={<UserLoginForm />} />
+        <Route path="/HomePage" element={<Home />} />
         <Route path="/Register" element={<BackendRegistration />} />
-        <Route path="/Exam" element={<CreateVideoForm VideoMode={true} />} />
+        <Route path="/Exam" element={<ExamForm />} />
       </Routes>
     </HashRouter>
   );
