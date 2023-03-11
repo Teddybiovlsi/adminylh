@@ -24,6 +24,11 @@
 ```Terminal
 npm i
 ```
+**若要在本機執行本專案，請由Terminal執行以下指令**
+
+```Terminal
+npm 
+```
 
 兩個檔案內的資訊主要包含了當前使用 node 專案，如 vite、以及當前下載套件的版本號
 
