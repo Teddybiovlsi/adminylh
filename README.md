@@ -22,7 +22,7 @@
 **第一次使用時，請透過[github 連結](https://github.com/Teddybiovlsi/ntuh_ReactVersion)下載 zip 檔案後，透過使用指令下載對應版本的套件**
 
 ```Terminal
-npm run dev
+npm i
 ```
 
 兩個檔案內的資訊主要包含了當前使用 node 專案，如 vite、以及當前下載套件的版本號
