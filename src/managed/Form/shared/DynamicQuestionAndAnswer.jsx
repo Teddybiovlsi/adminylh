@@ -11,6 +11,7 @@ import BtnBootstrap from "../../../shared/BtnBootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function DynamicQuestionandAnswer({
+  FormMode = false,
   VideoQA,
   handleDelQAMessage,
   handleGetVideoTime,
@@ -32,12 +33,13 @@ function DynamicQuestionandAnswer({
               }}
             />
           )}
-
           <Card.Title className="pt-3 ps-3 pe-3 pb-0">
             <h3>問題 {index + 1}</h3>
-            <p className={`${styles.noticficationMessage}`}>
-              <strong>若下列填寫問題為必答問題請點選○</strong>
-            </p>
+            {FormMode && (
+              <p className={`${styles.noticficationMessage}`}>
+                <strong>若下列填寫問題為必答問題請點選○</strong>
+              </p>
+            )}
             <p className={`${styles.noticficationMessage}`}>
               <strong>若此為該問題答案請點選○</strong>
             </p>
@@ -85,7 +87,6 @@ function DynamicQuestionandAnswer({
                   onChange={(e) => {
                     handleGetQuestionContent(index, e);
                   }}
-                  
                 />
                 <label htmlFor="floatingInput">{`請輸入問題${
                   index + 1

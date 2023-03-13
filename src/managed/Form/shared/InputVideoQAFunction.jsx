@@ -9,7 +9,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 function InputVideoQAFunction({
   FormMode = false,
-  FormStep = 0,
   VideoFile = "",
   VideoQA,
   setVideoQA,
@@ -165,6 +164,7 @@ function InputVideoQAFunction({
           </Stack>
 
           <DynamicQuestionandAnswer
+            FormMode={FormMode}
             VideoQA={VideoQA}
             handleDelQAMessage={handleDelQAMessage}
             handleGetVideoTime={handleGetVideoTime}
