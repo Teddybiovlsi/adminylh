@@ -68,13 +68,15 @@ function DynamicQuestionandAnswer({
             </InputGroup>
             {/* In this inputGroup is about Question and Answer Select */}
             <InputGroup className="pb-2">
-              <InputGroup.Checkbox
-                aria-label="若此為必對問題請點選"
-                onChange={() => {
-                  handleGetQuestionMustCorrect(index);
-                }}
-                checked={info.mustCorrectQuestion}
-              />
+              {FormMode && (
+                <InputGroup.Checkbox
+                  aria-label="若此為必對問題請點選"
+                  onChange={() => {
+                    handleGetQuestionMustCorrect(index);
+                  }}
+                  checked={info.mustCorrectQuestion}
+                />
+              )}
               <Form.Floating>
                 <Form.Control
                   name="questionContent"

@@ -7,7 +7,7 @@ function ExamForm() {
   return (
     <>
       <NavMenu />
-      <CreateVideoForm VideoMode={false} />
+      <CreateVideoForm VideoMode={true} />
       <Footer />
     </>
   );
