@@ -2,7 +2,7 @@ import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import UserLoginForm from "./client/UserLogin";
 import ExamForm from "./managed/components/ExamForm";
-import BackendRegistration from "./managed/Form/Account/BackendRegistration";
+import CreateAdmin from "./managed/components/CreateAdmin";
 import Home from "./managed/components/Home";
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<UserLoginForm />} />
         <Route path="/HomePage" element={<Home />} />
-        <Route path="/Register" element={<BackendRegistration />} />
+        <Route path="/Register" element={<CreateAdmin />} />
         <Route path="/Exam" element={<ExamForm />} />
       </Routes>
     </HashRouter>
