@@ -22,6 +22,11 @@
 **第一次使用時，請透過[github 連結](https://github.com/Teddybiovlsi/ntuh_ReactVersion)下載 zip 檔案後，透過使用指令下載對應版本的套件**
 
 ```Terminal
+npm i
+```
+**若要在本機執行本專案，請由Terminal執行以下指令**
+
+```Terminal
 npm run dev
 ```
 
