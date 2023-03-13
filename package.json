@@ -1,4 +1,5 @@
 {
+
   "name": "ntuh_proj",
   "private": true,
   "version": "0.0.0",
@@ -6,7 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "watch": "npm-watch"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
@@ -17,6 +19,7 @@
     "bootstrap-icons": "^1.10.3",
     "formik": "^2.2.9",
     "lodash": "^4.17.21",
+    "npm-watch": "^0.11.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.0",
@@ -31,6 +34,14 @@
     "styled-components": "^5.3.6",
     "yup": "^1.0.0",
     "zxcvbn": "^4.4.2"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "js,jsx"
+    }
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.18.6",
