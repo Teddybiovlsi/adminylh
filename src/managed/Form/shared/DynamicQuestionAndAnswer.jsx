@@ -82,7 +82,7 @@ function DynamicQuestionandAnswer({
                   name="questionContent"
                   id="floatingInput"
                   type="text"
-                  placeholder={`請在這裡輸入答案${String.fromCharCode(
+                  placeholder={`請在這裡輸入問題${String.fromCharCode(
                     65 + index
                   )}`}
                   value={info.questionContent}

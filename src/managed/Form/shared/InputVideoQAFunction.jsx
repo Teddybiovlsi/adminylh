@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Card, Stack } from "react-bootstrap";
 import PageTitle from "../../../shared/Title";
 import { CardTitleFunction } from "./CardTitleFunction";
+import { update } from "lodash/fp";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
 import styles from "./scss/FormStyles.module.scss";
@@ -19,37 +20,46 @@ function InputVideoQAFunction({
   // 影片時間參考欄位
   const videoRef = useRef(null);
   // 以下是跟影片問題/選項/答案填寫有關的欄位
-  // 若該欄位之index取得時間有變動
+
+  // 若該欄位之index取得影片時間有所變動
   const handleGetVideoTime = (index, e) => {
     if (videoRef.current) {
-      const newVideoQA = [...VideoQA];
-      newVideoQA[index].currentTime = videoRef.current.currentTime;
-      setVideoQA(newVideoQA);
+      setVideoQA(
+        update(
+          `${index}.currentTime`,
+          () => videoRef.current.currentTime,
+          VideoQA
+        )
+      );
     }
   };
   // if radio box is checked then the information of the Question mustCorrect will be true
   const handleGetQuestionMustCorrect = (index, e) => {
-    const newVideoQA = [...VideoQA];
-    newVideoQA[index].mustCorrectQuestion =
-      !newVideoQA[index].mustCorrectQuestion;
-    setVideoQA(newVideoQA);
+    setVideoQA(
+      update(`${index}.mustCorrectQuestion`, (value) => !value, VideoQA)
+    );
   };
-  //取得問題內容變動
+
+  //取得問題填寫內容變動
   const handleGetQuestionContent = (index, e) => {
-    const newVideoQA = [...VideoQA];
-    newVideoQA[index].questionContent = e.target.value;
-    setVideoQA(newVideoQA);
+    setVideoQA(
+      update(`${index}.questionContent`, () => e.target.value, VideoQA)
+    );
   };
   // 取得答題選項數目變動
   const handleOptionChange = (index, e) => {
     const numOfChoice = parseInt(e.target.value);
-    const newVideoQA = [...VideoQA];
-    newVideoQA[index].answerContent = Array.from(
-      { length: numOfChoice },
-      () => [false, ""]
+    setVideoQA(
+      update(
+        index,
+        (question) => ({
+          ...question,
+          answerContent: Array.from({ length: numOfChoice }, () => [false, ""]),
+          numofOptions: numOfChoice,
+        }),
+        VideoQA
+      )
     );
-    newVideoQA[index].numofOptions = numOfChoice;
-    setVideoQA(newVideoQA);
   };
 
   const handleIsCorrectOption = (questionindex, answerOptionIndex) => {
@@ -90,9 +100,7 @@ function InputVideoQAFunction({
 
   // 刪減輸入欄位
   const handleDelQAMessage = (index) => {
-    const newVideoQA = [...VideoQA];
-    newVideoQA.splice(index, 1);
-    setVideoQA(newVideoQA);
+    setVideoQA((prevVideoQA) => prevVideoQA.filter((_, i) => i !== index));
   };
 
   // 驗證問題/選項/答案是否為空
