@@ -6,6 +6,7 @@ import CreateAdmin from "./managed/components/CreateAdmin";
 import Home from "./managed/components/Home";
 
 function App() {
+
   return (
     // Routes 若有網址則如第一範例/Register前面須加上/#組合起來為/#/Register
     <HashRouter>
