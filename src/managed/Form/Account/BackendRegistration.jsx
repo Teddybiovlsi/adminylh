@@ -10,6 +10,7 @@ import FormEmail from "../shared/FormEmail";
 import FormPwd from "../shared/FormPwd";
 import styles from "./scss/Registration.module.scss";
 import zxcvbn from "zxcvbn";
+import axios from "../../axios"
 
 export default function BackendRegistration() {
   const checkPwdHint = "請再次輸入您的密碼";
@@ -45,7 +46,7 @@ export default function BackendRegistration() {
             <Formik
               validationSchema={schema}
               onSubmit={(values, { resetForm }) => {
-                console.log(values);
+                axios.post("/posts", values);
                 resetForm();
                 setPwdScore(0);
               }}
