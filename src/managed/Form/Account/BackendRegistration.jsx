@@ -10,7 +10,6 @@ import FormEmail from "../shared/FormEmail";
 import FormPwd from "../shared/FormPwd";
 import styles from "./scss/Registration.module.scss";
 import zxcvbn from "zxcvbn";
-// import axios from "../../axios";
 import axios from "axios";
 
 export default function BackendRegistration() {
