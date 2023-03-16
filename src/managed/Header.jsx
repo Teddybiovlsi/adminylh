@@ -7,16 +7,17 @@ import {
 } from "react-bootstrap";
 import { BoxArrowLeft } from "react-bootstrap-icons";
 import { LinkContainer } from "react-router-bootstrap";
-import styles from "../SCSS/NavStyle.module.scss";
+import styles from "../styles/components/NavStyle.module.scss";
 
-function NavMenu({ expand = "lg" }) {
+export default function Header({ expand = "lg" }) {
   return (
     <Navbar
       collapseOnSelect
-      className={styles.navBarContainer}
+      id={styles.navBarContainer}
       expand={expand}
-      fixed="top"
+      className="mb-3"
       variant="dark"
+      fixed="top"
     >
       <Container fluid>
         <LinkContainer to="/HomePage">
@@ -53,7 +54,7 @@ function NavMenu({ expand = "lg" }) {
               </NavDropdown>
             </Nav>
             <Nav>
-              <LinkContainer to="/Register">
+              <LinkContainer to="/Admin/Register">
                 <Nav.Link>註冊後臺使用者</Nav.Link>
               </LinkContainer>
               <Nav.Link eventKey={2} href="#memes">
@@ -67,5 +68,3 @@ function NavMenu({ expand = "lg" }) {
     </Navbar>
   );
 }
-
-export default NavMenu;

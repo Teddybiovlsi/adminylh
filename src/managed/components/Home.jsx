@@ -1,14 +1,8 @@
-import React from "react";
-import NavMenu from "./NavMenu";
-import Footer from "./Footer";
-
-function Home() {
+export default function Home() {
   return (
-    <>
-      {/* <NavMenu /> */}
-      <Footer />
-    </>
+    <div>
+      <h1>Title</h1>
+      <div>這裡是主頁</div>
+    </div>
   );
 }
-
-export default Home;

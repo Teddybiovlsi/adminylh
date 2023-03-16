@@ -8,9 +8,9 @@ import BtnBootstrap from "../../../shared/BtnBootstrap";
 import useBoolean from "../shared/useBoolean";
 import FormEmail from "../shared/FormEmail";
 import FormPwd from "../shared/FormPwd";
-import styles from "./scss/Registration.module.scss";
 import zxcvbn from "zxcvbn";
 import axios from "axios";
+import styles from "../../../styles/Form/Registration.module.scss"
 
 export default function BackendRegistration() {
   const checkPwdHint = "請再次輸入您的密碼";
