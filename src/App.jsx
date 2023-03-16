@@ -8,6 +8,7 @@ import PraticeForm from "./managed/components/PraticeForm";
 import NavMenu from "./managed/components/NavMenu";
 
 function App() {
+
   return (
     // Routes 若有網址則如第一範例/Register前面須加上/#組合起來為/#/Register
     //  <Route exact path="/" element={<UserLoginForm />} />
