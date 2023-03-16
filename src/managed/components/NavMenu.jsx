@@ -44,7 +44,9 @@ function NavMenu({ expand = "lg" }) {
                 </LinkContainer>{" "}
               </NavDropdown>
               <NavDropdown title="建立影片表單" id="collasible-nav-dropdown">
-                <NavDropdown.Item>練習用</NavDropdown.Item>
+                <LinkContainer to="/Pratice">
+                  <NavDropdown.Item>練習用</NavDropdown.Item>
+                </LinkContainer>{" "}
                 <LinkContainer to="/Exam">
                   <NavDropdown.Item>測驗用</NavDropdown.Item>
                 </LinkContainer>{" "}
