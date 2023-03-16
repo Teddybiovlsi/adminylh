@@ -5,8 +5,7 @@ import { CardTitleFunction } from "./CardTitleFunction";
 import { update } from "lodash/fp";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
-import styles from "./scss/FormStyles.module.scss";
-import "bootstrap/dist/css/bootstrap.min.css";
+import styles from "../../../styles/Form/FormStyles.module.scss";
 
 function InputVideoQAFunction({
   FormMode = false,

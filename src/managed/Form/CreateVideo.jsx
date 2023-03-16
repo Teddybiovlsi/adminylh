@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import InputVideoFileFunction from "../shared/InputVideoFileFunction";
-import InputVideoInfoFunction from "../shared/InputVideoInfoFunction";
-import InputVideoQAFunction from "../shared/InputVideoQAFunction";
-import InputFormPreviewFunction from "../shared/InputFormPreviewFunction";
-import "bootstrap/dist/css/bootstrap.min.css";
+import InputVideoFileFunction from "./shared/InputVideoFileFunction";
+import InputVideoInfoFunction from "./shared/InputVideoInfoFunction";
+import InputVideoQAFunction from "./shared/InputVideoQAFunction";
+import InputFormPreviewFunction from "./shared/InputFormPreviewFunction";
 
-function CreateVideoForm({ VideoMode = false }) {
+export default function CreateVideo({ VideoMode = false }) {
   const [videoInfo, setVideoInfo] = useState([
     {
       currentTime: 0,
@@ -101,5 +100,3 @@ function CreateVideoForm({ VideoMode = false }) {
       return;
   }
 }
-
-export default CreateVideoForm;

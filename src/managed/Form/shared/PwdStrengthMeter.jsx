@@ -1,5 +1,3 @@
-import React from "react";
-
 const PwdStrengthMeter = ({ pwdScore }) => {
   const num = (pwdScore * 100) / 4;
 

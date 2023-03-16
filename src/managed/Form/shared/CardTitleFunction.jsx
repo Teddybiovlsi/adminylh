@@ -1,5 +1,3 @@
-import React from "react";
-
 function CardTitleFunction({ TitleName = "" }) {
   return (
     <h1>

@@ -6,8 +6,7 @@ import {
   CardSecondTitleFunction,
 } from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
-import styles from "./scss/FormStyles.module.scss";
-import "bootstrap/dist/css/bootstrap.min.css";
+import styles from "../../../styles/Form/FormStyles.module.scss";
 
 function InputVideoInfoFunction({
   FormMode = false,

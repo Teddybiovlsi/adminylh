@@ -3,12 +3,12 @@ import { Route, Routes } from "react-router-dom";
 import Header from "./managed/Header";
 import Footer from "./managed/Footer";
 import UserLoginForm from "./client/UserLogin";
-import ExamForm from "./managed/components/ExamForm";
-import CreateAdmin from "./managed/components/CreateAdmin";
+import BackendRegistration from "./managed/Form/BackendRegistration";
 import Home from "./managed/components/Home";
-import PraticeForm from "./managed/components/PraticeForm";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles/app.css"
+import "./styles/app.css";
+
+import CreateVideo from "./managed/Form/CreateVideo";
 
 function App() {
   return (
@@ -19,9 +19,9 @@ function App() {
       <main>
         <Routes>
           <Route path="/HomePage" element={<Home />} />
-          <Route path="/Admin/Register" element={<CreateAdmin />} />
-          <Route path="/Exam" element={<ExamForm />} />
-          <Route path="/Pratice" element={<PraticeForm />} />
+          <Route path="/Admin/Register" element={<BackendRegistration />} />
+          <Route path="/Pratice" element={<CreateVideo VideoMode={false} />} />
+          <Route path="/Exam" element={<CreateVideo VideoMode={true} />} />
         </Routes>
       </main>
       <Footer />

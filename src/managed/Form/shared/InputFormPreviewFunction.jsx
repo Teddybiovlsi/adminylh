@@ -4,7 +4,7 @@ import { Card } from "react-bootstrap";
 import { CardTitleFunction } from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
 import SwitchNumToLanguage from "./func/SwitchNumToLanguage";
-import styles from "./scss/FormStyles.module.scss";
+import styles from "../../../styles/Form/FormStyles.module.scss";
 
 function InputFormPreviewFunction({
   FormMode = false,

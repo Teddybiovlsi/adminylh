@@ -3,7 +3,7 @@ import { Form, Card } from "react-bootstrap";
 import PageTitle from "../../../shared/Title";
 import { CardTitleFunction } from "./CardTitleFunction";
 import BtnBootstrap from "../../../shared/BtnBootstrap";
-import styles from "./scss/FormStyles.module.scss";
+import styles from "../../../styles/Form/FormStyles.module.scss";
 
 function InputVideoFileFunction({
   FormMode = false,
