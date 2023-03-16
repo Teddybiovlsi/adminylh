@@ -1,11 +1,5 @@
-import React from 'react'
+import React from "react";
 
-function FrontEndRefistration() {
-  return (
-    <div>
-      
-    </div>
-  )
+export default function FrontEndRefistration() {
+  return <div></div>;
 }
-
-export default FrontEndRefistration
