@@ -4,11 +4,11 @@ import Header from "./managed/Header";
 import Footer from "./managed/Footer";
 import UserLoginForm from "./client/UserLogin";
 import BackendRegistration from "./managed/Form/BackendRegistration";
-import Home from "./managed/components/Home";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles/app.css";
+import Home from "./managed/Pages/Home";
 import Pratice from "./managed/Pages/Pratice";
 import Exam from "./managed/Pages/Exam";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/app.css";
 
 function App() {
   return (
