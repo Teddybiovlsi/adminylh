@@ -1,7 +1,11 @@
+// 建立後台使用者元件
+// 包含email認證/密碼驗證/2次密碼驗證
+
+
 import React, { useState } from "react";
+import { Form } from "react-bootstrap";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { Form } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import PageTitle from "../../shared/Title";
 import BtnBootstrap from "../../shared/BtnBootstrap";
