@@ -6,8 +6,8 @@ import {
   InputGroup,
   FloatingLabel,
 } from "react-bootstrap";
+import BtnBootstrap from "../../../components/BtnBootstrap";
 import styles from "../../../styles/Form/FormStyles.module.scss";
-import BtnBootstrap from "../../../shared/BtnBootstrap";
 
 function DynamicQuestionandAnswer({
   FormMode = false,

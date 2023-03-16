@@ -1,8 +1,8 @@
 import React from "react";
-import PageTitle from "../../../shared/Title";
+import PageTitle from "../../../components/Title";
 import { Card } from "react-bootstrap";
 import { CardTitleFunction } from "./CardTitleFunction";
-import BtnBootstrap from "../../../shared/BtnBootstrap";
+import BtnBootstrap from "../../../components/BtnBootstrap";
 import SwitchNumToLanguage from "./func/SwitchNumToLanguage";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 

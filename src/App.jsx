@@ -7,8 +7,8 @@ import BackendRegistration from "./managed/Form/BackendRegistration";
 import Home from "./managed/components/Home";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/app.css";
-
-import CreateVideo from "./managed/Form/CreateVideo";
+import Pratice from "./managed/Pages/Pratice";
+import Exam from "./managed/Pages/Exam";
 
 function App() {
   return (
@@ -20,8 +20,8 @@ function App() {
         <Routes>
           <Route path="/HomePage" element={<Home />} />
           <Route path="/Admin/Register" element={<BackendRegistration />} />
-          <Route path="/Pratice" element={<CreateVideo VideoMode={false} />} />
-          <Route path="/Exam" element={<CreateVideo VideoMode={true} />} />
+          <Route path="/Pratice" element={<Pratice />} />
+          <Route path="/Exam" element={<Exam />} />
         </Routes>
       </main>
       <Footer />

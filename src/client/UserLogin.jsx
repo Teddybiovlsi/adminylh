@@ -1,6 +1,6 @@
 import React from 'react'
-import { LoginForm } from "../shared/form";
-import '../shared/formRWD.css';
+import {LoginForm} from "../components/form"
+// import '../shared/formRWD.css';
 
 function UserLoginForm() {
     return (

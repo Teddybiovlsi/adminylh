@@ -1,11 +1,11 @@
 import React from "react";
-import PageTitle from "../../../shared/Title";
+import PageTitle from "../../../components/Title";
 import { Form, Card, FloatingLabel } from "react-bootstrap";
 import {
   CardTitleFunction,
   CardSecondTitleFunction,
 } from "./CardTitleFunction";
-import BtnBootstrap from "../../../shared/BtnBootstrap";
+import BtnBootstrap from "../../../components/BtnBootstrap";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 
 function InputVideoInfoFunction({

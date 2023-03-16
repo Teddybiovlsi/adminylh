@@ -1,9 +1,9 @@
 import React, { useState, useRef } from "react";
 import { Card, Stack } from "react-bootstrap";
-import PageTitle from "../../../shared/Title";
+import PageTitle from "../../../components/Title";
 import { CardTitleFunction } from "./CardTitleFunction";
 import { update } from "lodash/fp";
-import BtnBootstrap from "../../../shared/BtnBootstrap";
+import BtnBootstrap from "../../../components/BtnBootstrap";
 import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 

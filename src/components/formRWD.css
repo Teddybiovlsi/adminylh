@@ -1,0 +1,111 @@
+/* for small devices */
+@media (min-width: 576px) {
+    .usr_info {
+        width: 80%;
+        margin: 0 auto;
+        margin-top: 100px;
+        /* padding: 35px 35px; */
+        background-color: white;
+        border-radius: 10px;
+        text-align: center;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    .usr_info {
+        width: 80vw;
+        margin: 0 auto;
+        margin-top: 100px;
+        background-color: white;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    #loginBtn {
+        width: 32%;
+        font-size: 25px;
+        font-weight: bolder;
+        border: none;
+        border-radius: 5px;
+        background-color: #D6BDE3;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .usr_info {
+        width: 35vw;
+        margin: 0 auto;
+        margin-top: 100px;
+        padding: 30px 35px 10px;
+        background-color: white;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .switch_toggle,
+    .loginBtnContainer {
+        display: inline-block;
+    }
+
+    .switch_toggle {
+        margin-right: 40px;
+    }
+
+    #loginBtn {
+        display: inline-block;
+        width: 15vw;
+        font-size: 25px;
+        font-weight: bolder;
+        border: none;
+        border-radius: 5px;
+        background-color: #D6BDE3;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1500px) {
+    .usr_info {
+        width: 32vw;
+        height: 32vh;
+    }
+
+    .inputText {
+        padding-top: 15px;
+    }
+
+    .inputText input {
+        padding: 1.5vh 10vw 0vh 0vh;
+        margin: 10px;
+        font-size: 26px;
+    }
+
+    .BtnContainter {
+        margin-top: 25px;
+    }
+
+    .switch_toggle,
+    .loginBtnContainer {
+        display: inline-block;
+    }
+
+    .switch_toggle {
+        margin-right: 35%;
+    }
+
+    #loginBtn {
+        display: inline-block;
+        height: 50px;
+        width: 150px;
+        font-size: 25px;
+        font-weight: bolder;
+        border: none;
+        border-radius: 5px;
+        background-color: #D6BDE3;
+    }
+}
