@@ -49,7 +49,24 @@ export default function BackendRegistration() {
             <Formik
               validationSchema={schema}
               onSubmit={({ email, password }, { resetForm }) => {
-                console.log(JSON.stringify({ email, password }));
+
+                axios({
+                  method: "post",
+                  url: "http://laravel.test:8079/api/getRegisterAccount",
+                  data: JSON.stringify({
+                    email: email,
+                    password: password,
+                  }),
+                  headers: { "Content-Type": "application/json" },
+                })
+                .then((res) => {
+                  console.log(res);
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+
+
                 resetForm();
                 setPwdScore(0);
               }}
