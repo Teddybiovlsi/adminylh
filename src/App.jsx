@@ -18,7 +18,7 @@ function App() {
       <Header />
       <main>
         <Routes>
-          <Route path="/HomePage" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/Admin/Register" element={<BackendRegistration />} />
           <Route path="/Pratice" element={<Pratice />} />
           <Route path="/Exam" element={<Exam />} />

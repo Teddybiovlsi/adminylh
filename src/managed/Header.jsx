@@ -20,7 +20,7 @@ export default function Header({ expand = "lg" }) {
       fixed="top"
     >
       <Container fluid>
-        <LinkContainer to="/HomePage">
+        <LinkContainer to="/">
           <Navbar.Brand>台大分院雲林分院衛教系統</Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
