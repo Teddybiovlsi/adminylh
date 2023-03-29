@@ -2,26 +2,6 @@ import { React, useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import axios from "../axios";
 
-const VideoTitle = () => {
-  return (
-    <tr>
-      <th>類型</th>
-      <th>語言</th>
-      <th>名稱</th>
-    </tr>
-  );
-};
-
-const VideoInfo = ({ ID, ClassID, Language, Title }) => {
-  return (
-    <tr key={ID}>
-      <td>{ClassID}</td>
-      <td>{Language}</td>
-      <td>{Title}</td>
-    </tr>
-  );
-};
-
 export default function Home() {
   const [videoData, setVideoData] = useState([
     {
@@ -31,6 +11,45 @@ export default function Home() {
       Title: "",
     },
   ]);
+  const [selectVideoindex, setSelectVideoindex] = useState([]);
+
+  const handleSelectVideoindex = (ID) => {
+    if (selectVideoindex.includes(ID)) {
+      setSelectVideoindex(selectVideoindex.filter((item) => item !== ID));
+    } else {
+      setSelectVideoindex([...selectVideoindex, ID]);
+    }
+  };
+
+  const VideoTitle = () => {
+    return (
+      <tr>
+        <th>勾選</th>
+        <th>類型</th>
+        <th>語言</th>
+        <th>名稱</th>
+      </tr>
+    );
+  };
+
+  const VideoInfo = ({ ID, ClassID, Language, Title }) => {
+    return (
+      <tr key={ID}>
+        <td>
+          <input
+            type="checkbox"
+            checked={selectVideoindex.includes(ID)}
+            onChange={() => {
+              handleSelectVideoindex(ID);
+            }}
+          />
+        </td>
+        <td>{ClassID}</td>
+        <td>{Language}</td>
+        <td>{Title}</td>
+      </tr>
+    );
+  };
 
   useEffect(() => {
     axios({
@@ -55,6 +74,16 @@ export default function Home() {
   return (
     <div className="container">
       <h1>影片資訊欄位</h1>
+      <div className="mt-3 mb-3">
+        <table>
+          <tbody>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tbody>
+        </table>
+      </div>
 
       {videoData === null ? (
         <p>Loading...</p>
