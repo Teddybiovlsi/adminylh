@@ -1,0 +1,17 @@
+.container_firstHeading {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.container_division{
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.container_division_secondHeading {
+  // centering the text in the div
+  text-align: center;
+  padding: 10px;
+}
