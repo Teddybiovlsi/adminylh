@@ -10,6 +10,7 @@ import PageTitle from "../../components/Title";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import useBoolean from "./shared/useBoolean";
 import FormEmail from "./shared/FormEmail";
+import AlertBootstrap from "../../components/AlertBootstrap";
 import FormPwd from "./shared/FormPwd";
 import zxcvbn from "zxcvbn";
 import axios from "axios";
@@ -20,6 +21,11 @@ export default function BackendRegistration() {
 
   const [pwdScore, setPwdScore] = useState(0);
   const [showPwd, { setShowPwd }] = useBoolean(false);
+
+  // 若註冊成功，則顯示成功訊息
+  const [successMessage, setSuccessMessage] = useState("");
+  // 若註冊失敗，則顯示錯誤訊息
+  const [errorMessage, setErrorMessage] = useState("");
 
   const schema = yup.object({
     email: yup.string().email("請輸入合法的信箱").required("信箱欄位不得為空"),
@@ -38,6 +44,14 @@ export default function BackendRegistration() {
   return (
     <>
       <PageTitle title="台大分院雲林分院｜創建後台使用者" />
+      {successMessage || errorMessage ? (
+        <AlertBootstrap
+          variant={successMessage ? "success" : "danger"}
+          children={successMessage ? successMessage : errorMessage}
+        />
+      ) : (
+        <div></div>
+      )}
       <div className="FormStyle d-flex align-items-center justify-content-center">
         <Card className={`${styles.RegisterCard}`}>
           <Card.Title className={`${styles.FormTitle}`}>
@@ -48,27 +62,25 @@ export default function BackendRegistration() {
           <Card.Body>
             <Formik
               validationSchema={schema}
-              onSubmit={({ email, password }, { resetForm }) => {
-
+              onSubmit={(data, { resetForm }) => {
                 axios({
                   method: "post",
-                  url: "http://laravel.test:8079/api/getRegisterAccount",
+                  url: "http://140.125.35.82:8079/ntuh-API/public/api/v1/POST/admin",
                   data: JSON.stringify({
-                    email: email,
-                    password: password,
+                    email: data.email,
+                    password: data.password,
+                    confirmPassword: data.confirmPassword,
                   }),
                   headers: { "Content-Type": "application/json" },
                 })
-                .then((res) => {
-                  console.log(res);
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-
-
-                resetForm();
-                setPwdScore(0);
+                  .then((res) => {
+                    setSuccessMessage(res.data.message);
+                    resetForm();
+                    setPwdScore(0);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
               }}
               initialValues={{
                 email: "",
