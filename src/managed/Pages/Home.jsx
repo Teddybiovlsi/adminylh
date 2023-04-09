@@ -26,57 +26,41 @@ export default function Home() {
   const fetchVideoData = async ({ api }) => {
     try {
       const response = await axios.get(api);
-      return response.data.data;
-      // .then(async (res) => {
       // get data from res.data.data
       // because res.data.data is a promise
       // so we need to use await to get the value of res.data.data
       // and then we can use data to get the value of res.data.data
-
-      //   const data = await res.data.data;
-      //   // check if data is an array
-      //   // if data is an array, checkIsArray is true
-      //   // otherwise, checkIsArray is false
-      //   const checkIsArray = Array.isArray(data);
-      //   // set videoData
-      //   // if checkIsArray is true, set videoData to data
-      //   // otherwise, set videoData to [data]
-      //   setVideoData(checkIsArray ? data : [data]);
-      //   // clear error message
-      //   setErrorMessage('');
-      // })
-      // .catch(async (err) => {
-      //   // clear videoData
-      //   setVideoData([]);
-      //   // set error message
-      //   // use await to get error message
-      //   // because error message is in err.response.data.message
-      //   // and err.response.data.message is a promise
-      //   // so we need to use await to get the value of err.response.data.message
-      //   const errorMessage = await err.response.data.message;
-      //   // set error message
-      //   // if errorMessage is undefined, set error message to '伺服器發生錯誤，請稍後再試'
-      //   // otherwise, set error message to errorMessage
-      //   setErrorMessage(
-      //     errorMessage === undefined
-      //       ? '伺服器發生錯誤，請稍後再試'
-      //       : errorMessage
-      //   );
-      // });
+      const data = await response.data.data;
+      // check if data is an array
+      // if data is an array, checkIsArray is true
+      // otherwise, checkIsArray is false
+      const checkIsArray = Array.isArray(data);
+      // set videoData
+      // if checkIsArray is true, set videoData to data
+      // otherwise, set videoData to [data]
+      setVideoData(checkIsArray ? data : [data]);
+      // clear error message
+      setErrorMessage('');
     } catch (error) {
+      // if catch error, clear videoData
+      setVideoData([]);
+      // if error.response is true, get error message
       if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
+        // if error.response.status is 408, set error message to timeoutErrorMessage
+        if (error.response.status == 408) {
+          // set error message to error.response.config.timeoutErrorMessage
+          console.log(error.response.config.timeoutErrorMessage);
+          // setErrorMessage(error.response.config.timeoutErrorMessage);
+        } else {
+          // set error message to error.response.data.message
+          setErrorMessage('伺服器發生錯誤，請稍後再試');
+        }
       } else if (error.request) {
-        console.log(error.request);
+        // show error message
+        setErrorMessage('伺服器發生錯誤，請稍後再試');
       } else {
-        console.log('Error', error.message);
+        setErrorMessage('伺服器發生錯誤，請稍後再試');
       }
-      // clear videoData
-      // setVideoData([]);
-      // set error message
-      // setErrorMessage(error);
     }
   };
 
