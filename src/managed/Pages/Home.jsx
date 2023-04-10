@@ -28,12 +28,7 @@ export default function Home() {
       // get all video data
       // if success, set videoData to res.data
       // otherwise, set error message
-
-      axios({
-        method: "get",
-        url: "http://140.125.35.82:8079/ntuh-API/public/api/v1/GET/videos",
-        headers: { "Content-Type": "application/json" },
-      })
+      get("videos")
         .then((res) => {
           // if res.data is an array, set videoData to res.data
           // otherwise, convert res.data to an array and set videoData to it
@@ -50,13 +45,7 @@ export default function Home() {
     }
     // if selectVideoType is not 0 and selectVideoLanguage is 0, get video data by video type
     else if (selectVideoType != 0 && selectVideoLanguage == 0) {
-      console.log("selectVideoType");
-      axios({
-        // get video data by video type
-        method: "get",
-        url: `http://140.125.35.82:8079/ntuh-API/public/api/v1/GET/videoClass/${selectVideoType}`,
-        headers: { "Content-Type": "application/json" },
-      })
+      get(`videoClass/${selectVideoType}`)
         .then((res) => {
           // if res.data is an array, set videoData to res.data
           // otherwise, convert res.data to an array and set videoData to it
@@ -71,13 +60,7 @@ export default function Home() {
           setErrorMessage(err.response.data.message);
         });
     } else if (selectVideoType == 0 && selectVideoLanguage != 0) {
-      console.log("selectVideoLanguage");
-      axios({
-        // get video data by video language
-        method: "get",
-        url: `http://140.125.35.82:8079/ntuh-API/public/api/v1/GET/videoLanguage/${selectVideoLanguage}`,
-        headers: { "Content-Type": "application/json" },
-      })
+      get(`videoLanguage/${selectVideoLanguage}`)
         .then((res) => {
           // if res.data is an array, set videoData to res.data
           // otherwise, convert res.data to an array and set videoData to it
@@ -92,12 +75,7 @@ export default function Home() {
           setErrorMessage(err.response.data.message);
         });
     } else if (selectVideoType != 0 && selectVideoLanguage != 0) {
-      axios({
-        // get video data by video type and video language
-        method: "get",
-        url: `http://140.125.35.82:8079/ntuh-API/public/api/v1/GET/videoByClassAndLanguage/${selectVideoType}/${selectVideoLanguage}`,
-        headers: { "Content-Type": "application/json" },
-      })
+      get(`videoClassAndLanguage/${selectVideoType}/${selectVideoLanguage}`)
         .then((res) => {
           // if res.data is an array, set videoData to res.data
           // otherwise, convert res.data to an array and set videoData to it
