@@ -16,6 +16,7 @@ import zxcvbn from 'zxcvbn';
 import { post } from '../axios';
 import styles from '../../styles/Form/Registration.module.scss';
 import { useNavigate } from 'react-router-dom';
+import StatusCode from '../../sys/StatusCode';
 
 export default function BackendRegistration() {
   const checkPwdHint = '請再次輸入您的密碼';
@@ -49,24 +50,7 @@ export default function BackendRegistration() {
       setSuccessBoolean(true);
       setShouldRedirect(true);
     } catch (error) {
-      // if status code is 400, then it is a bad request
-      switch (error.response.status) {
-        case 303:
-          setErrorMessage('信箱已被註冊');
-          break;
-        case 400:
-          setErrorMessage('格式錯誤');
-          break;
-        case 404:
-          setErrorMessage('找不到請求之資源');
-          break;
-        case 500:
-          setErrorMessage('伺服器錯誤');
-          break;
-        default:
-          setErrorMessage('未知錯誤');
-          break;
-      }
+      setErrorMessage(StatusCode(error.response.status));
     }
   };
 
