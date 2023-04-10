@@ -46,6 +46,8 @@ export default function BackendRegistration() {
     try {
       // 正確格式API
       const response = await post('admin', data);
+      // if errorMessage is not empty, then set it to empty
+      {errorMessage && setErrorMessage('')}
       setSuccessMessage('成功創建後台使用者');
       setSuccessBoolean(true);
       setShouldRedirect(true);
