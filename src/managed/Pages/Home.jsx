@@ -207,33 +207,38 @@ export default function Home() {
         </Form.Select>
       </div>
       {/* if don't have any error message or videoData go to show data */}
-      {ErrorMessage !== '' || videoData == null ? (
-        <div className={styles.container_division}>
-          <h2 className={styles.container_division_secondHeading}>
-            {ErrorMessage}
-          </h2>
-        </div>
-      ) : // if videodata is not ready, show loading
-      videoData.length === 0 ? (
-        <div className={styles.container_division}>
-          <h2 className={styles.container_division_secondHeading}>
-            資料載入中...
-          </h2>
-        </div>
-      ) : (
-        <div className={`mt-3 mb-3 ${styles.container_division}`}>
-          <Table>
-            <thead>
-              <VideoTitle />
-            </thead>
-            <tbody>
-              {videoData.map((info, _) => {
-                return <VideoInfo {...info} key={info.ID} />;
-              })}
-            </tbody>
-          </Table>
-        </div>
-      )}
+      {
+        // if videodata is not ready, show loading
+        videoData.length === 0 ? (
+          <div className={styles.container_division}>
+            <h2 className={styles.container_division_secondHeading}>
+              資料載入中...
+            </h2>
+          </div>
+        ) : 
+        // if videodata is null or error message is not empty, show error message
+        ErrorMessage !== '' || videoData == null ? (
+          <div className={styles.container_division}>
+            <h2 className={styles.container_division_secondHeading}>
+              {ErrorMessage}
+            </h2>
+          </div>
+        ) : (
+          // if videodata is not null and error message is empty, show data
+          <div className={`mt-3 mb-3 ${styles.container_division}`}>
+            <Table>
+              <thead>
+                <VideoTitle />
+              </thead>
+              <tbody>
+                {videoData.map((info, _) => {
+                  return <VideoInfo {...info} key={info.ID} />;
+                })}
+              </tbody>
+            </Table>
+          </div>
+        )
+      }
     </div>
   );
 }
