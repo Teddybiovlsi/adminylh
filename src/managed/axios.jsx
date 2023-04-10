@@ -11,5 +11,10 @@ const axios = (baseURL) => {
   return instance;
 };
 
+// make axios get request api from the baseURL and /api/v1/GET/ + path
+export const get = (path) => axios().get(`api/v1/GET/${path}`);
+// make axios post request api from the baseURL and /api/v1/POST/ + path
+export const post = (path, data) => axios().post(`api/v1/POST/${path}`, data);
+
 export { axios };
 export default axios();
