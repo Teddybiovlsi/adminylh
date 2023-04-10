@@ -100,12 +100,10 @@ export default function BackendRegistration() {
                     // redirect to login page after submit successfully 5s
                     setTimeout(() => {
                       setShouldRedirect(true);
-                    }, 5000);           
-                    
+                    }, 5000);
                   } catch (error) {
                     console.log(error);
                   }
-
                 }}
                 initialValues={{
                   email: '',
