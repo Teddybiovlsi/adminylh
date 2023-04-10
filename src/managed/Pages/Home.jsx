@@ -50,6 +50,7 @@ export default function Home() {
       setVideoData([]);
       // if error.response is true, get error message
       if (error.response) {
+        console.log(error.response);
         setErrorMessage(StatusCode(error.response.status));
       }
     }
@@ -210,6 +211,13 @@ export default function Home() {
         <div className={styles.container_division}>
           <h2 className={styles.container_division_secondHeading}>
             {ErrorMessage}
+          </h2>
+        </div>
+      ) : // if videodata is not ready, show loading
+      videoData.length === 0 ? (
+        <div className={styles.container_division}>
+          <h2 className={styles.container_division_secondHeading}>
+            資料載入中...
           </h2>
         </div>
       ) : (
