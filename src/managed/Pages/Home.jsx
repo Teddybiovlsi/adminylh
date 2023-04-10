@@ -3,6 +3,7 @@ import { Form, Table } from 'react-bootstrap';
 import { get, post } from '../axios';
 import styles from '../../styles/pages/HomePage.module.scss';
 import { check } from 'prettier';
+import StatusCode from '../../sys/StatusCode';
 
 export default function Home() {
   const [videoData, setVideoData] = useState([
@@ -49,20 +50,7 @@ export default function Home() {
       setVideoData([]);
       // if error.response is true, get error message
       if (error.response) {
-        // if error.response.status is 408, set error message to timeoutErrorMessage
-        if (error.response.status == 408) {
-          // set error message to error.response.config.timeoutErrorMessage
-          console.log(error.response.config.timeoutErrorMessage);
-          // setErrorMessage(error.response.config.timeoutErrorMessage);
-        } else {
-          // set error message to error.response.data.message
-          setErrorMessage('伺服器發生錯誤，請稍後再試');
-        }
-      } else if (error.request) {
-        // show error message
-        setErrorMessage('伺服器發生錯誤，請稍後再試');
-      } else {
-        setErrorMessage('伺服器發生錯誤，請稍後再試');
+        setErrorMessage(StatusCode(error.response.status));
       }
     }
   };
