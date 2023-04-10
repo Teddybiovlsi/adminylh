@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { Form, Table } from "react-bootstrap";
-import axios from "../axios";
+import { axios, get, post } from "../axios";
 import styles from "../../styles/pages/HomePage.module.scss";
 
 export default function Home() {
@@ -28,6 +28,7 @@ export default function Home() {
       // get all video data
       // if success, set videoData to res.data
       // otherwise, set error message
+
       axios({
         method: "get",
         url: "http://140.125.35.82:8079/ntuh-API/public/api/v1/GET/videos",
