@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function StatusCode({ statusCode }) {
   switch (statusCode) {
     case 200:
