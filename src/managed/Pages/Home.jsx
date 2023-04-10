@@ -208,19 +208,13 @@ export default function Home() {
       </div>
       {/* if don't have any error message or videoData go to show data */}
       {
-        // if videodata is not ready, show loading
-        videoData.length === 0 ? (
+        // if videodata is not ready, show loading or error message is not empty, show error message
+        ErrorMessage !== '' || videoData == null || videoData.length === 0 ? (
           <div className={styles.container_division}>
             <h2 className={styles.container_division_secondHeading}>
-              資料載入中...
-            </h2>
-          </div>
-        ) : 
-        // if videodata is null or error message is not empty, show error message
-        ErrorMessage !== '' || videoData == null ? (
-          <div className={styles.container_division}>
-            <h2 className={styles.container_division_secondHeading}>
-              {ErrorMessage}
+              {ErrorMessage !== '' || videoData == null
+                ? ErrorMessage
+                : '資料載入中...'}
             </h2>
           </div>
         ) : (
