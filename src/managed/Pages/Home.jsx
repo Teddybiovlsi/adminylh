@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { Form, Table } from "react-bootstrap";
-import { axios, get, post } from "../axios";
+import { get, post } from "../axios";
 import styles from "../../styles/pages/HomePage.module.scss";
 
 export default function Home() {
