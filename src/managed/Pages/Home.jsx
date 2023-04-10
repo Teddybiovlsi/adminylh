@@ -25,7 +25,7 @@ export default function Home() {
 
   const fetchVideoData = async ({ api }) => {
     try {
-      const response = await axios.get(api);
+      const response = await get(api);
       // get data from res.data.data
       // because res.data.data is a promise
       // so we need to use await to get the value of res.data.data
@@ -69,24 +69,24 @@ export default function Home() {
     if (selectVideoType == 0 && selectVideoLanguage == 0) {
       // get all video data
       fetchVideoData({
-        api: 'http://140.125.35.82:8079/ntuh-API/public/api/v1/GET/videos',
+        api: 'videos',
       });
     }
     // if selectVideoType is not 0 and selectVideoLanguage is 0, get video data by video type
     else if (selectVideoType != 0 && selectVideoLanguage == 0) {
       // get video data by video type
       fetchVideoData({
-        api: `http://140.125.35.82:8079/ntuh-API/public/api/v1/GET/videoClass/${selectVideoType}`,
+        api: `/videoClass/${selectVideoType}`,
       });
     } else if (selectVideoType == 0 && selectVideoLanguage != 0) {
       // get video data by video language
       fetchVideoData({
-        api: `http://140.125.35.82:8079/ntuh-API/public/api/v1/GET/videoLanguage/${selectVideoLanguage}`,
+        api: `videoLanguage/${selectVideoLanguage}`,
       });
     } else if (selectVideoType != 0 && selectVideoLanguage != 0) {
       // get video data by video type and video language
       fetchVideoData({
-        api: `http://140.125.35.82:8079/ntuh-API/public/api/v1/GET/videoByClassAndLanguage/${selectVideoType}/${selectVideoLanguage}`,
+        api: `/videoByClassAndLanguage/${selectVideoType}/${selectVideoLanguage}`,
       });
     }
     // 若發生例外情形，則將錯誤訊息顯示在畫面上
