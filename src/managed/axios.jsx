@@ -15,6 +15,10 @@ const axios = (baseURL) => {
 export const get = (path) => axios().get(`api/v1/GET/${path}`);
 // make axios post request api from the baseURL and /api/v1/POST/ + path
 export const post = (path, data) => axios().post(`api/v1/POST/${path}`, data);
+// make axios put request api from the baseURL and /api/v1/PUT/ + path
+export const put = (path, data) => axios().put(`api/v1/PUT/${path}`, data);
+// make axios delete request api from the baseURL and /api/v1/DELETE/ + path
+export const del = (path) => axios().delete(`api/v1/DELETE/${path}`);
 
 export { axios };
 export default axios();
