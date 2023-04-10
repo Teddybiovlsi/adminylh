@@ -16,13 +16,15 @@ export default function Home() {
   ]);
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [selectVideoindex, setSelectVideoindex] = useState([]);
+  // loading is true, show loading text, until loading is false
+  const [loading, setLoading] = useState(false);
   // 取得影片類別
   // selectVideoType is 0, get all video data
   const [selectVideoType, setSelectVideoType] = useState(0);
   // 取得影片語系
   // selectVideoLanguage is 0, get all video data
   const [selectVideoLanguage, setSelectVideoLanguage] = useState(0);
-  const [ErrorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const fetchVideoData = async ({ api }) => {
     try {
@@ -43,11 +45,15 @@ export default function Home() {
       // if checkIsArray is true, set videoData to data
       // otherwise, set videoData to [data]
       setVideoData(checkIsArray ? data : [data]);
+      // 將 loading 設為 false
+      setLoading(false);
       // clear error message
       setErrorMessage('');
     } catch (error) {
       // if catch error, clear videoData
       setVideoData([]);
+      // 將 loading 設為 false
+      setLoading(false);
       // if error.response is true, get error message
       if (error.response) {
         console.log(error.response);
@@ -57,6 +63,8 @@ export default function Home() {
   };
 
   useEffect(() => {
+    // set loading to true
+    setLoading(true);
     // if selectVideoType is 0 and selectVideoLanguage is 0, get all video data
     if (selectVideoType == 0 && selectVideoLanguage == 0) {
       // get all video data
@@ -80,9 +88,11 @@ export default function Home() {
       fetchVideoData({
         api: `/videoByClassAndLanguage/${selectVideoType}/${selectVideoLanguage}`,
       });
+      setLoading(false);
     }
     // 若發生例外情形，則將錯誤訊息顯示在畫面上
     else {
+      setLoading(false);
       setVideoData([]);
       setErrorMessage('發生錯誤');
     }
@@ -168,6 +178,32 @@ export default function Home() {
     );
   };
 
+  if (loading) {
+    return (
+      <div className='container'>
+        <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
+        <div className={styles.container_division}>
+          <h2 className={styles.container_division_secondHeading}>
+            資料載入中...
+          </h2>
+        </div>
+      </div>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <div className='container'>
+        <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
+        <div className={styles.container_division}>
+          <h2 className={styles.container_division_secondHeading}>
+            {errorMessage}
+          </h2>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className='container'>
       <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
@@ -206,33 +242,19 @@ export default function Home() {
           <option value='8'>菲律賓語</option>
         </Form.Select>
       </div>
-      {/* if don't have any error message or videoData go to show data */}
-      {
-        // if videodata is not ready, show loading or error message is not empty, show error message
-        ErrorMessage !== '' || videoData == null || videoData.length === 0 ? (
-          <div className={styles.container_division}>
-            <h2 className={styles.container_division_secondHeading}>
-              {ErrorMessage !== '' || videoData == null
-                ? ErrorMessage
-                : '資料載入中...'}
-            </h2>
-          </div>
-        ) : (
-          // if videodata is not null and error message is empty, show data
-          <div className={`mt-3 mb-3 ${styles.container_division}`}>
-            <Table>
-              <thead>
-                <VideoTitle />
-              </thead>
-              <tbody>
-                {videoData.map((info, _) => {
-                  return <VideoInfo {...info} key={info.ID} />;
-                })}
-              </tbody>
-            </Table>
-          </div>
-        )
-      }
+      {/* if videodata is not null and error message is empty, show data */}
+      <div className={`mt-3 mb-3 ${styles.container_division}`}>
+        <Table>
+          <thead>
+            <VideoTitle />
+          </thead>
+          <tbody>
+            {videoData.map((info, _) => {
+              return <VideoInfo {...info} key={info.ID} />;
+            })}
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 }
