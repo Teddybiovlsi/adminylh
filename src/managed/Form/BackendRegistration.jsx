@@ -36,6 +36,7 @@ export default function BackendRegistration() {
   let navigate = useNavigate();
 
   useEffect(() => {
+    // redirect to Home page after 5 seconds
     if (shouldRedirect) {
       return navigate('/');
     }
@@ -50,7 +51,10 @@ export default function BackendRegistration() {
       {errorMessage && setErrorMessage('')}
       setSuccessMessage('成功創建後台使用者');
       setSuccessBoolean(true);
-      setShouldRedirect(true);
+      // redirect to Home page after 5 seconds
+      setTimeout(() => {
+        setShouldRedirect(true);
+      }, 5000);
     } catch (error) {
       setErrorMessage(StatusCode(error.response.status));
     }
@@ -98,10 +102,6 @@ export default function BackendRegistration() {
 
                 if (successMessage) {
                   resetForm();
-                  // redirect to Home page after 5 seconds
-                  setTimeout(() => {
-                    setShouldRedirect(true);
-                  }, 5000);
                 } else if (errorMessage) {
                   console.log('error');
                 } else {
