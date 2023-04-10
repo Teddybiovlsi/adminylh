@@ -33,6 +33,26 @@ export default function BackendRegistration() {
 
   const [shouldRedirect, setShouldRedirect] = React.useState(false);
 
+  // create a async function to send data to backend
+  const sendBackendRegistrationData = async (data) => {
+    try {
+      const response = await post('/api/user/register', data);
+      // console.log(response);
+      // console.log(response.data);
+      // console.log(response.data.data);
+      // console.log(response.data.data.message);
+      setSuccessMessage(response.data.data.message);
+      setSuccessBoolean(true);
+      setShouldRedirect(true);
+    } catch (error) {
+      // console.log(error);
+      // console.log(error.response);
+      // console.log(error.response.data);
+      // console.log(error.response.data.message);
+      setErrorMessage(error.response.data.message);
+    }
+  };
+
   const schema = yup.object({
     email: yup.string().email('請輸入合法的信箱').required('信箱欄位不得為空'),
     password: yup
@@ -72,30 +92,20 @@ export default function BackendRegistration() {
               <Formik
                 validationSchema={schema}
                 onSubmit={(data, { resetForm }) => {
-                  axios({
-                    method: 'post',
-                    url: 'http://140.125.35.82:8079/ntuh-API/public/api/v1/POST/admin',
-                    data: JSON.stringify({
-                      email: data.email,
-                      password: data.password,
-                      confirmPassword: data.confirmPassword,
-                    }),
-                    headers: { 'Content-Type': 'application/json' },
-                  })
-                    .then((res) => {
-                      setSuccessMessage(res.data.message);
-                      setSuccessBoolean(true);
-                      resetForm();
-                      setPwdScore(0);
-                      const id = setTimeout(() => {
-                        setShouldRedirect(true);
-                      }, 5000);
+                  //call sendBackendRegistrationData function and check if it is successful
+                  try {
+                    sendBackendRegistrationData(data);
+                    // reset form after submit
+                    resetForm();
+                    // redirect to login page after submit successfully 5s
+                    setTimeout(() => {
+                      setShouldRedirect(true);
+                    }, 5000);           
+                    
+                  } catch (error) {
+                    console.log(error);
+                  }
 
-                      return () => clearTimeout(id);
-                    })
-                    .catch((err) => {
-                      // setErrorMessage(err.response.data.message);
-                    });
                 }}
                 initialValues={{
                   email: '',
