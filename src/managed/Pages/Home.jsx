@@ -26,6 +26,9 @@ export default function Home() {
   const fetchVideoData = async ({ api }) => {
     try {
       const response = await get(api);
+      // confirm response data
+      // console.log(response);
+
       // get data from res.data.data
       // because res.data.data is a promise
       // so we need to use await to get the value of res.data.data
@@ -223,7 +226,7 @@ export default function Home() {
         </div>
       ) : (
         <div className={`mt-3 mb-3 ${styles.container_division}`}>
-          {/* <Table>
+          <Table>
             <thead>
               <VideoTitle />
             </thead>
@@ -232,7 +235,7 @@ export default function Home() {
                 return <VideoInfo {...info} key={info.ID} />;
               })}
             </tbody>
-          </Table> */}
+          </Table>
         </div>
       )}
     </div>
