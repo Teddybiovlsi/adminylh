@@ -1,17 +1,17 @@
-import { React, useEffect, useState } from 'react';
-import { Form, Table } from 'react-bootstrap';
-import { get, post } from '../axios';
-import styles from '../../styles/pages/HomePage.module.scss';
-import { check } from 'prettier';
-import StatusCode from '../../sys/StatusCode';
+import { React, useEffect, useState } from "react";
+import { Form, Table } from "react-bootstrap";
+import { get, post } from "../axios";
+import styles from "../../styles/pages/HomePage.module.scss";
+import { check } from "prettier";
+import StatusCode from "../../sys/StatusCode";
 
 export default function Home() {
   const [videoData, setVideoData] = useState([
     {
       ID: 0,
-      ClassID: '',
-      Language: '',
-      Title: '',
+      ClassID: "",
+      Language: "",
+      Title: "",
     },
   ]);
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
@@ -24,7 +24,7 @@ export default function Home() {
   // 取得影片語系
   // selectVideoLanguage is 0, get all video data
   const [selectVideoLanguage, setSelectVideoLanguage] = useState(0);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const fetchVideoData = async ({ api }) => {
     try {
@@ -48,7 +48,7 @@ export default function Home() {
       // 將 loading 設為 false
       setLoading(false);
       // clear error message
-      setErrorMessage('');
+      setErrorMessage("");
     } catch (error) {
       // if catch error, clear videoData
       setVideoData([]);
@@ -69,7 +69,7 @@ export default function Home() {
     if (selectVideoType == 0 && selectVideoLanguage == 0) {
       // get all video data
       fetchVideoData({
-        api: 'videos',
+        api: "videos",
       });
     }
     // if selectVideoType is not 0 and selectVideoLanguage is 0, get video data by video type
@@ -94,7 +94,7 @@ export default function Home() {
     else {
       setLoading(false);
       setVideoData([]);
-      setErrorMessage('發生錯誤');
+      setErrorMessage("發生錯誤");
     }
   }, [selectVideoType, selectVideoLanguage]);
 
@@ -126,7 +126,7 @@ export default function Home() {
           className={styles.container_division_table_rowTable_headingCheckBox}
         >
           <input
-            type='checkbox'
+            type="checkbox"
             onChange={() => {
               handleSelectAllVideo();
             }}
@@ -156,7 +156,7 @@ export default function Home() {
       <tr key={ID}>
         <td className={styles.container_division_table_rowTable_data}>
           <input
-            type='checkbox'
+            type="checkbox"
             checked={selectVideoindex.includes(ID)}
             onChange={() => {
               handleSelectVideoindex(ID);
@@ -180,7 +180,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className='container'>
+      <div className="container">
         <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
         <div className={styles.container_division}>
           <h2 className={styles.container_division_secondHeading}>
@@ -193,7 +193,7 @@ export default function Home() {
 
   if (errorMessage) {
     return (
-      <div className='container'>
+      <div className="container">
         <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
         <div className={styles.container_division}>
           <h2 className={styles.container_division_secondHeading}>
@@ -205,41 +205,41 @@ export default function Home() {
   }
 
   return (
-    <div className='container'>
+    <div className="container pb-4">
       <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
       <div className={styles.container_division}>
         <Form.Select
-          aria-label='Default select example'
+          aria-label="Default select example"
           onChange={(event) => {
             setSelectVideoType(event.target.value);
           }}
-          style={{ width: '200px' }}
+          style={{ width: "200px" }}
         >
-          <option value='0'>請選擇影片類型</option>
-          <option value='1'>疾病照護</option>
-          <option value='2'>活動</option>
-          <option value='3'>進食</option>
-          <option value='4'>管路照護及異常處理</option>
-          <option value='5'>皮膚照護</option>
-          <option value='6'>傷口照護</option>
-          <option value='7'>預防合併症</option>
+          <option value="0">請選擇影片類型</option>
+          <option value="1">疾病照護</option>
+          <option value="2">活動</option>
+          <option value="3">進食</option>
+          <option value="4">管路照護及異常處理</option>
+          <option value="5">皮膚照護</option>
+          <option value="6">傷口照護</option>
+          <option value="7">預防合併症</option>
         </Form.Select>
         <Form.Select
-          aria-label='Default select example'
+          aria-label="Default select example"
           onChange={(event) => {
             setSelectVideoLanguage(event.target.value);
           }}
-          style={{ width: '200px' }}
+          style={{ width: "200px" }}
         >
-          <option value='0'>請選擇影片語言</option>
-          <option value='1'>國語</option>
-          <option value='2'>台語</option>
-          <option value='3'>英語</option>
-          <option value='4'>日文</option>
-          <option value='5'>越南語</option>
-          <option value='6'>泰語</option>
-          <option value='7'>印尼語</option>
-          <option value='8'>菲律賓語</option>
+          <option value="0">請選擇影片語言</option>
+          <option value="1">國語</option>
+          <option value="2">台語</option>
+          <option value="3">英語</option>
+          <option value="4">日文</option>
+          <option value="5">越南語</option>
+          <option value="6">泰語</option>
+          <option value="7">印尼語</option>
+          <option value="8">菲律賓語</option>
         </Form.Select>
       </div>
       {/* if videodata is not null and error message is empty, show data */}
@@ -249,7 +249,11 @@ export default function Home() {
             <VideoTitle />
           </thead>
           <tbody>
-            {videoData.map((info, _) => {
+            {/* {videoData.map((info, _) => {
+              return <VideoInfo {...info} key={info.ID} />;
+            })} */}
+            {/* create fake array */}
+            {Array.from(Array(20).keys()).map((info, _) => {
               return <VideoInfo {...info} key={info.ID} />;
             })}
           </tbody>
