@@ -6,6 +6,9 @@ import { check } from "prettier";
 import StatusCode from "../../sys/StatusCode";
 
 export default function Home() {
+  // limit video data size in one page
+  const size = 10;
+  // videoData is an array
   const [videoData, setVideoData] = useState([
     {
       ID: 0,
@@ -25,6 +28,12 @@ export default function Home() {
   // selectVideoLanguage is 0, get all video data
   const [selectVideoLanguage, setSelectVideoLanguage] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
+  // track page number
+  const [page, setPage] = useState(0);
+  // track total page number
+  const [totalPage, setTotalPage] = useState(0);
+  // track total video data size
+  const [totalVideoDataSize, setTotalVideoDataSize] = useState(0);
 
   const fetchVideoData = async ({ api }) => {
     try {
@@ -249,12 +258,21 @@ export default function Home() {
             <VideoTitle />
           </thead>
           <tbody>
-            {videoData.map((info, _) => {
+            {/* {videoData.map((info, _) => {
+              return <VideoInfo {...info} key={info.ID} />;
+            })} */}
+            {/* Create fake array */}
+            {Array.from(Array(30).keys()).map((info, _) => {
               return <VideoInfo {...info} key={info.ID} />;
             })}
           </tbody>
         </Table>
       </div>
+      <button className={`${styles.container_button}`}>
+        創建
+        <br />
+        帳號
+      </button>
     </div>
   );
 }
