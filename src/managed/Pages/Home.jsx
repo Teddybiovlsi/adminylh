@@ -249,11 +249,7 @@ export default function Home() {
             <VideoTitle />
           </thead>
           <tbody>
-            {/* {videoData.map((info, _) => {
-              return <VideoInfo {...info} key={info.ID} />;
-            })} */}
-            {/* create fake array */}
-            {Array.from(Array(20).keys()).map((info, _) => {
+            {videoData.map((info, _) => {
               return <VideoInfo {...info} key={info.ID} />;
             })}
           </tbody>

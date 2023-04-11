@@ -3,6 +3,7 @@ import InputVideoFileFunction from "./shared/InputVideoFileFunction";
 import InputVideoInfoFunction from "./shared/InputVideoInfoFunction";
 import InputVideoQAFunction from "./shared/InputVideoQAFunction";
 import InputFormPreviewFunction from "./shared/InputFormPreviewFunction";
+import InputVideoTypeFunction from "./shared/InputVideoTypeFunction";
 
 export default function CreateVideo({ VideoMode = false }) {
   const [videoInfo, setVideoInfo] = useState([
@@ -22,6 +23,7 @@ export default function CreateVideo({ VideoMode = false }) {
     videoSource: "",
     videoFileName: "",
     videoLanguage: "",
+    videoType: "",
     questionNum: 1,
   });
 
@@ -75,6 +77,21 @@ export default function CreateVideo({ VideoMode = false }) {
       );
     case 3:
       return (
+        <InputVideoTypeFunction
+          FormMode={VideoMode}
+          ChangeEvent={(e) => {
+            setFormType({
+              ...formType,
+              videoType: e.target.value,
+            });
+          }}
+          VideoType={formType.videoType ? formType.videoType : null}
+          GoPrevEvent={prevStep}
+          GoNextEvent={nextStep}
+        />
+      );
+    case 4:
+      return (
         <InputVideoQAFunction
           FormMode={VideoMode}
           FormStep={formType.formStep}
@@ -85,12 +102,13 @@ export default function CreateVideo({ VideoMode = false }) {
           GoNextEvent={nextStep}
         />
       );
-    case 4:
+    case 5:
       return (
         <InputFormPreviewFunction
           FormMode={VideoMode}
           VideoName={formType.videoFileName}
           VideoLanguage={formType.videoLanguage}
+          VideoType={formType.videoType}
           VideoQA={videoInfo}
           GoPrevEvent={prevStep}
           SubmitEvent={submitAction}

@@ -1,6 +1,7 @@
 @media only screen and (max-width: 576px) {
   .ExamVideoInputCard,
-  .ExamVideoInfoCard {
+  .ExamVideoInfoCard,
+  .ExamVideoTypeCard {
     width: 100vw;
     height: 50vh;
   }
@@ -11,7 +12,8 @@
 }
 @media (min-width: 576px) {
   .ExamVideoInputCard,
-  .ExamVideoInfoCard {
+  .ExamVideoInfoCard,
+  .ExamVideoTypeCard {
     width: 60vw;
     height: 50vh;
   }
@@ -27,7 +29,8 @@
 }
 @media (min-width: 768px) {
   .ExamVideoInputCard,
-  .ExamVideoInfoCard {
+  .ExamVideoInfoCard,
+  .ExamVideoTypeCard {
     width: 55vw;
     height: 50vh;
   }
@@ -43,7 +46,8 @@
 }
 @media (min-width: 992px) {
   .ExamVideoInputCard,
-  .ExamVideoInfoCard {
+  .ExamVideoInfoCard,
+  .ExamVideoTypeCard {
     width: 50vw;
     height: 50vh;
   }
@@ -59,7 +63,8 @@
 }
 @media (min-width: 1200px) {
   .ExamVideoInputCard,
-  .ExamVideoInfoCard {
+  .ExamVideoInfoCard,
+  .ExamVideoTypeCard {
     width: 45vw;
     height: 50vh;
   }
@@ -75,7 +80,8 @@
 }
 @media (min-width: 1500px) {
   .ExamVideoInputCard,
-  .ExamVideoInfoCard {
+  .ExamVideoInfoCard,
+  .ExamVideoTypeCard {
     width: 40vw;
     height: 50vh;
   }

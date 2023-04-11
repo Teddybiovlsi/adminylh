@@ -3,13 +3,17 @@ import PageTitle from "../../../components/Title";
 import { Card } from "react-bootstrap";
 import { CardTitleFunction } from "./CardTitleFunction";
 import BtnBootstrap from "../../../components/BtnBootstrap";
-import SwitchNumToLanguage from "./func/SwitchNumToLanguage";
+import {
+  SwitchNumToLanguage,
+  SwitchNumToType,
+} from "./func/SwitchNumToLanguage";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 
 function InputFormPreviewFunction({
   FormMode = false,
   VideoName = "",
   VideoLanguage = "",
+  VideoType = "",
   VideoQA,
   GoPrevEvent = null,
   SubmitEvent = null,
@@ -31,6 +35,8 @@ function InputFormPreviewFunction({
           <Card.Text>{VideoName}</Card.Text>
           <Card.Title>影片語言:</Card.Title>
           <Card.Text>{SwitchNumToLanguage(parseInt(VideoLanguage))}</Card.Text>
+          <Card.Title>影片類型:</Card.Title>
+          <Card.Text>{SwitchNumToType(parseInt(VideoType))}</Card.Text>
           {VideoQA?.map((questionInfo, questionIndex) => (
             <Card key={questionIndex} className="mb-2">
               <Card.Title className="mb-2 ms-1">

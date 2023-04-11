@@ -1,5 +1,3 @@
-import React from "react";
-
 function SwitchNumToLanguage(languageNum) {
   switch (languageNum) {
     case 1:
@@ -23,4 +21,25 @@ function SwitchNumToLanguage(languageNum) {
   }
 }
 
-export default SwitchNumToLanguage;
+function SwitchNumToType(TypeNum) {
+  switch (TypeNum) {
+    case 1:
+      return "疾病照護";
+    case 2:
+      return "活動";
+    case 3:
+      return "進食";
+    case 4:
+      return "管路照護及異常處理";
+    case 5:
+      return "皮膚照護";
+    case 6:
+      return "傷口照護";
+    case 7:
+      return "預防合併症";
+    default:
+      return "";
+  }
+}
+
+export { SwitchNumToLanguage, SwitchNumToType };
