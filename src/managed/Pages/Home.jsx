@@ -54,6 +54,13 @@ export default function Home() {
       // if checkIsArray is true, set videoData to data
       // otherwise, set videoData to [data]
       setVideoData(checkIsArray ? data : [data]);
+      // calculate the total rows and lastpage by Pagination function
+      const { rows, lastPage } = Pagination({
+        data: videoData,
+        rowsPerPage: size,
+      });
+      // show thw rows and lastPage by console.log
+      console.log(rows, lastPage);
       // 將 loading 設為 false
       setLoading(false);
       // clear error message
@@ -258,13 +265,13 @@ export default function Home() {
             <VideoTitle />
           </thead>
           <tbody>
-            {/* {videoData.map((info, _) => {
-              return <VideoInfo {...info} key={info.ID} />;
-            })} */}
-            {/* Create fake array */}
-            {Array.from(Array(30).keys()).map((info, _) => {
+            {videoData.map((info, _) => {
               return <VideoInfo {...info} key={info.ID} />;
             })}
+            {/* Create fake array */}
+            {/* {Array.from(Array(30).keys()).map((info, _) => {
+              return <VideoInfo {...info} key={info.ID} />;
+            })} */}
           </tbody>
         </Table>
       </div>
