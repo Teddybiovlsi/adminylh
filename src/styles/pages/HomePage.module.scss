@@ -3,9 +3,16 @@
   margin-bottom: 10px;
   font-weight: bold;
 }
-.container_division {
+.container_division_select {
   display: flex;
   flex-direction: row;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.container_division {
   margin-top: 10px;
   margin-bottom: 10px;
 }

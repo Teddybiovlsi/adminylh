@@ -14,6 +14,8 @@ export default function StatusCode({ statusCode }) {
       return "您沒有權限進行此操作";
     case 404:
       return "找不到請求之資源";
+    case 429:
+      return "請求過於頻繁";
     case 500:
       return "伺服器錯誤";
     default:

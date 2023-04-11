@@ -1,9 +1,10 @@
 import { React, useEffect, useState } from "react";
-import { Form, Table } from "react-bootstrap";
+import { Form, Table, Pagination } from "react-bootstrap";
 import { get, post } from "../axios";
 import styles from "../../styles/pages/HomePage.module.scss";
 import { check } from "prettier";
 import StatusCode from "../../sys/StatusCode";
+import ReactPaginate from "react-paginate";
 
 export default function Home() {
   // limit video data size in one page
@@ -28,12 +29,16 @@ export default function Home() {
   // selectVideoLanguage is 0, get all video data
   const [selectVideoLanguage, setSelectVideoLanguage] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
-  // track page number
-  const [page, setPage] = useState(0);
+  // track current page number
+  const [currentPage, setCurrentPage] = useState(1);
   // track total page number
   const [totalPage, setTotalPage] = useState(0);
   // track total video data size
-  const [totalVideoDataSize, setTotalVideoDataSize] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
+  // track current page video data size
+  const endOffset = itemOffset + size;
+  // get current page video data
+  const currentItem = videoData.slice(itemOffset, endOffset);
 
   const fetchVideoData = async ({ api }) => {
     try {
@@ -54,13 +59,6 @@ export default function Home() {
       // if checkIsArray is true, set videoData to data
       // otherwise, set videoData to [data]
       setVideoData(checkIsArray ? data : [data]);
-      // calculate the total rows and lastpage by Pagination function
-      const { rows, lastPage } = Pagination({
-        data: videoData,
-        rowsPerPage: size,
-      });
-      // show thw rows and lastPage by console.log
-      console.log(rows, lastPage);
       // 將 loading 設為 false
       setLoading(false);
       // clear error message
@@ -114,6 +112,13 @@ export default function Home() {
     }
   }, [selectVideoType, selectVideoLanguage]);
 
+  // if videoData have any change and it's not empty, set totalPage to Math.ceil(videoData.length / size)
+  useEffect(() => {
+    if (videoData.length > 0) {
+      setTotalPage(Math.ceil(videoData.length / size));
+    }
+  }, [videoData]);
+
   // if select all video, set isCheckAllVideo to true and set selectVideoindex to all video ID
   const handleSelectAllVideo = () => {
     // set isCheckAllVideo to !isCheckAllVideo
@@ -133,6 +138,11 @@ export default function Home() {
     selectVideoLanguage.includes(ID)
       ? setSelectVideoindex(selectVideoindex.filter((item) => item !== ID))
       : setSelectVideoindex([...selectVideoindex, ID]);
+  };
+
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * size) % videoData.length;
+    setItemOffset(newOffset);
   };
   // 表格標題
   const VideoTitle = () => {
@@ -223,9 +233,9 @@ export default function Home() {
   return (
     <div className="container pb-4">
       <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
-      <div className={styles.container_division}>
+      <div className={styles.container_division_select}>
         <Form.Select
-          aria-label="Default select example"
+          aria-label="請選擇影片類型"
           onChange={(event) => {
             setSelectVideoType(event.target.value);
           }}
@@ -241,7 +251,8 @@ export default function Home() {
           <option value="7">預防合併症</option>
         </Form.Select>
         <Form.Select
-          aria-label="Default select example"
+          className="me-auto"
+          aria-label="請選擇影片語言"
           onChange={(event) => {
             setSelectVideoLanguage(event.target.value);
           }}
@@ -257,6 +268,9 @@ export default function Home() {
           <option value="7">印尼語</option>
           <option value="8">菲律賓語</option>
         </Form.Select>
+        <h5>
+          <b>共有{videoData.length}筆資料</b>{" "}
+        </h5>
       </div>
       {/* if videodata is not null and error message is empty, show data */}
       <div className={`mt-3 mb-3 ${styles.container_division}`}>
@@ -265,7 +279,7 @@ export default function Home() {
             <VideoTitle />
           </thead>
           <tbody>
-            {videoData.map((info, _) => {
+            {currentItem.map((info, _) => {
               return <VideoInfo {...info} key={info.ID} />;
             })}
             {/* Create fake array */}
@@ -274,6 +288,27 @@ export default function Home() {
             })} */}
           </tbody>
         </Table>
+        <ReactPaginate
+          breakLabel={"..."}
+          previousLabel={"上一頁"}
+          nextLabel={"下一頁"}
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={2}
+          marginPagesDisplayed={1}
+          pageCount={totalPage}
+          renderOnZeroPageCount={null}
+          containerClassName="justify-content-center pagination"
+          previousClassName="page-item"
+          previousLinkClassName="page-link"
+          nextClassName="page-item"
+          nextLinkClassName="page-link"
+          pageClassName="page-item"
+          pageLinkClassName="page-link"
+          breakClassName="page-item"
+          breakLinkClassName="page-link"
+          activeClassName="active"
+          disabledClassName="disabled"
+        />
       </div>
       <button className={`${styles.container_button}`}>
         創建
