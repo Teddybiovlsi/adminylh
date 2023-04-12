@@ -32,6 +32,18 @@ function InputVideoQAFunction({
       );
     }
   };
+  // 若該欄位的持續時間有所變動
+  const handleGetVideoDuration = (index, e) => {
+    // if user have any change in the video duration then the setVideoQA will be update
+    setVideoQA(
+      update(
+        `${index}.durationTime`,
+        () => e.target.value,
+        VideoQA
+      )
+    );
+  };
+
   // if radio box is checked then the information of the Question mustCorrect will be true
   const handleGetQuestionMustCorrect = (index, e) => {
     setVideoQA(
@@ -89,6 +101,7 @@ function InputVideoQAFunction({
       ...VideoQA,
       {
         currentTime: 0,
+        durationTime: 0,
         mustCorrectQuestion: false,
         questionContent: "",
         numofOptions: 0,
@@ -175,6 +188,7 @@ function InputVideoQAFunction({
             VideoQA={VideoQA}
             handleDelQAMessage={handleDelQAMessage}
             handleGetVideoTime={handleGetVideoTime}
+            handleGetVideoDuration={handleGetVideoDuration}
             handleGetQuestionMustCorrect={handleGetQuestionMustCorrect}
             handleGetQuestionContent={handleGetQuestionContent}
             handleOptionChange={handleOptionChange}

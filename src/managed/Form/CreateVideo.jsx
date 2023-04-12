@@ -11,6 +11,7 @@ export default function CreateVideo({ VideoMode = false }) {
   const [videoInfo, setVideoInfo] = useState([
     {
       currentTime: 0,
+      durationTime: 0,
       mustCorrectQuestion: false,
       questionContent: "",
       numofOptions: 0,
@@ -75,12 +76,13 @@ export default function CreateVideo({ VideoMode = false }) {
 
   const submitAction = () => {
     const formData = new FormData();
+    formData.append("videoMode", VideoMode);
     formData.append("videoFile", formType.videoFile);
     formData.append("videoName", formType.videoFileName);
     formData.append("videoLanguage", formType.videoLanguage);
     formData.append("videoType", formType.videoType);
     videoInfo.forEach((element) => {
-      console.log(element);
+      // console.log(element);
       // store the videoInfo in formData  as a array
       formData.append("info[]", JSON.stringify(element));
     });
