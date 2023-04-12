@@ -4,7 +4,7 @@ const axios = (baseURL) => {
   // 建立自訂義的axios
   const instance = _axios.create({
     baseURL: baseURL || "http://140.125.35.82:8079/ntuh-API/public/", //JSON-Server端口位置
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "multipart/form-data" },
     timeout: 2500,
   });
 

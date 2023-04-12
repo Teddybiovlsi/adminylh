@@ -48,6 +48,7 @@ export default function BackendRegistration() {
   // create a async function to send data to backend
   const sendBackendRegistrationData = async (data) => {
     try {
+      console.log(typeof data);
       // 正確格式API
       const response = await post("admin", data);
       // if errorMessage is not empty, then set it to empty
