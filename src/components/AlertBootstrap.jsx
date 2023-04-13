@@ -9,14 +9,16 @@ export default function AlertBootstrap({
 }) {
   const [show, setShow] = useState(true);
 
-  const seconds = 5;
-
-  // useEffect(() => {
-    // when ifsucceed is true, then redirect to Home page after 5 seconds
-    // and the second will be counted down
-    // if(seconds >)
-    //   seconds = seconds - 1;
-    // }, [ifsucceed]);
+  const [countDownSeconds, setCountDownSeconds] = useState(5);
+  useEffect(() => {
+    // 設計倒數計時器，若ifsucceed為true，則在5秒後關閉alert
+    if (ifsucceed) {
+      const timer =
+        countDownSeconds > 0 &&
+        setInterval(() => setCountDownSeconds(countDownSeconds - 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [countDownSeconds, ifsucceed]);
   // if show is false, then the alert will not be rendered
   if (show) {
     return (
@@ -32,7 +34,7 @@ export default function AlertBootstrap({
           {ifsucceed ? "成功！" : "發生了一些錯誤"}{" "}
         </Alert.Heading>
         {children}
-        {ifsucceed ? "秒後將回到主頁面" : ""}
+        {ifsucceed ? `${countDownSeconds}秒後將回到主頁面` : ""}
       </Alert>
     );
   }
