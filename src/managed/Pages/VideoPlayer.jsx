@@ -1,7 +1,7 @@
 import React from "react";
 import VideoJS from "../../components/VideoJS";
 
-export default function VideoPlayer() {
+export default function VideoPlayer({ VideoUUID }) {
   const playerRef = React.useRef(null);
 
   const videoJsOptions = {
