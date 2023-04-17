@@ -82,6 +82,7 @@ export default function CreateVideo({ VideoMode = false }) {
     const formData = new FormData();
     formData.append("videoMode", VideoMode);
     formData.append("videoFile", formType.videoFile);
+    formData.append("videoTitleName", formType.videoTitleName);
     formData.append("videoName", formType.videoFileName);
     formData.append("videoLanguage", formType.videoLanguage);
     formData.append("videoType", formType.videoType);
@@ -165,6 +166,7 @@ export default function CreateVideo({ VideoMode = false }) {
         <InputFormPreviewFunction
           FormMode={VideoMode}
           VideoName={formType.videoFileName}
+          VideoTitle={formType.videoTitleName}
           VideoLanguage={formType.videoLanguage}
           VideoType={formType.videoType}
           VideoQA={videoInfo}

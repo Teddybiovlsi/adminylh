@@ -12,6 +12,7 @@ import styles from "../../../styles/Form/FormStyles.module.scss";
 function InputFormPreviewFunction({
   FormMode = false,
   VideoName = "",
+  VideoTitle = "",
   VideoLanguage = "",
   VideoType = "",
   VideoQA,
@@ -32,7 +33,7 @@ function InputFormPreviewFunction({
         </Card.Title>
         <Card.Body>
           <Card.Title>影片名稱:</Card.Title>
-          <Card.Text>{VideoName}</Card.Text>
+          <Card.Text>{VideoTitle != "" ? VideoTitle : VideoName}</Card.Text>
           <Card.Title>影片語言:</Card.Title>
           <Card.Text>{SwitchNumToLanguage(parseInt(VideoLanguage))}</Card.Text>
           <Card.Title>影片類型:</Card.Title>
