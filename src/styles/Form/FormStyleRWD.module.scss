@@ -1,11 +1,12 @@
 @media only screen and (max-width: 576px) {
   .ExamVideoInputCard,
+  .ExamTitleCard,
   .ExamVideoInfoCard,
   .ExamVideoTypeCard {
     width: 100vw;
     height: 50vh;
   }
-  .ExamQusetionCard{
+  .ExamQusetionCard {
     width: 90vw;
     height: 85vh;
   }
@@ -13,12 +14,13 @@
 @media (min-width: 576px) {
   .ExamVideoInputCard,
   .ExamVideoInfoCard,
+  .ExamTitleCard,
   .ExamVideoTypeCard {
     width: 60vw;
     height: 50vh;
   }
 
-  .ExamQusetionCard{
+  .ExamQusetionCard {
     width: 60vw;
     height: 85vh;
   }
@@ -30,12 +32,13 @@
 @media (min-width: 768px) {
   .ExamVideoInputCard,
   .ExamVideoInfoCard,
+  .ExamTitleCard,
   .ExamVideoTypeCard {
     width: 55vw;
     height: 50vh;
   }
 
-  .ExamQusetionCard{
+  .ExamQusetionCard {
     width: 55vw;
     height: 85vh;
   }
@@ -47,6 +50,7 @@
 @media (min-width: 992px) {
   .ExamVideoInputCard,
   .ExamVideoInfoCard,
+  .ExamTitleCard,
   .ExamVideoTypeCard {
     width: 50vw;
     height: 50vh;
@@ -64,6 +68,7 @@
 @media (min-width: 1200px) {
   .ExamVideoInputCard,
   .ExamVideoInfoCard,
+  .ExamTitleCard,
   .ExamVideoTypeCard {
     width: 45vw;
     height: 50vh;
@@ -81,6 +86,7 @@
 @media (min-width: 1500px) {
   .ExamVideoInputCard,
   .ExamVideoInfoCard,
+  .ExamTitleCard,
   .ExamVideoTypeCard {
     width: 40vw;
     height: 50vh;

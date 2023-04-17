@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import InputVideoFileFunction from "./shared/InputVideoFileFunction";
+import InputVideoTitleFunction from "./shared/InputVideoTitleFunction";
 import InputVideoInfoFunction from "./shared/InputVideoInfoFunction";
 import InputVideoQAFunction from "./shared/InputVideoQAFunction";
 import InputFormPreviewFunction from "./shared/InputFormPreviewFunction";
@@ -25,6 +26,7 @@ export default function CreateVideo({ VideoMode = false }) {
     videoFile: "",
     videoSource: "",
     videoFileName: "",
+    videoTitleName: "",
     videoLanguage: "",
     videoType: "",
     questionNum: 1,
@@ -61,6 +63,8 @@ export default function CreateVideo({ VideoMode = false }) {
         ...formType,
         videoFile: e.target.files[0],
         videoFileName: e.target.files[0].name,
+        // remove the suffix of the video file name
+        videoTitleName: e.target.files[0].name.split(".")[0],
         videoSource: URL.createObjectURL(e.target.files[0]),
       });
     }
@@ -101,6 +105,21 @@ export default function CreateVideo({ VideoMode = false }) {
       );
     case 2:
       return (
+        <InputVideoTitleFunction
+          FormMode={VideoMode}
+          ChangeEvent={(e) => {
+            setFormType({
+              ...formType,
+              videoTitleName: e.target.value,
+            });
+          }}
+          VideoTitle={formType.videoTitleName ? formType.videoTitleName : null}
+          GoPrevEvent={prevStep}
+          GoNextEvent={nextStep}
+        />
+      );
+    case 3:
+      return (
         <InputVideoInfoFunction
           FormMode={VideoMode}
           ChangeEvent={(e) => {
@@ -114,7 +133,7 @@ export default function CreateVideo({ VideoMode = false }) {
           GoNextEvent={nextStep}
         />
       );
-    case 3:
+    case 4:
       return (
         <InputVideoTypeFunction
           FormMode={VideoMode}
@@ -129,7 +148,7 @@ export default function CreateVideo({ VideoMode = false }) {
           GoNextEvent={nextStep}
         />
       );
-    case 4:
+    case 5:
       return (
         <InputVideoQAFunction
           FormMode={VideoMode}
@@ -141,7 +160,7 @@ export default function CreateVideo({ VideoMode = false }) {
           GoNextEvent={nextStep}
         />
       );
-    case 5:
+    case 6:
       return (
         <InputFormPreviewFunction
           FormMode={VideoMode}
