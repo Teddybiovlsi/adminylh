@@ -223,7 +223,7 @@ export default function Home() {
           {video_language}
         </td>
         <td className={styles.container_division_table_rowTable_data}>
-          {video_name}
+          <Link>{video_name}</Link>
         </td>
       </tr>
     );

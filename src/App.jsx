@@ -7,6 +7,7 @@ import BackendRegistration from "./managed/Form/BackendRegistration";
 import Home from "./managed/Pages/Home";
 import Pratice from "./managed/Pages/Pratice";
 import Exam from "./managed/Pages/Exam";
+import VideoPlayer from "./managed/Pages/VideoPlayer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/app.css";
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/Admin/Register" element={<BackendRegistration />} />
           <Route path="/Pratice" element={<Pratice />} />
           <Route path="/Exam" element={<Exam />} />
+          <Route path={`/Video/${VideoUUID}`} element={<VideoPlayer />} />
         </Routes>
       </main>
       <Footer />

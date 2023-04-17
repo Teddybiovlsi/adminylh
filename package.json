@@ -35,6 +35,7 @@
     "react-router-dom": "^6.8.0",
     "sass": "^1.58.0",
     "styled-components": "^5.3.6",
+    "video.js": "^8.0.4",
     "yup": "^1.0.0",
     "zxcvbn": "^4.4.2"
   },
