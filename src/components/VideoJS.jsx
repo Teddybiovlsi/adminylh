@@ -4,6 +4,7 @@ import "video.js/dist/video-js.css";
 
 export const VideoJS = (props) => {
   const videoRef = React.useRef(null);
+  const [currentTime, setCurrentTime] = React.useState(null);
   const playerRef = React.useRef(null);
   const { options, onReady } = props;
 
