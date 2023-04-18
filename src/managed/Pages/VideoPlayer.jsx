@@ -15,6 +15,7 @@ export default function VideoPlayer() {
   const [videoQA, setVideoQA] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isFinish, setIsFinish] = useState(false);
 
   const videoJsOptions = {
     controls: true,
@@ -34,21 +35,24 @@ export default function VideoPlayer() {
     try {
       setLoading(true);
       const response = await get(api);
-      response.data.videoQA.map((item) => {
-        // console.log(item);
-        setVideoQA((prev) => [
-          ...prev,
-          {
-            video_question: item.video_question,
-            video_duration: item.video_duration,
-            video_interrupt_time: item.video_interrupt_time,
-            option_1: JSON.parse(item.option_1),
-            option_2: JSON.parse(item.option_2),
-            option_3: JSON.parse(item.option_3),
-            option_4: JSON.parse(item.option_4),
-          },
-        ]);
+      const VideoInfo = await response.data.videoQA;
+      VideoInfo.map((item) => {
+        if (!ignore) {
+          setVideoQA((prev) => [
+            ...prev,
+            {
+              video_question: item.video_question,
+              video_duration: item.video_duration,
+              video_interrupt_time: item.video_interrupt_time,
+              option_1: JSON.parse(item.option_1),
+              option_2: JSON.parse(item.option_2),
+              option_3: JSON.parse(item.option_3),
+              option_4: JSON.parse(item.option_4),
+            },
+          ]);
+        }
       });
+      // setInfo(VideoInfo);
       setLoading(false);
     } catch (error) {
       setError(StatusCode(error.response.status));
@@ -56,9 +60,43 @@ export default function VideoPlayer() {
   };
 
   useEffect(() => {
+    let ignore = false;
+
+    async function fetchVideoData({ api }) {
+      try {
+        setLoading(true);
+        const response = await get(api);
+        const VideoInfo = await response.data.videoQA;
+        VideoInfo.map((item) => {
+          if (!ignore) {
+            setVideoQA((prev) => [
+              ...prev,
+              {
+                video_question: item.video_question,
+                video_duration: item.video_duration,
+                video_interrupt_time: item.video_interrupt_time,
+                option_1: JSON.parse(item.option_1),
+                option_2: JSON.parse(item.option_2),
+                option_3: JSON.parse(item.option_3),
+                option_4: JSON.parse(item.option_4),
+              },
+            ]);
+          }
+        });
+        // setInfo(VideoInfo);
+        setLoading(false);
+      } catch (error) {
+        setError(StatusCode(error.response.status));
+      }
+    }
+
     fetchVideoData({
       api: `videoQA/${VideoUUID}`,
     });
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const playerRef = React.useRef(null);
@@ -77,6 +115,7 @@ export default function VideoPlayer() {
   };
 
   if (loading) return <Loading />;
+
   return (
     <>
       <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
