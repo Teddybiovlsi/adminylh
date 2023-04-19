@@ -34,3 +34,8 @@ npm run dev
 
 - **[package-lock.json]**
 - **[package.json]**
+
+## 製作團隊
+本台大衛教系統係由Dr.H.Group研究團隊進行研發。<br>
+研發成員為：顏銘德、高彬軒<br>
+本專案託管由：顏銘德負責，聯絡資訊：M11113005@yuntech.edu.tw
