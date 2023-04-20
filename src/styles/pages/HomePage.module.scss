@@ -29,10 +29,28 @@
   right: 5%;
 }
 .container_button {
-  background-color: #4caf50; /* Green */
   border: none;
-  color: white;
-  padding: 15px;
+  padding: 13px;
   text-align: center;
   font-size: 20px;
+  border-radius: 15px;
+  &:disabled{
+    .disabledLink{
+      color: #000;
+      opacity: 0.3;
+      pointer-events: none;
+      cursor: default;
+      text-decoration: none;
+    }
+  }
+  &:not(disabled){
+    .disabledLink{
+      color: #000;
+      opacity: 1;
+      pointer-events: auto;
+      cursor: pointer;
+      text-decoration: none;
+    }
+  }
 }
+
