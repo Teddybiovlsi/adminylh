@@ -1,6 +1,6 @@
-// 建立後台使用者元件
-// 包含email認證/密碼驗證/2次密碼驗證
-// 送出後台使用者資料到API
+// 建立用戶端使用者元件
+// 包含email認證/密碼驗證
+// 送出用戶資料到API
 // 顯示成功訊息/錯誤訊息
 // 若傳送成功，5秒後自動跳轉回到首頁
 
@@ -18,10 +18,13 @@ import AlertBootstrap from "../../components/AlertBootstrap";
 import zxcvbn from "zxcvbn";
 import { post } from "../axios";
 import styles from "../../styles/Form/Registration.module.scss";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";
 
 export default function FrontEndRegistration() {
+  const location = useLocation();
+  const VideoIndex = location.state?.videoIndex;
+
   const checkPwdHint = "請再次輸入您的密碼";
 
   const [pwdScore, setPwdScore] = useState(0);
@@ -49,7 +52,7 @@ export default function FrontEndRegistration() {
   const sendBackendRegistrationData = async (data, resetForm) => {
     try {
       // 正確格式API
-      const response = await post("admin", data);
+      // const response = await post("admin", data);
       // if errorMessage is not empty, then unset it
       {
         errorMessage && setErrorMessage("");

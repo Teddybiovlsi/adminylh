@@ -6,7 +6,7 @@ import { check } from "prettier";
 import StatusCode from "../../sys/StatusCode";
 import Loading from "../../components/Loading";
 import ReactPaginate from "react-paginate";
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 
 export default function Home() {
   // limit video data size in one page
@@ -169,18 +169,6 @@ export default function Home() {
         : [...selectVideoindex, ID]
     );
   };
-
-  const handleCreateUser = () => {
-    // if selectVideoindex is empty do not redirect to CreateUser page
-    if (selectVideoindex.length == 0) {
-      return;
-    }
-    // redirect to CreateUser page
-    else {
-      <Link to="/CreateUser" state={selectVideoindex} />;
-    }
-  };
-
   // 表格標題
   const VideoTitle = () => {
     return (
@@ -373,16 +361,18 @@ export default function Home() {
           disabledClassName="disabled"
         />
       </div>
-      <button
-        className={`${styles.container_button}`}
-        disabled={createUserButton}
-        onClick={handleCreateUser()}
-      >
-        <b>
-          創建
-          <br />
-          帳號
-        </b>
+      <button className={styles.container_button} disabled={createUserButton}>
+        <Link
+          to={!createUserButton ? "/Client/Register" : null}
+          state={{ videoIndex: selectVideoindex }}
+          className={styles.disabledLink}
+        >
+          <b>
+            創建
+            <br />
+            帳號
+          </b>
+        </Link>
       </button>
     </div>
   );
