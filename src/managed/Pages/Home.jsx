@@ -4,6 +4,7 @@ import { get, post } from "../axios";
 import styles from "../../styles/pages/HomePage.module.scss";
 import { check } from "prettier";
 import StatusCode from "../../sys/StatusCode";
+import Loading from "../../components/Loading";
 import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
 
@@ -33,6 +34,8 @@ export default function Home() {
   // selectVideoLanguage is 0, get all video data
   const [selectVideoLanguage, setSelectVideoLanguage] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
+  // 創建用戶帳號button
+  const [createUserButton, setCreateUserButton] = useState(true);
 
   // track current page number
   const [currentPage, setCurrentPage] = useState(1);
@@ -133,6 +136,10 @@ export default function Home() {
     }
   }, [selectVideoindex, videoData]);
 
+  useEffect(() => {
+    setCreateUserButton(selectVideoindex.length != 0 ? false : true);
+  }, [selectVideoindex]);
+
   const handlePageClick = (event) => {
     const newOffset = (event.selected * size) % videoData.length;
     setItemOffset(newOffset);
@@ -161,6 +168,17 @@ export default function Home() {
         ? selectVideoindex.filter((item) => item !== ID)
         : [...selectVideoindex, ID]
     );
+  };
+
+  const handleCreateUser = () => {
+    // if selectVideoindex is empty do not redirect to CreateUser page
+    if (selectVideoindex.length == 0) {
+      return;
+    }
+    // redirect to CreateUser page
+    else {
+      <Link to="/CreateUser" state={selectVideoindex} />;
+    }
   };
 
   // 表格標題
@@ -242,7 +260,7 @@ export default function Home() {
         <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
         <div className={styles.container_division}>
           <h2 className={styles.container_division_secondHeading}>
-            資料載入中...
+            <Loading text="資訊載入中" />
           </h2>
         </div>
       </div>
@@ -355,10 +373,16 @@ export default function Home() {
           disabledClassName="disabled"
         />
       </div>
-      <button className={`${styles.container_button}`}>
-        創建
-        <br />
-        帳號
+      <button
+        className={`${styles.container_button}`}
+        disabled={createUserButton}
+        onClick={handleCreateUser()}
+      >
+        <b>
+          創建
+          <br />
+          帳號
+        </b>
       </button>
     </div>
   );
