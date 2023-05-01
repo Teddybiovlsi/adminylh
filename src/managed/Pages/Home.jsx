@@ -7,16 +7,7 @@ import StatusCode from "../../sys/StatusCode";
 import Loading from "../../components/Loading";
 import ReactPaginate from "react-paginate";
 import { Link, redirect } from "react-router-dom";
-
-// function CreateClientModal(ShowEvent, CloseEvent) {
-//   return (
-//     <Modal show={ShowEvent} onHide={CloseEvent}>
-//       <Modal.Header closeButton>
-//         <Modal.Title>創建使用者</Modal.Title>
-//       </Modal.Header>
-//     </Modal>
-//   );
-// }
+import BtnBootstrap from "../../components/BtnBootstrap";
 
 export default function Home() {
   // limit video data size in one page
@@ -58,10 +49,6 @@ export default function Home() {
   const endOffset = itemOffset + size;
   // get current page video data
   const currentItem = videoData.slice(itemOffset, endOffset);
-
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
   const fetchVideoData = async ({ api }) => {
     try {
@@ -396,46 +383,23 @@ export default function Home() {
           disabledClassName="disabled"
         />
       </div>
-      <button
-        className={styles.container_button}
-        disabled={createUserButton}
-        onClick={handleShow}
-      >
-        <b>
-          創建
-          <br />
-          帳號
-        </b>
+      <button className={styles.container_button} disabled={createUserButton}>
+        <Link
+          to={!createUserButton ? "/Client/Register" : null}
+          state={{
+            videoIndex: selectVideoindex,
+            videoName: selectVideoName,
+            videoData: videoData,
+          }}
+          className={styles.disabledLink}
+        >
+          <b>
+            創建
+            <br />
+            帳號
+          </b>
+        </Link>
       </button>
-
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>創建使用者</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h6 className="mb-2">
-            請確認勾選影片是否正確，<b>若有誤請按下"+"進行修正</b>
-          </h6>
-          <h6>
-            若影片無誤請按下一步，<b>進行創建帳號</b>
-          </h6>
-
-          <Table>
-            <thead>
-              <th>影片名稱</th>
-            </thead>
-            <tbody>
-              {selectVideoName.map((info, index) => {
-                return (
-                  <tr key={index}>
-                    <td>{info}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        </Modal.Body>
-      </Modal>
     </div>
   );
 }

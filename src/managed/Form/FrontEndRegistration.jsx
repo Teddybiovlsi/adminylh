@@ -5,7 +5,7 @@
 // 若傳送成功，5秒後自動跳轉回到首頁
 
 import React, { useEffect, useState } from "react";
-import { Form } from "react-bootstrap";
+import { Form, Modal, ModalFooter, Table } from "react-bootstrap";
 import { Formik } from "formik";
 import * as yup from "yup";
 import Card from "react-bootstrap/Card";
@@ -17,170 +17,221 @@ import FormPwd from "./shared/FormPwd";
 import AlertBootstrap from "../../components/AlertBootstrap";
 import zxcvbn from "zxcvbn";
 import { post } from "../axios";
-import styles from "../../styles/Form/Registration.module.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";
+import PageTitleHeading from "../../components/PageTitleHeading";
+import styles from "../../styles/Form/ClientRegistration.module.scss";
 
 export default function FrontEndRegistration() {
   const location = useLocation();
-  const VideoIndex = location.state?.videoIndex;
+  const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
+  const [videoIndex, setVideoIndex] = useState(location.state?.videoIndex);
+  const [videoName, setVideoName] = useState(location.state?.videoName);
+  const [videoData, setVideoData] = useState(location.state?.videoData);
+  const [videoTempIndex, setVideoTempIndex] = useState([]);
 
-  const checkPwdHint = "請再次輸入您的密碼";
-
-  const [pwdScore, setPwdScore] = useState(0);
-  const [showPwd, { setShowPwd }] = useBoolean(false);
-
-  // 若註冊成功，則顯示成功訊息
-  const [successMessage, setSuccessMessage] = useState("");
-  // 若註冊失敗，則顯示錯誤訊息
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const [successBoolean, setSuccessBoolean] = useState(false);
-
-  const [shouldRedirect, setShouldRedirect] = React.useState(false);
-
-  let navigate = useNavigate();
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
-    // redirect to Home page after 5 seconds
-    if (shouldRedirect) {
-      return navigate("/");
+    if (videoData.length === videoIndex.length) {
+      setIsCheckAllVideo(true);
     }
-  }, [shouldRedirect]);
+  }, [videoData, videoIndex]);
 
-  // create a async function to send data to backend
-  const sendBackendRegistrationData = async (data, resetForm) => {
-    try {
-      // 正確格式API
-      // const response = await post("admin", data);
-      // if errorMessage is not empty, then unset it
-      {
-        errorMessage && setErrorMessage("");
-      }
-      setSuccessMessage("成功創建");
-      setSuccessBoolean(true);
-      resetForm();
-      // redirect to Home page after 5 seconds
-      setTimeout(() => {
-        setShouldRedirect(true);
-      }, 5000);
-    } catch (error) {
-      setErrorMessage(StatusCode(error.response.status));
+  // 單一勾選影片
+  const handleSelectVideoindex = (ID) => {
+    // if selectVideoindex includes ID, set selectVideoindex to selectVideoindex filter ID
+    // otherwise, set selectVideoindex to selectVideoindex add ID
+    setVideoIndex(
+      setVideoIndex.includes(ID)
+        ? setVideoIndex.filter((item) => item !== ID)
+        : [...videoIndex, ID]
+    );
+  };
+  // 全部勾選影片
+  const handleSelectAllVideo = () => {
+    // set isCheckAllVideo to !isCheckAllVideo
+    setIsCheckAllVideo(!isCheckAllVideo);
+    // if isCheckAllVideo is true, set selectVideoindex to []
+    // otherwise, set selectVideoindex to all video ID
+
+    isCheckAllVideo
+      ? setVideoIndex([])
+      : setVideoIndex(videoData.map((item) => item.id));
+  };
+
+  const handleEditVideo = () => {};
+  //
+
+  const [step, setStep] = useState(0);
+  const [isFirstPage, setIsFirstPage] = useState(false);
+  const [isSubmitPage, setIsSubmitPage] = useState(false);
+  const [isLastPage, setIsLastPage] = useState(false);
+  const prevStep = () => setStep(step - 1);
+  const nextStep = () => setStep(step + 1);
+  useEffect(() => {
+    if (step === 0) {
+      setIsFirstPage(true);
+    } else {
+      setIsFirstPage(false);
+    }
+    if (step === 1) {
+      setIsSubmitPage(true);
+    } else {
+      setIsSubmitPage(false);
+    }
+
+    if (step === 2) {
+      setIsLastPage(true);
+    } else {
+      setIsLastPage(false);
+    }
+  }, [step]);
+
+  const ShowClientVideoTable = ({ id, name }) => {
+    return (
+      <tr key={id}>
+        <td>{name}</td>
+      </tr>
+    );
+  };
+
+  const renderPageRegister = () => {
+    switch (step) {
+      case 0:
+        return (
+          <div>
+            <p>第{step + 1}步</p>
+            <h5 className="mb-2">
+              請確認勾選影片是否正確，<b>若有誤請按下"+"進行修正</b>
+            </h5>
+            <h5>
+              若影片無誤請按下一步，<b>進行創建帳號</b>
+            </h5>
+
+            <Table>
+              <thead>
+                <tr>
+                  <th>影片名稱</th>
+                </tr>
+              </thead>
+              <tbody>
+                {videoName.map((info, index) => {
+                  return <ShowClientVideoTable name={info} key={index} />;
+                })}
+              </tbody>
+            </Table>
+          </div>
+        );
+      case 1:
+        return <p>第{step + 1}步</p>;
+      case 2:
+        return <p>第{step + 1}步</p>;
+      default:
+        return null;
     }
   };
 
-  const schema = yup.object({
-    email: yup.string().email("請輸入合法的信箱").required("信箱欄位不得為空"),
-    password: yup
-      .string()
-      .required("密碼欄位不得為空")
-      .test("是否為中等強度密碼", "密碼強度不足，請試著多加特殊符號", () => {
-        return pwdScore > 0;
-      }),
-    confirmPassword: yup
-      .string()
-      .required("再次確認密碼欄位不得為空!")
-      .oneOf([yup.ref("password"), null], "前後密碼必須一致"),
-  });
-
   return (
     <>
-      <PageTitle title="台大分院雲林分院｜創建後台使用者" />
-      {/* 使用自訂Alert元件 */}
-      {successMessage || errorMessage ? (
-        <AlertBootstrap
-          ifsucceed={successBoolean}
-          variant={successMessage ? "success" : "danger"}
-          children={successMessage ? successMessage : errorMessage}
-        />
-      ) : (
-        ""
-      )}
-      <div className="FormStyle d-flex align-items-center justify-content-center">
-        <Card className={`${styles.RegisterCard}`}>
-          <Card.Title className={`${styles.FormTitle}`}>
-            <h1 className="fs-2">
-              <strong>創建後台使用者</strong>
-            </h1>
-          </Card.Title>
-          <Card.Body>
-            <Formik
-              validationSchema={schema}
-              onSubmit={(data, { resetForm }) => {
-                //call sendBackendRegistrationData function and check if it is successful
-                sendBackendRegistrationData(data, resetForm);
-              }}
-              initialValues={{
-                email: "",
-                password: "",
-                confirmPassword: "",
-              }}
-            >
-              {({
-                handleSubmit,
-                handleChange,
-                handleBlur,
-                values,
-                errors,
-                touched,
-              }) => (
-                <Form noValidate onSubmit={handleSubmit}>
-                  <FormEmail
-                    ChangeEvent={handleChange}
-                    BlurEvent={handleBlur}
-                    EmailValue={values.email}
-                    ValidCheck={touched.email && !errors.email}
-                    InValidCheck={!!errors.email}
-                    ErrorMessage={errors.email}
-                  />
-                  <FormPwd
-                    GroupClassName="mb-1"
-                    SetStrengthMeter={true}
-                    StrengthMeterPwdScore={pwdScore}
-                    ChangeEvent={handleChange}
-                    BlurEvent={handleBlur}
-                    InputEvent={(e) => {
-                      setPwdScore(zxcvbn(e.target.value).score);
-                    }}
-                    PwdValue={values.password}
-                    ValidCheck={touched.password & !errors.password}
-                    InValidCheck={!!errors.password}
-                    ControlID={"inputPassword"}
-                    IconID={"showPass"}
-                    SetShowPwdCondition={setShowPwd}
-                    ShowPwdCondition={showPwd}
-                    ErrorMessage={errors.password}
-                  />
-                  <FormPwd
-                    LabelForName="checkInputPassword"
-                    ControlName="confirmPassword"
-                    LabelMessage="請再次確認輸入密碼"
-                    FormControlPlaceHolder={checkPwdHint}
-                    BlurEvent={handleBlur}
-                    ChangeEvent={handleChange}
-                    PwdValue={values.confirmPassword}
-                    SetShowPwdCondition={setShowPwd}
-                    ShowPwdCondition={showPwd}
-                    ValidCheck={
-                      touched.confirmPassword & !errors.confirmPassword
-                    }
-                    InValidCheck={!!errors.confirmPassword}
-                    CorrectMessage="確認密碼與輸入密碼相符"
-                    ErrorMessage={errors.confirmPassword}
-                  />
-                  <div className={`${styles.btnPosition} d-grid gap-2 p-2`}>
-                    <BtnBootstrap
-                      text={"送出"}
-                      btnType={"submit"}
-                      variant={"primary"}
-                    />
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          </Card.Body>
-        </Card>
+      <PageTitle title="台大分院雲林分院｜創建使用者" />
+      <div className={styles.client_container}>
+        <PageTitleHeading text="創建使用者" styleOptions={3} />
+        {renderPageRegister()}
+        <div className={styles.footerBtn}>
+          {isFirstPage !== true && (
+            <BtnBootstrap
+              btnPosition="me-auto"
+              variant="secondary"
+              onClickEventName={prevStep}
+              text="上一步"
+            />
+          )}
+          {isFirstPage == true && (
+            <BtnBootstrap
+              btnPosition="me-auto"
+              variant="success"
+              onClickEventName={handleShow}
+              text="+"
+            />
+          )}
+
+          <BtnBootstrap
+            variant="primary"
+            onClickEventName={isLastPage ? handleClose : nextStep}
+            text={isLastPage ? "送出" : "下一步"}
+          />
+        </div>
       </div>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>請選擇要新增的影片</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th
+                  className={
+                    styles.container_division_table_rowTable_headingCheckBox
+                  }
+                >
+                  <input
+                    type="checkbox"
+                    onChange={() => {
+                      handleSelectAllVideo();
+                    }}
+                    checked={isCheckAllVideo}
+                  />
+                </th>
+                <th>類型</th>
+                <th>語言</th>
+                <th>名稱</th>
+              </tr>
+            </thead>
+            <tbody>
+              {videoData.map((info, index) => {
+                return (
+                  <tr key={index}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        value={info.id}
+                        checked={videoIndex.includes(info.id)}
+                        // onChange={() => {
+                        //   handleSelectVideo(info.id);
+                        // }}
+                        // checked={isCheckVideo[index]}
+                        // className={
+                        //   styles.container_division_table_rowTable_heading_checkbox
+                        // }
+                      />
+                    </td>
+                    <td>{info.video_class}</td>
+                    <td>{info.video_language}</td>
+                    <td>{info.video_name}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </Modal.Body>
+        <Modal.Footer>
+          <BtnBootstrap
+            btnPosition="me-auto"
+            variant="secondary"
+            onClickEventName={handleClose}
+            text="取消"
+          />
+          <BtnBootstrap
+            variant="danger"
+            onClickEventName={handleEditVideo}
+            text="修改"
+          />
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }
