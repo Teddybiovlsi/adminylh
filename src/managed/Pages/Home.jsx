@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import { Form, Table, Pagination } from "react-bootstrap";
+import { Form, Table, Pagination, Modal } from "react-bootstrap";
 import { get, post } from "../axios";
 import styles from "../../styles/pages/HomePage.module.scss";
 import { check } from "prettier";
@@ -7,6 +7,16 @@ import StatusCode from "../../sys/StatusCode";
 import Loading from "../../components/Loading";
 import ReactPaginate from "react-paginate";
 import { Link, redirect } from "react-router-dom";
+
+// function CreateClientModal(ShowEvent, CloseEvent) {
+//   return (
+//     <Modal show={ShowEvent} onHide={CloseEvent}>
+//       <Modal.Header closeButton>
+//         <Modal.Title>創建使用者</Modal.Title>
+//       </Modal.Header>
+//     </Modal>
+//   );
+// }
 
 export default function Home() {
   // limit video data size in one page
@@ -25,6 +35,7 @@ export default function Home() {
 
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [selectVideoindex, setSelectVideoindex] = useState([]);
+  const [selectVideoName, setSelectVideoName] = useState([]);
   // loading is true, show loading text, until loading is false
   const [loading, setLoading] = useState(false);
   // 取得影片類別
@@ -47,6 +58,10 @@ export default function Home() {
   const endOffset = itemOffset + size;
   // get current page video data
   const currentItem = videoData.slice(itemOffset, endOffset);
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const fetchVideoData = async ({ api }) => {
     try {
@@ -135,6 +150,26 @@ export default function Home() {
       setIsCheckAllVideo(false);
     }
   }, [selectVideoindex, videoData]);
+
+  useEffect(() => {
+    if (selectVideoindex.length == 0) {
+      setSelectVideoName([]);
+    } else if (selectVideoindex.length == videoData.length) {
+      setSelectVideoName(videoData.map((item) => item.video_name));
+    } else {
+      selectVideoindex.map((item) => {
+        const found = videoData.find(
+          (element) => element.id == item
+        ).video_name;
+
+        setSelectVideoName(
+          selectVideoName.includes(found)
+            ? selectVideoName.filter((item) => item == found)
+            : [...selectVideoName, found]
+        );
+      });
+    }
+  }, [selectVideoindex]);
 
   useEffect(() => {
     setCreateUserButton(selectVideoindex.length != 0 ? false : true);
@@ -361,19 +396,46 @@ export default function Home() {
           disabledClassName="disabled"
         />
       </div>
-      <button className={styles.container_button} disabled={createUserButton}>
-        <Link
-          to={!createUserButton ? "/Client/Register" : null}
-          state={{ videoIndex: selectVideoindex }}
-          className={styles.disabledLink}
-        >
-          <b>
-            創建
-            <br />
-            帳號
-          </b>
-        </Link>
+      <button
+        className={styles.container_button}
+        disabled={createUserButton}
+        onClick={handleShow}
+      >
+        <b>
+          創建
+          <br />
+          帳號
+        </b>
       </button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>創建使用者</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h6 className="mb-2">
+            請確認勾選影片是否正確，<b>若有誤請按下"+"進行修正</b>
+          </h6>
+          <h6>
+            若影片無誤請按下一步，<b>進行創建帳號</b>
+          </h6>
+
+          <Table>
+            <thead>
+              <th>影片名稱</th>
+            </thead>
+            <tbody>
+              {selectVideoName.map((info, index) => {
+                return (
+                  <tr key={index}>
+                    <td>{info}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
