@@ -20,10 +20,10 @@ import { post } from "../axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";
 import PageTitleHeading from "../../components/PageTitleHeading";
-import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "../../styles/Form/ClientRegistration.module.scss";
+import ToastAlert from "../../components/ToastAlert";
 
 export default function FrontEndRegistration() {
   const location = useLocation();
@@ -108,19 +108,6 @@ export default function FrontEndRegistration() {
       });
     } else {
       handleShowM2();
-
-      // setVideoIndex(videoTempIndex);
-      // handleClose();
-      // toast.success('修改影片成功', {
-      //   position: "top-right",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   });
     }
   };
 
@@ -129,9 +116,9 @@ export default function FrontEndRegistration() {
     setVideoName(videoTempName);
     handleClose();
     handleCloseM2();
-    toast.success("修改影片成功", {
+    toast.success("修改影片成功!", {
       position: "top-right",
-      autoClose: 5000,
+      autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,

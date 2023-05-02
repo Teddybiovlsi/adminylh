@@ -1,12 +1,13 @@
 import React from "react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { Flip } from "react-toastify";
 
 export default function ToastAlert({ ThemeMode = "light" }) {
   return (
     <ToastContainer
-      position="top-center"
+      position="top-right"
       transition={Flip}
+      limit={1}
       autoClose={3000}
       hideProgressBar={false}
       newestOnTop={false}
