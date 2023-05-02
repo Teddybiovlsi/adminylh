@@ -20,34 +20,68 @@ import { post } from "../axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";
 import PageTitleHeading from "../../components/PageTitleHeading";
+import ToastAlert from "../../components/ToastAlert";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import styles from "../../styles/Form/ClientRegistration.module.scss";
+// import { confirmAlert } from "react-confirm-alert";
+// import "react-confirm-alert/src/react-confirm-alert.css";
 
 export default function FrontEndRegistration() {
   const location = useLocation();
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [videoIndex, setVideoIndex] = useState(location.state?.videoIndex);
+  const [videoTempIndex, setVideoTempIndex] = useState(videoIndex);
+
   const [videoName, setVideoName] = useState(location.state?.videoName);
+  const [videoTempName, setVideoTempName] = useState(videoName);
+
   const [videoData, setVideoData] = useState(location.state?.videoData);
-  const [videoTempIndex, setVideoTempIndex] = useState([]);
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const [show2, setShow2] = useState(false);
+  const handleCloseM2 = () => setShow2(false);
+  const handleShowM2 = () => setShow2(true);
+
   useEffect(() => {
-    if (videoData.length === videoIndex.length) {
+    if (videoData.length === videoTempIndex.length) {
       setIsCheckAllVideo(true);
+    } else {
+      setIsCheckAllVideo(false);
     }
-  }, [videoData, videoIndex]);
+  }, [videoData, videoTempIndex]);
+
+  useEffect(() => {
+    if (videoTempIndex.length === 0) {
+      setVideoTempName([]);
+    } else if (videoData.length === videoTempIndex.length) {
+      setVideoTempName(videoData.map((item) => item.video_name));
+    } else {
+      videoTempIndex.map((item) => {
+        const found = videoData.find(
+          (element) => element.id == item
+        ).video_name;
+
+        setVideoTempName(
+          videoTempName.includes(found)
+            ? videoTempName.filter((item) => item == found)
+            : [...videoTempName, found]
+        );
+      });
+    }
+  }, [videoTempIndex]);
 
   // 單一勾選影片
   const handleSelectVideoindex = (ID) => {
     // if selectVideoindex includes ID, set selectVideoindex to selectVideoindex filter ID
     // otherwise, set selectVideoindex to selectVideoindex add ID
-    setVideoIndex(
-      setVideoIndex.includes(ID)
-        ? setVideoIndex.filter((item) => item !== ID)
-        : [...videoIndex, ID]
+    setVideoTempIndex(
+      videoTempIndex.includes(ID)
+        ? videoTempIndex.filter((item) => item !== ID)
+        : [...videoTempIndex, ID]
     );
   };
   // 全部勾選影片
@@ -58,11 +92,56 @@ export default function FrontEndRegistration() {
     // otherwise, set selectVideoindex to all video ID
 
     isCheckAllVideo
-      ? setVideoIndex([])
-      : setVideoIndex(videoData.map((item) => item.id));
+      ? setVideoTempIndex([])
+      : setVideoTempIndex(videoData.map((item) => item.id));
   };
 
-  const handleEditVideo = () => {};
+  const handleEditVideo = () => {
+    if (videoTempIndex.length === 0) {
+      toast.error("請勾選影片!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      handleShowM2();
+
+      // setVideoIndex(videoTempIndex);
+      // handleClose();
+      // toast.success('修改影片成功', {
+      //   position: "top-right",
+      //   autoClose: 5000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      //   theme: "light",
+      //   });
+    }
+  };
+
+  const handleConfirmEditVideo = () => {
+    setVideoIndex(videoTempIndex);
+    setVideoName(videoTempName);
+    handleClose();
+    handleCloseM2();
+    toast.success("修改影片成功", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
   //
 
   const [step, setStep] = useState(0);
@@ -167,7 +246,7 @@ export default function FrontEndRegistration() {
       </div>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>請選擇要新增的影片</Modal.Title>
+          <Modal.Title>請選擇要修改/新增的影片</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <table className="table table-striped">
@@ -199,14 +278,10 @@ export default function FrontEndRegistration() {
                       <input
                         type="checkbox"
                         value={info.id}
-                        checked={videoIndex.includes(info.id)}
-                        // onChange={() => {
-                        //   handleSelectVideo(info.id);
-                        // }}
-                        // checked={isCheckVideo[index]}
-                        // className={
-                        //   styles.container_division_table_rowTable_heading_checkbox
-                        // }
+                        checked={videoTempIndex.includes(info.id)}
+                        onChange={() => {
+                          handleSelectVideoindex(info.id);
+                        }}
                       />
                     </td>
                     <td>{info.video_class}</td>
@@ -232,6 +307,45 @@ export default function FrontEndRegistration() {
           />
         </Modal.Footer>
       </Modal>
+      {/* 再次確認影片資訊視窗 */}
+      <Modal show={show2} onHide={handleCloseM2}>
+        <Modal.Header closeButton>
+          <Modal.Title>請再次確認要修改的影片</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h4>
+            <b>修改前影片名稱:</b>{" "}
+          </h4>
+          <ol>
+            {videoName.map((info, index) => {
+              return <li key={index}>{info}</li>;
+            })}
+          </ol>
+          <h4>
+            <b>修改後影片名稱:</b>
+          </h4>
+          <ol>
+            {videoTempName.map((info, index) => {
+              return <li key={index}>{info}</li>;
+            })}
+          </ol>
+          {/* {videoTempIndex.map((info, index) => { */}
+        </Modal.Body>
+        <Modal.Footer>
+          <BtnBootstrap
+            btnPosition="me-auto"
+            variant="secondary"
+            onClickEventName={handleCloseM2}
+            text="取消"
+          />
+          <BtnBootstrap
+            variant="danger"
+            onClickEventName={handleConfirmEditVideo}
+            text="確認"
+          />
+        </Modal.Footer>
+      </Modal>
+      <ToastAlert />
     </>
   );
 }

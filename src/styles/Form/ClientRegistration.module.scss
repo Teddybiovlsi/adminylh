@@ -1,3 +1,5 @@
+@use "../RWD/ClientRegistrationRWD.module.scss";
+
 .client_container {
 //   transform: perspective(75em) rotateX(18deg);
   // position: absolute;
@@ -6,4 +8,8 @@
   border-radius: 10px;
   border: 1px solid;
   border-color: rgb(213, 220, 226) rgb(213, 220, 226) rgb(184, 194, 204);
+}
+.client_container{
+  margin: 0 auto;
+  position: relative;
 }

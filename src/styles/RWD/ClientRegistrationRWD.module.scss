@@ -1,0 +1,26 @@
+@media only screen and (max-width: 576px) {
+    .client_container {
+      width: 95vw;
+    }
+  }
+  @media (min-width: 576px) {
+    .client_container {
+      width: 65vw;
+    }
+  }
+  @media (min-width: 768px) {
+    .client_container {
+      width: 60vw;
+    }
+  }
+  @media (min-width: 992px) {
+    .client_container {
+      width: 55vw;
+    }
+  }
+  @media (min-width: 1200px) {
+    .client_container {
+      width: 45vw;
+    }
+  }
+  
