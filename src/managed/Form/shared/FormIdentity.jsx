@@ -1,41 +1,39 @@
-import React, { Component } from "react";
+import React from "react";
 import { Form, FloatingLabel } from "react-bootstrap";
 
-function FormEmail({
+export default function FormIdentity({
   GroupClassName = "mb-3",
   LabelClassName = "fs-3",
   FeedBackClassName = "fs-5",
-  ControlName = "email",
+  ControlName = "",
   ChangeEvent,
   BlurEvent,
-  EmailValue = "",
+  TextValue = "",
   ValidCheck,
   InValidCheck,
-  FormControlPlaceHolder = "name@example.com",
-  LabelMessage = "請輸入Email:",
-  CorrectMessage = "信箱格式輸入正確",
+  FormControlPlaceHolder = "A123456789",
+  LabelMessage = "請輸入身分證字號:",
+  CorrectMessage = "格式正確",
   ErrorMessage = "",
 }) {
   return (
-    <Form.Group
-      className={GroupClassName}
-      controlId="exampleForm.ControlInput1"
-    >
+    <Form.Group className={GroupClassName} controlId="IdentityInput">
       <Form.Label className={LabelClassName} style={{ cursor: "pointer" }}>
         {LabelMessage}
       </Form.Label>
       <FloatingLabel
-        controlId="floatingInput"
-        label="Email address"
+        controlId="IdentityInput"
+        label="User Identity number"
         className="mb-3"
       >
         <Form.Control
-          type="email"
+          type="text"
           name={ControlName}
           placeholder={FormControlPlaceHolder}
           onChange={ChangeEvent}
           onBlur={BlurEvent}
-          value={EmailValue}
+          value={TextValue}
+          maxLength={10}
           isValid={ValidCheck}
           isInvalid={!!InValidCheck}
         />
@@ -51,5 +49,3 @@ function FormEmail({
     </Form.Group>
   );
 }
-
-export default FormEmail;

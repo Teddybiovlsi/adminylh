@@ -5,8 +5,14 @@
 // 若傳送成功，5秒後自動跳轉回到首頁
 
 import React, { useEffect, useState } from "react";
-import { Form, Modal, ModalFooter, Table } from "react-bootstrap";
-import { Formik } from "formik";
+import {
+  Form,
+  Modal,
+  ModalFooter,
+  Table,
+  FloatingLabel,
+} from "react-bootstrap";
+import * as formik from "formik";
 import * as yup from "yup";
 import Card from "react-bootstrap/Card";
 import PageTitle from "../../components/Title";
@@ -14,7 +20,6 @@ import BtnBootstrap from "../../components/BtnBootstrap";
 import useBoolean from "./shared/useBoolean";
 import FormEmail from "./shared/FormEmail";
 import FormPwd from "./shared/FormPwd";
-import AlertBootstrap from "../../components/AlertBootstrap";
 import zxcvbn from "zxcvbn";
 import { post } from "../axios";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -22,8 +27,9 @@ import StatusCode from "../../sys/StatusCode";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import styles from "../../styles/Form/ClientRegistration.module.scss";
 import ToastAlert from "../../components/ToastAlert";
+import FormIdentity from "./shared/FormIdentity";
+import styles from "../../styles/Form/ClientRegistration.module.scss";
 
 export default function FrontEndRegistration() {
   const location = useLocation();
@@ -35,7 +41,7 @@ export default function FrontEndRegistration() {
   const [videoTempName, setVideoTempName] = useState(videoName);
 
   const [videoData, setVideoData] = useState(location.state?.videoData);
-
+  // 以下是第一頁的表單內容
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -43,7 +49,7 @@ export default function FrontEndRegistration() {
   const [show2, setShow2] = useState(false);
   const handleCloseM2 = () => setShow2(false);
   const handleShowM2 = () => setShow2(true);
-
+  // 限制重複點擊
   const [disabledBtn, setDisabledBtn] = useState(false);
 
   useEffect(() => {
@@ -133,7 +139,31 @@ export default function FrontEndRegistration() {
       theme: "light",
     });
   };
-  //
+
+  // 以下是第二頁表單內容
+  const [pwdScore, setPwdScore] = useState(0);
+  const [showPwd, { setShowPwd }] = useBoolean(false);
+  const { Formik } = formik;
+
+  const schema = yup.object().shape({
+    email: yup
+      .string()
+      .email("信箱格式錯誤，請重新嘗試")
+      .required("請輸入信箱"),
+    user_account: yup
+      .string()
+      .required("請輸入身分證字號")
+      .matches(/^[A-Za-z][A-D0-9]\d{8}$/, {
+        message: "身分證字號格式錯誤，請重新嘗試",
+        excludeEmptyString: true,
+      }),
+    // user_password: yup.string().required("請輸入密碼"),
+  });
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    user_account: "",
+    // user_password: "",
+  });
 
   const [step, setStep] = useState(0);
   const [isFirstPage, setIsFirstPage] = useState(false);
@@ -196,7 +226,84 @@ export default function FrontEndRegistration() {
           </div>
         );
       case 1:
-        return <p>第{step + 1}步</p>;
+        return (
+          <div>
+            <p>第{step + 1}步</p>
+            <Formik
+              initialValues={{
+                email: userInfo.email,
+                user_account: "",
+                // user_password: "",
+              }}
+              validationSchema={schema}
+              onSubmit={(values) => {
+                console.log(values);
+                // setUserInfo(values);
+                // nextStep();
+              }}
+            >
+              {({
+                handleSubmit,
+                handleChange,
+                handleBlur,
+                values,
+                errors,
+                touched,
+              }) => (
+                <Form noValidate onSubmit={handleSubmit}>
+                  <FormEmail
+                    ChangeEvent={handleChange}
+                    BlurEvent={handleBlur}
+                    EmailValue={values.email ? values.email : userInfo.email}
+                    ValidCheck={touched.email && !errors.email}
+                    InValidCheck={touched.email && errors.email}
+                    ErrorMessage={errors.email}
+                    LabelMessage="請輸入您的信箱(必填)"
+                  />
+                  <FormIdentity
+                    ControlName="user_account"
+                    ChangeEvent={handleChange}
+                    BlurEvent={handleBlur}
+                    TextValue={values.user_account}
+                    IdentityValue={values.user_account}
+                    ValidCheck={touched.user_account && !errors.user_account}
+                    InValidCheck={touched.user_account && errors.user_account}
+                    ErrorMessage={errors.user_account}
+                  />
+                  {/* <FormPwd
+                    GroupClassName="mb-1"
+                    SetStrengthMeter={true}
+                    StrengthMeterPwdScore={pwdScore}
+                    ChangeEvent={handleChange}
+                    BlurEvent={handleBlur}
+                    InputEvent={(e) => {
+                      setPwdScore(zxcvbn(e.target.value).score);
+                    }}
+                    PwdValue={values.user_password}
+                    ValidCheck={touched.user_password & !errors.user_password}
+                    InValidCheck={!!errors.user_password}
+                    ControlID={"inputPassword"}
+                    IconID={"showPass"}
+                    SetShowPwdCondition={setShowPwd}
+                    ShowPwdCondition={showPwd}
+                    ErrorMessage={errors.user_password}
+                  /> */}
+                  <BtnBootstrap
+                    btnPosition="me-auto"
+                    variant="secondary"
+                    onClickEventName={prevStep}
+                    text="上一步"
+                  />
+                  <BtnBootstrap
+                    text={"下一步"}
+                    btnType="submit"
+                    variant={"primary"}
+                  />
+                </Form>
+              )}
+            </Formik>
+          </div>
+        );
       case 2:
         return <p>第{step + 1}步</p>;
       default:
@@ -211,7 +318,7 @@ export default function FrontEndRegistration() {
         <PageTitleHeading text="創建使用者" styleOptions={3} />
         {renderPageRegister()}
         <div className={styles.footerBtn}>
-          {isFirstPage !== true && (
+          {isFirstPage !== true && isSubmitPage != true && (
             <BtnBootstrap
               btnPosition="me-auto"
               variant="secondary"
@@ -227,14 +334,17 @@ export default function FrontEndRegistration() {
               text="+"
             />
           )}
-
-          <BtnBootstrap
-            variant="primary"
-            onClickEventName={isLastPage ? handleClose : nextStep}
-            text={isLastPage ? "送出" : "下一步"}
-          />
+          {isSubmitPage != true && (
+            <BtnBootstrap
+              variant="primary"
+              onClickEventName={isLastPage ? handleClose : nextStep}
+              text={isLastPage ? "送出" : "下一步"}
+            />
+          )}
         </div>
       </div>
+
+      {/* 影片修改Modal */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>請選擇要修改/新增的影片</Modal.Title>
