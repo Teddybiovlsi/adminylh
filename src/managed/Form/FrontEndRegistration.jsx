@@ -24,8 +24,6 @@ import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "../../styles/Form/ClientRegistration.module.scss";
-// import { confirmAlert } from "react-confirm-alert";
-// import "react-confirm-alert/src/react-confirm-alert.css";
 
 export default function FrontEndRegistration() {
   const location = useLocation();
