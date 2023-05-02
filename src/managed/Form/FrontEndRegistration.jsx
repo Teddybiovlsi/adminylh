@@ -44,6 +44,8 @@ export default function FrontEndRegistration() {
   const handleCloseM2 = () => setShow2(false);
   const handleShowM2 = () => setShow2(true);
 
+  const [disabledBtn, setDisabledBtn] = useState(false);
+
   useEffect(() => {
     if (videoData.length === videoTempIndex.length) {
       setIsCheckAllVideo(true);
@@ -106,6 +108,10 @@ export default function FrontEndRegistration() {
         progress: undefined,
         theme: "light",
       });
+      setDisabledBtn(true);
+      setTimeout(() => {
+        setDisabledBtn(false);
+      }, 3000);
     } else {
       handleShowM2();
     }
@@ -289,6 +295,7 @@ export default function FrontEndRegistration() {
             variant="danger"
             onClickEventName={handleEditVideo}
             text="修改"
+            disabled={disabledBtn}
           />
         </Modal.Footer>
       </Modal>
