@@ -95,7 +95,7 @@ export default function FrontEndRegistration() {
       ? setVideoTempIndex([])
       : setVideoTempIndex(videoData.map((item) => item.id));
   };
-
+  // 修改影片事件
   const handleEditVideo = () => {
     if (videoTempIndex.length === 0) {
       toast.error("請勾選影片!", {
@@ -116,7 +116,7 @@ export default function FrontEndRegistration() {
       handleShowM2();
     }
   };
-
+  // 確認修改影片事件
   const handleConfirmEditVideo = () => {
     setVideoIndex(videoTempIndex);
     setVideoName(videoTempName);
