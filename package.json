@@ -1,7 +1,7 @@
 {
   "name": "ntuh_proj",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite --port 3000",
@@ -26,7 +26,6 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.0",
     "react-bootstrap-icons": "^1.10.2",
-    "react-confirm-alert": "^3.0.6",
     "react-device-detect": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
