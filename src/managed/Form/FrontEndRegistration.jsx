@@ -29,6 +29,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ToastAlert from "../../components/ToastAlert";
 import FormIdentity from "./shared/FormIdentity";
+import { Stepper, Step } from "react-form-stepper";
 import styles from "../../styles/Form/ClientRegistration.module.scss";
 
 export default function FrontEndRegistration() {
@@ -237,9 +238,9 @@ export default function FrontEndRegistration() {
               }}
               validationSchema={schema}
               onSubmit={(values) => {
-                console.log(values);
-                // setUserInfo(values);
-                // nextStep();
+                // console.log(values);
+                setUserInfo(values);
+                nextStep();
               }}
             >
               {({
@@ -316,6 +317,18 @@ export default function FrontEndRegistration() {
       <PageTitle title="台大分院雲林分院｜創建使用者" />
       <div className={styles.client_container}>
         <PageTitleHeading text="創建使用者" styleOptions={3} />
+        <Stepper
+          activeStep={step}
+          connectorStateColors
+          connectorStyleConfig={{
+            activeColor: "#9441DF",
+            completedColor: "#9441DF",
+          }}
+        >
+          <Step label="基本資料確認" />
+          <Step label="帳號填寫" />
+          <Step label="最終確認" />
+        </Stepper>
         {renderPageRegister()}
         <div className={styles.footerBtn}>
           {isFirstPage !== true && isSubmitPage != true && (
