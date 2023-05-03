@@ -142,7 +142,6 @@ export default function FrontEndRegistration() {
   };
 
   // 以下是第二頁表單內容
-  const [pwdScore, setPwdScore] = useState(0);
   const [showPwd, { setShowPwd }] = useBoolean(false);
   const { Formik } = formik;
 
@@ -158,13 +157,14 @@ export default function FrontEndRegistration() {
         message: "身分證字號格式錯誤，請重新嘗試",
         excludeEmptyString: true,
       }),
-    // user_password: yup.string().required("請輸入密碼"),
+    user_password: yup.string().required("請輸入密碼"),
   });
   const [userInfo, setUserInfo] = useState({
     email: "",
     user_account: "",
-    // user_password: "",
+    user_password: "",
   });
+  const [pwdScore, setPwdScore] = useState(0);
 
   const [step, setStep] = useState(0);
   const [isFirstPage, setIsFirstPage] = useState(false);
@@ -233,12 +233,14 @@ export default function FrontEndRegistration() {
             <Formik
               initialValues={{
                 email: userInfo.email,
-                user_account: "",
-                // user_password: "",
+                user_account: userInfo.user_account,
+                user_password: userInfo.user_password,
               }}
               validationSchema={schema}
               onSubmit={(values) => {
-                // console.log(values);
+                if (values == "") {
+                  nextStep();
+                }
                 setUserInfo(values);
                 nextStep();
               }}
@@ -265,13 +267,21 @@ export default function FrontEndRegistration() {
                     ControlName="user_account"
                     ChangeEvent={handleChange}
                     BlurEvent={handleBlur}
-                    TextValue={values.user_account}
+                    TextValue={
+                      values.user_account
+                        ? values.user_account
+                        : userInfo.user_account
+                    }
                     IdentityValue={values.user_account}
                     ValidCheck={touched.user_account && !errors.user_account}
                     InValidCheck={touched.user_account && errors.user_account}
                     ErrorMessage={errors.user_account}
+                    LabelMessage="請輸入您的身分證字號(必填)"
                   />
-                  {/* <FormPwd
+
+                  <FormPwd
+                    LabelMessage="請輸入您的密碼(必填)"
+                    ControlName="user_password"
                     GroupClassName="mb-1"
                     SetStrengthMeter={true}
                     StrengthMeterPwdScore={pwdScore}
@@ -280,15 +290,19 @@ export default function FrontEndRegistration() {
                     InputEvent={(e) => {
                       setPwdScore(zxcvbn(e.target.value).score);
                     }}
-                    PwdValue={values.user_password}
+                    PwdValue={
+                      values.user_password
+                        ? values.user_password
+                        : userInfo.user_password
+                    }
                     ValidCheck={touched.user_password & !errors.user_password}
-                    InValidCheck={!!errors.user_password}
+                    InValidCheck={touched.user_password & errors.user_password}
                     ControlID={"inputPassword"}
                     IconID={"showPass"}
                     SetShowPwdCondition={setShowPwd}
                     ShowPwdCondition={showPwd}
                     ErrorMessage={errors.user_password}
-                  /> */}
+                  />
                   <BtnBootstrap
                     btnPosition="me-auto"
                     variant="secondary"
@@ -306,7 +320,42 @@ export default function FrontEndRegistration() {
           </div>
         );
       case 2:
-        return <p>第{step + 1}步</p>;
+        return (
+          <div>
+            <h4>
+              <b>1.請確認勾選影片是否正確</b>{" "}
+            </h4>
+            <Table>
+              <thead>
+                <tr>
+                  <th>影片名稱</th>
+                </tr>
+              </thead>
+              <tbody>
+                {videoName.map((info, index) => {
+                  return <ShowClientVideoTable name={info} key={index} />;
+                })}
+              </tbody>
+            </Table>
+            <h4>
+              <b>2.請確認填寫帳號是否正確</b>{" "}
+            </h4>
+            <Table>
+              <thead>
+                <tr>
+                  <th>信箱</th>
+                  <th>身分證字號</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{userInfo.email}</td>
+                  <td>{userInfo.user_account}</td>
+                </tr>
+              </tbody>
+            </Table>
+          </div>
+        );
       default:
         return null;
     }
@@ -322,7 +371,12 @@ export default function FrontEndRegistration() {
           connectorStateColors
           connectorStyleConfig={{
             activeColor: "#9441DF",
-            completedColor: "#9441DF",
+          }}
+          styleConfig={{
+            activeBgColor: "#644be1",
+            activeTextColor: "#fff",
+            completedBgColor: "#9441DF",
+            completedTextColor: "#fff",
           }}
         >
           <Step label="基本資料確認" />
