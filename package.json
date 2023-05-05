@@ -7,7 +7,11 @@
     "dev": "vite --port 3000",
     "build": "vite build",
     "preview": "vite preview",
-    "watch": "npm-watch"
+    "watch": "npm-watch",
+    "test": "vitest",
+    "lint": "eslint --ext .js,.jsx src",
+    "lint:fix": "eslint --fix --ext .js,.jsx src"
+
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
@@ -15,6 +19,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "axios": "^1.3.4",
+    "bcrypt": "^5.1.0",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.3",
     "formik": "^2.2.9",
@@ -60,6 +65,7 @@
     "eslint-plugin-react": "^7.32.2",
     "prettier": "^2.8.7",
     "prettier-eslint": "^15.0.1",
-    "vite": "^4.0.0"
+    "vite": "^4.0.0",
+    "vitest": "^0.31.0"
   }
 }

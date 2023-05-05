@@ -22,7 +22,7 @@ import FormEmail from "./shared/FormEmail";
 import FormPwd from "./shared/FormPwd";
 import zxcvbn from "zxcvbn";
 import { post } from "../axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { json, useLocation, useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import { toast } from "react-toastify";
@@ -172,6 +172,35 @@ export default function FrontEndRegistration() {
   const [isLastPage, setIsLastPage] = useState(false);
   const prevStep = () => setStep(step - 1);
   const nextStep = () => setStep(step + 1);
+
+  const handleSubmit = async () => {
+    if (isLastPage) {
+      // check if the userInfo and videoIndex is not empty
+      if (userInfo && videoIndex.length !== 0) {
+        try {
+          const values = {
+            ...userInfo,
+            videoIndex,
+          };
+          console.log(JSON.stringify(values));
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        toast.error("請確認是否有填寫完整", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     if (step === 0) {
       setIsFirstPage(true);
@@ -404,7 +433,7 @@ export default function FrontEndRegistration() {
           {isSubmitPage != true && (
             <BtnBootstrap
               variant="primary"
-              onClickEventName={isLastPage ? handleClose : nextStep}
+              onClickEventName={isLastPage ? handleSubmit : nextStep}
               text={isLastPage ? "送出" : "下一步"}
             />
           )}
