@@ -8,7 +8,7 @@ function FormPwd({
   SetStrengthMeter = false,
   StrengthMeterPwdScore = 0,
   PwdMaxLength = 20,
-  GroupClassName = "mb-3",
+  GroupClassName = "mb-2",
   LabelClassName = "fs-3",
   InputGroupClassName = "mb-1",
   FeedBackClassName = "fs-5",

@@ -1,3 +1,12 @@
 main {
-  min-height: calc(100% - 50px);
+  min-height: calc(100% - 68px);
+}
+.app{
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.app_main{
+  margin-bottom: 50px;
 }

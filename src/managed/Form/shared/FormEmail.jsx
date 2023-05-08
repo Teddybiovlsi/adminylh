@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Form, FloatingLabel } from "react-bootstrap";
 
 function FormEmail({
-  GroupClassName = "mb-3",
+  GroupClassName = "mb-2",
   LabelClassName = "fs-3",
   FeedBackClassName = "fs-5",
   ControlName = "email",

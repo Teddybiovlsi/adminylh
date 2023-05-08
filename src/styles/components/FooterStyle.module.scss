@@ -4,17 +4,18 @@
 }
 
 #footerStyle {
+  clear: both;
   position: fixed;
-  right: 0;
-  left: 0;
+  height: 35px;
+  overflow: hidden;
+  display: block;
   bottom: 0;
-  z-index: 1000;
+  width: 100%;
 }
 
 #footerStyle {
-  margin-top: 10px;
   padding: 5px 0px 5px 0px;
-  text-align: center;
+  // text-align: center;
 }
 
 #footerStyle {

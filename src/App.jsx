@@ -16,9 +16,9 @@ function App() {
   return (
     // Routes 若有網址則如第一範例/Register前面須加上/#組合起來為/#/Register
     //  <Route exact path="/" element={<UserLoginForm />} />
-    <div className="container">
+    <div className="app">
       <Header />
-      <main>
+      <main className="app_main">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/Admin/Register" element={<BackendRegistration />} />
