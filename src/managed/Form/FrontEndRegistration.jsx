@@ -150,6 +150,7 @@ export default function FrontEndRegistration() {
       .string()
       .email("信箱格式錯誤，請重新嘗試")
       .required("請輸入信箱"),
+    name: yup.string().required("請輸入姓名"),
     user_account: yup
       .string()
       .required("請輸入身分證字號")
@@ -160,6 +161,7 @@ export default function FrontEndRegistration() {
     user_password: yup.string().required("請輸入密碼"),
   });
   const [userInfo, setUserInfo] = useState({
+    name: "",
     email: "",
     user_account: "",
     user_password: "",
@@ -182,7 +184,8 @@ export default function FrontEndRegistration() {
             ...userInfo,
             videoIndex,
           };
-          console.log(JSON.stringify(values));
+
+          // console.log(JSON.stringify(values));
         } catch (error) {
           console.log(error);
         }
@@ -233,7 +236,6 @@ export default function FrontEndRegistration() {
       case 0:
         return (
           <div>
-            <p>第{step + 1}步</p>
             <h5 className="mb-2">
               請確認勾選影片是否正確，<b>若有誤請按下"+"進行修正</b>
             </h5>
@@ -258,9 +260,9 @@ export default function FrontEndRegistration() {
       case 1:
         return (
           <div>
-            <p>第{step + 1}步</p>
             <Formik
               initialValues={{
+                name: userInfo.name,
                 email: userInfo.email,
                 user_account: userInfo.user_account,
                 user_password: userInfo.user_password,
@@ -283,6 +285,21 @@ export default function FrontEndRegistration() {
                 touched,
               }) => (
                 <Form noValidate onSubmit={handleSubmit}>
+                  <FormIdentity
+                    ControlName="name"
+                    ChangeEvent={handleChange}
+                    BlurEvent={handleBlur}
+                    TextValue={values.name ? values.name : userInfo.name}
+                    maxLens={100}
+                    IdentityValue={values.name}
+                    ValidCheck={touched.name && !errors.name}
+                    InValidCheck={touched.name && errors.name}
+                    ErrorMessage={errors.name}
+                    LabelMessage="請輸入您的姓名(必填)"
+                    componentID="name"
+                    componentLableText="User Name"
+                  />
+
                   <FormEmail
                     ChangeEvent={handleChange}
                     BlurEvent={handleBlur}
@@ -301,11 +318,13 @@ export default function FrontEndRegistration() {
                         ? values.user_account
                         : userInfo.user_account
                     }
+                    maxLens={10}
                     IdentityValue={values.user_account}
                     ValidCheck={touched.user_account && !errors.user_account}
                     InValidCheck={touched.user_account && errors.user_account}
                     ErrorMessage={errors.user_account}
                     LabelMessage="請輸入您的身分證字號(必填)"
+                    componentID="user_account"
                   />
 
                   <FormPwd
@@ -391,7 +410,7 @@ export default function FrontEndRegistration() {
   };
 
   return (
-    <>
+    <div className={styles.main_client_container}>
       <PageTitle title="台大分院雲林分院｜創建使用者" />
       <div className={styles.client_container}>
         <PageTitleHeading text="創建使用者" styleOptions={3} />
@@ -544,6 +563,6 @@ export default function FrontEndRegistration() {
         </Modal.Footer>
       </Modal>
       <ToastAlert />
-    </>
+    </div>
   );
 }
