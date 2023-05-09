@@ -22,7 +22,7 @@ import FormEmail from "./shared/FormEmail";
 import FormPwd from "./shared/FormPwd";
 import zxcvbn from "zxcvbn";
 import { post } from "../axios";
-import { json, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, json, useLocation, useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import { toast } from "react-toastify";
@@ -31,6 +31,7 @@ import ToastAlert from "../../components/ToastAlert";
 import FormIdentity from "./shared/FormIdentity";
 import { Stepper, Step } from "react-form-stepper";
 import styles from "../../styles/Form/ClientRegistration.module.scss";
+import { set } from "lodash";
 
 export default function FrontEndRegistration() {
   const location = useLocation();
@@ -80,6 +81,17 @@ export default function FrontEndRegistration() {
       });
     }
   }, [videoTempIndex]);
+
+  // 當表單完整送出後，跳轉到首頁
+  const [shouldRedirect, setShouldRedirect] = React.useState(false);
+
+  let navigate = useNavigate();
+  useEffect(() => {
+    // redirect to Home page after 5 seconds
+    if (shouldRedirect) {
+      return navigate("/");
+    }
+  }, [shouldRedirect]);
 
   // 單一勾選影片
   const handleSelectVideoindex = (ID) => {
@@ -175,8 +187,12 @@ export default function FrontEndRegistration() {
   const prevStep = () => setStep(step - 1);
   const nextStep = () => setStep(step + 1);
 
+  const [disabledSubmit, setDisabledSubmit] = useState(false);
+
+  // 上船註冊資料
   const handleSubmit = async () => {
     if (isLastPage) {
+      setDisabledSubmit(true);
       // check if the userInfo and videoIndex is not empty
       if (userInfo && videoIndex.length !== 0) {
         try {
@@ -185,9 +201,38 @@ export default function FrontEndRegistration() {
             videoIndex,
           };
 
-          // console.log(JSON.stringify(values));
+          const res = await post("client", values);
+
+          if (res.status === 200) {
+            toast.success("註冊成功!", {
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+            setTimeout(() => {
+              setShouldRedirect(true);
+            }, 3000);
+          }
         } catch (error) {
-          console.log(error);
+          const message = error.response.data.message;
+          toast.error(message, {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          setTimeout(() => {
+            setDisabledSubmit(false);
+          }, 3000);
         }
       } else {
         toast.error("請確認是否有填寫完整", {
@@ -200,6 +245,9 @@ export default function FrontEndRegistration() {
           progress: undefined,
           theme: "light",
         });
+        setTimeout(() => {
+          setDisabledSubmit(false);
+        }, 3000);
       }
     }
   };
@@ -454,6 +502,7 @@ export default function FrontEndRegistration() {
               variant="primary"
               onClickEventName={isLastPage ? handleSubmit : nextStep}
               text={isLastPage ? "送出" : "下一步"}
+              disabled={disabledSubmit}
             />
           )}
         </div>
