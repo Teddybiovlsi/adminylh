@@ -53,6 +53,20 @@ export default function Home() {
   const endOffset = itemOffset + size;
   // get current page video data
   const currentItem = videoData.slice(itemOffset, endOffset);
+  // first render, get video data
+  useEffect(() => {
+    let ignore = false;
+    if (!ignore) {
+      // set loading to true
+      setLoading(true);
+      fetchVideoData({
+        api: "videos",
+      });
+    }
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const fetchVideoData = async ({ api }) => {
     try {
@@ -90,20 +104,6 @@ export default function Home() {
       }
     }
   };
-
-  useEffect(() => {
-    let ignore = false;
-    if (!ignore) {
-      // set loading to true
-      setLoading(true);
-      fetchVideoData({
-        api: "videos",
-      });
-    }
-    return () => {
-      ignore = true;
-    };
-  }, []);
 
   useEffect(() => {
     if (selectVideoLanguage == 0 && selectVideoType == 0) {
