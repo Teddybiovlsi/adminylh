@@ -67,7 +67,7 @@ export default function Home() {
       ignore = true;
     };
   }, []);
-
+  // get video data async function
   const fetchVideoData = async ({ api }) => {
     try {
       const response = await get(api);
