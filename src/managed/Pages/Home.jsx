@@ -21,8 +21,12 @@ export default function Home() {
       video_path: "",
       video_language: "",
       video_class: "",
+      video_language_index: "",
+      video_class_index: "",
     },
   ]);
+
+  const [filterVideoData, setFilterVideoData] = useState(videoData);
 
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [selectVideoindex, setSelectVideoindex] = useState([]);
@@ -69,6 +73,7 @@ export default function Home() {
       // if checkIsArray is true, set videoData to data
       // otherwise, set videoData to [data]
       setVideoData(checkIsArray ? data : [data]);
+      setFilterVideoData(checkIsArray ? data : [data]);
       // 將 loading 設為 false
       setLoading(false);
       // clear error message
@@ -76,49 +81,51 @@ export default function Home() {
     } catch (error) {
       // if catch error, clear videoData
       setVideoData([]);
+      setFilterVideoData([]);
       // 將 loading 設為 false
       setLoading(false);
       // if error.response is true, get error message
       if (error.response) {
-        console.log(error.response);
         setErrorMessage(StatusCode(error.response.status));
       }
     }
   };
 
   useEffect(() => {
-    // set loading to true
-    setLoading(true);
-    // if selectVideoType is 0 and selectVideoLanguage is 0, get all video data
-    if (selectVideoType == 0 && selectVideoLanguage == 0) {
-      // get all video data
+    let ignore = false;
+    if (!ignore) {
+      // set loading to true
+      setLoading(true);
       fetchVideoData({
         api: "videos",
       });
     }
-    // if selectVideoType is not 0 and selectVideoLanguage is 0, get video data by video type
-    else if (selectVideoType != 0 && selectVideoLanguage == 0) {
-      // get video data by video type
-      fetchVideoData({
-        api: `/videoClass/${selectVideoType}`,
-      });
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (selectVideoLanguage == 0 && selectVideoType == 0) {
+      setFilterVideoData(videoData);
     } else if (selectVideoType == 0 && selectVideoLanguage != 0) {
-      // get video data by video language
-      fetchVideoData({
-        api: `videoLanguage/${selectVideoLanguage}`,
-      });
-    } else if (selectVideoType != 0 && selectVideoLanguage != 0) {
-      // get video data by video type and video language
-      fetchVideoData({
-        api: `/videoByClassAndLanguage/${selectVideoType}/${selectVideoLanguage}`,
-      });
-      setLoading(false);
-    }
-    // 若發生例外情形，則將錯誤訊息顯示在畫面上
-    else {
-      setLoading(false);
-      setVideoData([]);
-      setErrorMessage("發生錯誤");
+      setFilterVideoData(
+        videoData.filter(
+          (item) => item.video_language_index == selectVideoLanguage
+        )
+      );
+    } else if (selectVideoType != 0 && selectVideoLanguage == 0) {
+      setFilterVideoData(
+        videoData.filter((item) => item.video_class_index == selectVideoType)
+      );
+    } else {
+      setFilterVideoData(
+        videoData.filter(
+          (item) =>
+            item.video_class_index == selectVideoType &&
+            item.video_language_index == selectVideoLanguage
+        )
+      );
     }
   }, [selectVideoType, selectVideoLanguage]);
 
@@ -317,6 +324,7 @@ export default function Home() {
             setSelectVideoLanguage(event.target.value);
           }}
           style={{ width: "200px" }}
+          selected={selectVideoLanguage}
         >
           <option value="0">請選擇影片語言</option>
           <option value="1">國語</option>
@@ -352,7 +360,7 @@ export default function Home() {
             <VideoTitle />
           </thead>
           <tbody>
-            {videoData.map((info, _) => {
+            {filterVideoData.map((info, _) => {
               return <VideoInfo {...info} key={info.id} />;
             })}
             {/* Create fake array */}
