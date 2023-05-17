@@ -1,0 +1,11 @@
+[
+  { "id": "none", "value": "0", "label": "請選擇影片語言" },
+  { "id": "zh-cht", "value": "1", "label": "國語" },
+  { "id": "zh-twainese", "value": "2", "label": "台語" },
+  { "id": "en", "value": "3", "label": "英語" },
+  { "id": "ja", "value": "4", "label": "日文" },
+  { "id": "vi", "value": "5", "label": "越南語" },
+  { "id": "th", "value": "6", "label": "泰語" },
+  { "id": "id", "value": "7", "label": "印尼語" },
+  { "id": "fil", "value": "8", "label": "菲律賓語" }
+]

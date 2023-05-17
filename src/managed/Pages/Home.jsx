@@ -1,15 +1,13 @@
 import limitPage from "../JsonFile/FilterPageContentSize.json";
+import LanguageList from "../JsonFile/SelectLanguageList.json";
 import { React, useEffect, useState } from "react";
 import {
   Form,
   Table,
   Pagination,
   Modal,
-  Nav,
   Navbar,
   Container,
-  OverlayTrigger,
-  Tooltip,
 } from "react-bootstrap";
 import { get, post } from "../axios";
 import styles from "../../styles/pages/HomePage.module.scss";
@@ -18,8 +16,6 @@ import StatusCode from "../../sys/StatusCode";
 import Loading from "../../components/Loading";
 import ReactPaginate from "react-paginate";
 import { Link, redirect } from "react-router-dom";
-import BtnBootstrap from "../../components/BtnBootstrap";
-// import { BsFillTrash3Fill } from "react-bootstrap-icons";
 import ToolTipBtn from "../../components/ToolTipBtn";
 
 export default function Home() {
@@ -398,15 +394,13 @@ export default function Home() {
           style={{ width: "200px" }}
           selected={selectVideoLanguage}
         >
-          <option value="0">請選擇影片語言</option>
-          <option value="1">國語</option>
-          <option value="2">台語</option>
-          <option value="3">英語</option>
-          <option value="4">日文</option>
-          <option value="5">越南語</option>
-          <option value="6">泰語</option>
-          <option value="7">印尼語</option>
-          <option value="8">菲律賓語</option>
+          {LanguageList.map((item, _) => {
+            return (
+              <option key={item.id} value={item.value}>
+                {item.label}
+              </option>
+            );
+          })}
         </Form.Select>
 
         {/* use Form.Select to show 每頁顯示筆數 */}

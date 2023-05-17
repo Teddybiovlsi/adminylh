@@ -4,34 +4,34 @@
 // 顯示成功訊息/錯誤訊息
 // 若傳送成功，5秒後自動跳轉回到首頁
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Form,
   Modal,
   ModalFooter,
   Table,
   FloatingLabel,
-} from 'react-bootstrap';
-import * as formik from 'formik';
-import * as yup from 'yup';
-import Card from 'react-bootstrap/Card';
-import PageTitle from '../../components/Title';
-import BtnBootstrap from '../../components/BtnBootstrap';
-import useBoolean from './shared/useBoolean';
-import FormEmail from './shared/FormEmail';
-import FormPwd from './shared/FormPwd';
-import zxcvbn from 'zxcvbn';
-import { post } from '../axios';
-import { Navigate, json, useLocation, useNavigate } from 'react-router-dom';
-import StatusCode from '../../sys/StatusCode';
-import PageTitleHeading from '../../components/PageTitleHeading';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import ToastAlert from '../../components/ToastAlert';
-import FormIdentity from './shared/FormIdentity';
-import { Stepper, Step } from 'react-form-stepper';
-import styles from '../../styles/Form/ClientRegistration.module.scss';
-import { set } from 'lodash';
+} from "react-bootstrap";
+import * as formik from "formik";
+import * as yup from "yup";
+import Card from "react-bootstrap/Card";
+import PageTitle from "../../components/Title";
+import BtnBootstrap from "../../components/BtnBootstrap";
+import useBoolean from "./shared/useBoolean";
+import FormEmail from "./shared/FormEmail";
+import FormPwd from "./shared/FormPwd";
+import zxcvbn from "zxcvbn";
+import { post } from "../axios";
+import { Navigate, json, useLocation, useNavigate } from "react-router-dom";
+import StatusCode from "../../sys/StatusCode";
+import PageTitleHeading from "../../components/PageTitleHeading";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ToastAlert from "../../components/ToastAlert";
+import FormIdentity from "./shared/FormIdentity";
+import { Stepper, Step } from "react-form-stepper";
+import styles from "../../styles/Form/ClientRegistration.module.scss";
+import { set } from "lodash";
 
 export default function FrontEndRegistration() {
   const location = useLocation();
@@ -41,8 +41,10 @@ export default function FrontEndRegistration() {
 
   const [videoName, setVideoName] = useState(location.state?.videoName);
   const [videoTempName, setVideoTempName] = useState(videoName);
-
+  // 所有影片資料
   const [videoData, setVideoData] = useState(location.state?.videoData);
+  // 篩選影片資料
+  const [videoFilterData, setVideoFilterData] = useState(videoData);
   // 以下是第一頁的表單內容
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -53,6 +55,30 @@ export default function FrontEndRegistration() {
   const handleShowM2 = () => setShow2(true);
   // 限制重複點擊
   const [disabledBtn, setDisabledBtn] = useState(false);
+
+  useEffect(() => {
+    if (selectVideoLanguage == 0 && selectVideoType == 0) {
+      setVideoFilterData(videoData);
+    } else if (selectVideoType == 0 && selectVideoLanguage != 0) {
+      setVideoFilterData(
+        videoData.filter(
+          (item) => item.video_language_index == selectVideoLanguage
+        )
+      );
+    } else if (selectVideoType != 0 && selectVideoLanguage == 0) {
+      setVideoFilterData(
+        videoData.filter((item) => item.video_class_index == selectVideoType)
+      );
+    } else {
+      setVideoFilterData(
+        videoData.filter(
+          (item) =>
+            item.video_class_index == selectVideoType &&
+            item.video_language_index == selectVideoLanguage
+        )
+      );
+    }
+  }, [selectVideoType, selectVideoLanguage]);
 
   useEffect(() => {
     if (videoData.length === videoTempIndex.length) {
@@ -89,7 +115,7 @@ export default function FrontEndRegistration() {
   useEffect(() => {
     // redirect to Home page after 5 seconds
     if (shouldRedirect) {
-      return navigate('/');
+      return navigate("/");
     }
   }, [shouldRedirect]);
 
@@ -117,15 +143,15 @@ export default function FrontEndRegistration() {
   // 修改影片事件
   const handleEditVideo = () => {
     if (videoTempIndex.length === 0) {
-      toast.error('請勾選影片!', {
-        position: 'top-center',
+      toast.error("請勾選影片!", {
+        position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: 'light',
+        theme: "light",
       });
       setDisabledBtn(true);
       setTimeout(() => {
@@ -141,15 +167,15 @@ export default function FrontEndRegistration() {
     setVideoName(videoTempName);
     handleClose();
     handleCloseM2();
-    toast.success('修改影片成功!', {
-      position: 'top-right',
+    toast.success("修改影片成功!", {
+      position: "top-right",
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: 'light',
+      theme: "light",
     });
   };
 
@@ -160,23 +186,23 @@ export default function FrontEndRegistration() {
   const schema = yup.object().shape({
     email: yup
       .string()
-      .email('信箱格式錯誤，請重新嘗試')
-      .required('請輸入信箱'),
-    name: yup.string().required('請輸入姓名'),
+      .email("信箱格式錯誤，請重新嘗試")
+      .required("請輸入信箱"),
+    name: yup.string().required("請輸入姓名"),
     user_account: yup
       .string()
-      .required('請輸入身分證字號')
+      .required("請輸入身分證字號")
       .matches(/^[A-Za-z][A-D0-9]\d{8}$/, {
-        message: '身分證字號格式錯誤，請重新嘗試',
+        message: "身分證字號格式錯誤，請重新嘗試",
         excludeEmptyString: true,
       }),
-    user_password: yup.string().required('請輸入密碼'),
+    user_password: yup.string().required("請輸入密碼"),
   });
   const [userInfo, setUserInfo] = useState({
-    name: '',
-    email: '',
-    user_account: '',
-    user_password: '',
+    name: "",
+    email: "",
+    user_account: "",
+    user_password: "",
   });
   const [pwdScore, setPwdScore] = useState(0);
 
@@ -201,18 +227,18 @@ export default function FrontEndRegistration() {
             videoIndex,
           };
 
-          const res = await post('client', values);
+          const res = await post("client", values);
 
           if (res.status === 200) {
-            toast.success('註冊成功!', {
-              position: 'top-center',
+            toast.success("註冊成功!", {
+              position: "top-center",
               autoClose: 2000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true,
               draggable: true,
               progress: undefined,
-              theme: 'light',
+              theme: "light",
             });
             setTimeout(() => {
               setShouldRedirect(true);
@@ -221,29 +247,29 @@ export default function FrontEndRegistration() {
         } catch (error) {
           const message = error.response.data.message;
           toast.error(message, {
-            position: 'top-center',
+            position: "top-center",
             autoClose: 2000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: 'light',
+            theme: "light",
           });
           setTimeout(() => {
             setDisabledSubmit(false);
           }, 3000);
         }
       } else {
-        toast.error('請確認是否有填寫完整', {
-          position: 'top-center',
+        toast.error("請確認是否有填寫完整", {
+          position: "top-center",
           autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: 'light',
+          theme: "light",
         });
         setTimeout(() => {
           setDisabledSubmit(false);
@@ -277,7 +303,7 @@ export default function FrontEndRegistration() {
       case 0:
         return (
           <div>
-            <h5 className='mb-2'>
+            <h5 className="mb-2">
               請確認勾選影片是否正確，<b>若有誤請按下"+"進行修正</b>
             </h5>
             <h5>
@@ -310,7 +336,7 @@ export default function FrontEndRegistration() {
               }}
               validationSchema={schema}
               onSubmit={(values) => {
-                if (values == '') {
+                if (values == "") {
                   nextStep();
                 }
                 setUserInfo(values);
@@ -327,7 +353,7 @@ export default function FrontEndRegistration() {
               }) => (
                 <Form noValidate onSubmit={handleSubmit}>
                   <FormIdentity
-                    ControlName='name'
+                    ControlName="name"
                     ChangeEvent={handleChange}
                     BlurEvent={handleBlur}
                     TextValue={values.name ? values.name : userInfo.name}
@@ -336,9 +362,9 @@ export default function FrontEndRegistration() {
                     ValidCheck={touched.name && !errors.name}
                     InValidCheck={touched.name && errors.name}
                     ErrorMessage={errors.name}
-                    LabelMessage='請輸入您的姓名(必填)'
-                    componentID='name'
-                    componentLableText='User Name'
+                    LabelMessage="請輸入您的姓名(必填)"
+                    componentID="name"
+                    componentLableText="User Name"
                   />
 
                   <FormEmail
@@ -348,10 +374,10 @@ export default function FrontEndRegistration() {
                     ValidCheck={touched.email && !errors.email}
                     InValidCheck={touched.email && errors.email}
                     ErrorMessage={errors.email}
-                    LabelMessage='請輸入您的信箱(必填)'
+                    LabelMessage="請輸入您的信箱(必填)"
                   />
                   <FormIdentity
-                    ControlName='user_account'
+                    ControlName="user_account"
                     ChangeEvent={handleChange}
                     BlurEvent={handleBlur}
                     TextValue={
@@ -364,14 +390,14 @@ export default function FrontEndRegistration() {
                     ValidCheck={touched.user_account && !errors.user_account}
                     InValidCheck={touched.user_account && errors.user_account}
                     ErrorMessage={errors.user_account}
-                    LabelMessage='請輸入您的身分證字號(必填)'
-                    componentID='user_account'
+                    LabelMessage="請輸入您的身分證字號(必填)"
+                    componentID="user_account"
                   />
 
                   <FormPwd
-                    LabelMessage='請輸入您的密碼(必填)'
-                    ControlName='user_password'
-                    GroupClassName='mb-1'
+                    LabelMessage="請輸入您的密碼(必填)"
+                    ControlName="user_password"
+                    GroupClassName="mb-1"
                     SetStrengthMeter={true}
                     StrengthMeterPwdScore={pwdScore}
                     ChangeEvent={handleChange}
@@ -386,22 +412,22 @@ export default function FrontEndRegistration() {
                     }
                     ValidCheck={touched.user_password & !errors.user_password}
                     InValidCheck={touched.user_password & errors.user_password}
-                    ControlID={'inputPassword'}
-                    IconID={'showPass'}
+                    ControlID={"inputPassword"}
+                    IconID={"showPass"}
                     SetShowPwdCondition={setShowPwd}
                     ShowPwdCondition={showPwd}
                     ErrorMessage={errors.user_password}
                   />
                   <BtnBootstrap
-                    btnPosition='me-auto'
-                    variant='secondary'
+                    btnPosition="me-auto"
                     onClickEventName={prevStep}
-                    text='上一步'
+                    text="上一步"
+                    variant="outline-secondary"
                   />
                   <BtnBootstrap
-                    text={'下一步'}
-                    btnType='submit'
-                    variant={'primary'}
+                    btnType="submit"
+                    text="下一步"
+                    variant="outline-primary"
                   />
                 </Form>
               )}
@@ -412,7 +438,7 @@ export default function FrontEndRegistration() {
         return (
           <div>
             <h4>
-              <b>1.請確認勾選影片是否正確</b>{' '}
+              <b>1.請確認勾選影片是否正確</b>{" "}
             </h4>
             <Table>
               <thead>
@@ -427,7 +453,7 @@ export default function FrontEndRegistration() {
               </tbody>
             </Table>
             <h4>
-              <b>2.請確認填寫帳號是否正確</b>{' '}
+              <b>2.請確認填寫帳號是否正確</b>{" "}
             </h4>
             <Table>
               <thead>
@@ -452,49 +478,49 @@ export default function FrontEndRegistration() {
 
   return (
     <div className={styles.main_client_container}>
-      <PageTitle title='台大分院雲林分院｜創建使用者' />
+      <PageTitle title="台大分院雲林分院｜創建使用者" />
       <div className={styles.client_container}>
-        <PageTitleHeading text='創建使用者' styleOptions={3} />
+        <PageTitleHeading text="創建使用者" styleOptions={3} />
         <Stepper
           activeStep={step}
           connectorStateColors
           connectorStyleConfig={{
-            activeColor: '#9441DF',
+            activeColor: "#9441DF",
           }}
           styleConfig={{
-            activeBgColor: '#644be1',
-            activeTextColor: '#fff',
-            completedBgColor: '#9441DF',
-            completedTextColor: '#fff',
+            activeBgColor: "#644be1",
+            activeTextColor: "#fff",
+            completedBgColor: "#9441DF",
+            completedTextColor: "#fff",
           }}
         >
-          <Step label='基本資料確認' />
-          <Step label='帳號填寫' />
-          <Step label='最終確認' />
+          <Step label="基本資料確認" />
+          <Step label="帳號填寫" />
+          <Step label="最終確認" />
         </Stepper>
         {renderPageRegister()}
         <div className={styles.footerBtn}>
           {isFirstPage !== true && isSubmitPage != true && (
             <BtnBootstrap
-              btnPosition='me-auto'
-              variant='secondary'
+              btnPosition="me-auto"
+              variant="secondary"
               onClickEventName={prevStep}
-              text='上一步'
+              text="上一步"
             />
           )}
           {isFirstPage == true && (
             <BtnBootstrap
-              btnPosition='me-auto'
-              variant='success'
+              btnPosition="me-auto"
+              variant="outline-success"
               onClickEventName={handleShow}
-              text='+'
+              text={<i className="bi bi-plus-lg"></i>}
             />
           )}
           {isSubmitPage != true && (
             <BtnBootstrap
-              variant='primary'
+              variant="outline-primary"
               onClickEventName={isLastPage ? handleSubmit : nextStep}
-              text={isLastPage ? '送出' : '下一步'}
+              text={isLastPage ? "送出" : "下一步"}
               disabled={disabledSubmit}
             />
           )}
@@ -507,7 +533,7 @@ export default function FrontEndRegistration() {
           <Modal.Title>請選擇要修改/新增的影片</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <table className='table table-striped'>
+          <table className="table table-striped">
             <thead>
               <tr>
                 <th
@@ -516,14 +542,13 @@ export default function FrontEndRegistration() {
                   }
                 >
                   <input
-                    type='checkbox'
+                    type="checkbox"
                     onChange={() => {
                       handleSelectAllVideo();
                     }}
                     checked={isCheckAllVideo}
                   />
                 </th>
-                <th>類型</th>
                 <th>語言</th>
                 <th>名稱</th>
               </tr>
@@ -534,7 +559,7 @@ export default function FrontEndRegistration() {
                   <tr key={index}>
                     <td>
                       <input
-                        type='checkbox'
+                        type="checkbox"
                         value={info.id}
                         checked={videoTempIndex.includes(info.id)}
                         onChange={() => {
@@ -542,7 +567,6 @@ export default function FrontEndRegistration() {
                         }}
                       />
                     </td>
-                    <td>{info.video_class}</td>
                     <td>{info.video_language}</td>
                     <td>{info.video_name}</td>
                   </tr>
@@ -553,15 +577,15 @@ export default function FrontEndRegistration() {
         </Modal.Body>
         <Modal.Footer>
           <BtnBootstrap
-            btnPosition='me-auto'
-            variant='secondary'
+            btnPosition="me-auto"
             onClickEventName={handleClose}
-            text='取消'
+            text="取消"
+            variant="outline-secondary"
           />
           <BtnBootstrap
-            variant='danger'
+            variant="outline-danger"
             onClickEventName={handleEditVideo}
-            text='修改'
+            text="修改"
             disabled={disabledBtn}
           />
         </Modal.Footer>
@@ -573,7 +597,7 @@ export default function FrontEndRegistration() {
         </Modal.Header>
         <Modal.Body>
           <h4>
-            <b>修改前影片名稱:</b>{' '}
+            <b>修改前影片名稱:</b>{" "}
           </h4>
           <ol>
             {videoName.map((info, index) => {
@@ -592,15 +616,15 @@ export default function FrontEndRegistration() {
         </Modal.Body>
         <Modal.Footer>
           <BtnBootstrap
-            btnPosition='me-auto'
-            variant='secondary'
+            btnPosition="me-auto"
             onClickEventName={handleCloseM2}
-            text='取消'
+            text="取消"
+            variant="outline-secondary"
           />
           <BtnBootstrap
-            variant='danger'
             onClickEventName={handleConfirmEditVideo}
-            text='確認'
+            text="確認"
+            variant="outline-danger"
           />
         </Modal.Footer>
       </Modal>
