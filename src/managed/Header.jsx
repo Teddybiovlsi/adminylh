@@ -37,11 +37,19 @@ export default function Header({ expand = "lg" }) {
           <Offcanvas.Body>
             <Nav className="me-auto">
               <NavDropdown title="使用者管理" id="collasible-nav-dropdown">
-                <LinkContainer to="/ManageAccount">
+                <LinkContainer to="/ManageClientAccount">
                   <NavDropdown.Item>帳號管理</NavDropdown.Item>
                 </LinkContainer>{" "}
                 <LinkContainer to="/ManagePraticeRecord">
                   <NavDropdown.Item>紀錄管理</NavDropdown.Item>
+                </LinkContainer>{" "}
+              </NavDropdown>
+              <NavDropdown title="後台使用者管理" id="collasible-nav-dropdown">
+                <LinkContainer to="/Admin/Register">
+                  <NavDropdown.Item>註冊帳號</NavDropdown.Item>
+                </LinkContainer>{" "}
+                <LinkContainer to="/">
+                  <NavDropdown.Item>管理帳號</NavDropdown.Item>
                 </LinkContainer>{" "}
               </NavDropdown>
               <NavDropdown title="建立影片表單" id="collasible-nav-dropdown">
@@ -54,9 +62,6 @@ export default function Header({ expand = "lg" }) {
               </NavDropdown>
             </Nav>
             <Nav>
-              <LinkContainer to="/Admin/Register">
-                <Nav.Link>註冊後臺使用者</Nav.Link>
-              </LinkContainer>
               <Nav.Link eventKey={2} href="#memes">
                 <BoxArrowLeft title="登出" size={22} />
                 登出
