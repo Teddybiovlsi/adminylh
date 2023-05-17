@@ -16,21 +16,26 @@ const BtnBootstrap = ({
   btnName,
   btnPosition = "float-end",
   btnType = "button",
+  btnSize = "lg",
+  btnTitle,
   onClickEventName,
   text,
   disabled = false,
   variant,
+  ariaLabelName,
 }) => {
   return (
     <Button
       id={btnID}
       name={btnName}
-      size="lg"
+      size={btnSize}
       className={btnPosition}
       type={btnType}
-      variant={`outline-${variant}`}
+      variant={variant}
       onClick={onClickEventName}
       disabled={disabled}
+      title={btnTitle}
+      aria-label={ariaLabelName}
     >
       {text}
     </Button>

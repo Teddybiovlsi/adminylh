@@ -10,6 +10,7 @@ import Pratice from "./managed/Pages/Pratice";
 import Exam from "./managed/Pages/Exam";
 import VideoPlayer from "./managed/Pages/VideoPlayer";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "./styles/app.css";
 
 function App() {

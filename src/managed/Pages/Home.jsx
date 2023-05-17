@@ -1,5 +1,16 @@
+import limitPage from "../JsonFile/FilterPageContentSize.json";
 import { React, useEffect, useState } from "react";
-import { Form, Table, Pagination, Modal } from "react-bootstrap";
+import {
+  Form,
+  Table,
+  Pagination,
+  Modal,
+  Nav,
+  Navbar,
+  Container,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import { get, post } from "../axios";
 import styles from "../../styles/pages/HomePage.module.scss";
 import { check } from "prettier";
@@ -8,6 +19,8 @@ import Loading from "../../components/Loading";
 import ReactPaginate from "react-paginate";
 import { Link, redirect } from "react-router-dom";
 import BtnBootstrap from "../../components/BtnBootstrap";
+// import { BsFillTrash3Fill } from "react-bootstrap-icons";
+import ToolTipBtn from "../../components/ToolTipBtn";
 
 export default function Home() {
   // limit video data size in one page
@@ -40,6 +53,8 @@ export default function Home() {
   // selectVideoLanguage is 0, get all video data
   const [selectVideoLanguage, setSelectVideoLanguage] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [errorFilterMessage, setErrorFilterMessage] = useState("");
   // 創建用戶帳號button
   const [createUserButton, setCreateUserButton] = useState(true);
 
@@ -71,9 +86,6 @@ export default function Home() {
   const fetchVideoData = async ({ api }) => {
     try {
       const response = await get(api);
-      // confirm response data
-      // console.log(response);
-
       // get data from res.data.data
       // because res.data.data is a promise
       // so we need to use await to get the value of res.data.data
@@ -104,6 +116,14 @@ export default function Home() {
       }
     }
   };
+
+  useEffect(() => {
+    if (filterVideoData.length == 0) {
+      setErrorFilterMessage("該語言/類別中無資料");
+    } else {
+      setErrorFilterMessage("");
+    }
+  }, [filterVideoData]);
 
   useEffect(() => {
     if (selectVideoLanguage == 0 && selectVideoType == 0) {
@@ -198,6 +218,7 @@ export default function Home() {
         : [...selectVideoindex, ID]
     );
   };
+
   // 表格標題
   const VideoTitle = () => {
     return (
@@ -300,6 +321,57 @@ export default function Home() {
   return (
     <div className="container pb-4">
       <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
+      <Navbar bg="light" variant="light">
+        <Container>
+          <div className="me-auto">
+            <ToolTipBtn
+              placement="bottom"
+              btnAriaLabel="新增影片"
+              btnOnclickEventName={() => {
+                console.log("you click me add video");
+              }}
+              btnText={
+                <i
+                  className="bi bi-file-earmark-plus"
+                  style={{ fontSize: 1.2 + "rem" }}
+                ></i>
+              }
+              btnVariant="light"
+              tooltipText="新增影片"
+            />
+            <ToolTipBtn
+              placement="bottom"
+              btnAriaLabel="修改影片"
+              btnOnclickEventName={() => {
+                console.log("you click me rewrite video");
+              }}
+              btnText={
+                <i
+                  className="bi bi-pencil-square"
+                  style={{ fontSize: 1.2 + "rem" }}
+                ></i>
+              }
+              btnVariant="light"
+              tooltipText="編輯影片"
+            />
+            <ToolTipBtn
+              placement="bottom"
+              btnAriaLabel="刪除影片"
+              btnOnclickEventName={() => {
+                console.log("you click me delete video");
+              }}
+              btnText={
+                <i
+                  className="bi bi-trash3-fill"
+                  style={{ fontSize: 1.2 + "rem" }}
+                ></i>
+              }
+              btnVariant="light"
+              tooltipText="刪除影片"
+            />
+          </div>
+        </Container>
+      </Navbar>
       <div className={styles.container_division_select}>
         <Form.Select
           aria-label="請選擇影片類型"
@@ -336,9 +408,7 @@ export default function Home() {
           <option value="7">印尼語</option>
           <option value="8">菲律賓語</option>
         </Form.Select>
-        <h5>
-          <b>共有{videoData.length}筆資料</b>{" "}
-        </h5>
+
         {/* use Form.Select to show 每頁顯示筆數 */}
         <Form.Select
           aria-label="請選擇每頁顯示筆數"
@@ -346,51 +416,65 @@ export default function Home() {
             setSize(event.target.value);
           }}
           style={{ width: "200px" }}
+          selected={size}
         >
-          <option value="1">每頁顯示1筆</option>
-          <option value="10">每頁顯示10筆</option>
-          <option value="50">每頁顯示50筆</option>
-          <option value="100">每頁顯示100筆</option>
+          {
+            // use map to show 每頁顯示筆數
+            limitPage.map((limit, _) => {
+              return (
+                <option key={limit.id} value={limit.value}>
+                  每頁顯示{limit.value}筆
+                </option>
+              );
+            })
+          }
         </Form.Select>
       </div>
-      {/* if videodata is not null and error message is empty, show data */}
-      <div className={`mt-3 mb-3 ${styles.container_division}`}>
-        <Table>
-          <thead>
-            <VideoTitle />
-          </thead>
-          <tbody>
-            {filterVideoData.map((info, _) => {
-              return <VideoInfo {...info} key={info.id} />;
-            })}
-            {/* Create fake array */}
-            {/* {Array.from(Array(30).keys()).map((info, _) => {
-              return <VideoInfo {...info} key={info.ID} />;
-            })} */}
-          </tbody>
-        </Table>
-        <ReactPaginate
-          breakLabel={"..."}
-          previousLabel={"上一頁"}
-          nextLabel={"下一頁"}
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={2}
-          marginPagesDisplayed={1}
-          pageCount={totalPage}
-          renderOnZeroPageCount={null}
-          containerClassName="justify-content-center pagination"
-          previousClassName="page-item"
-          previousLinkClassName="page-link"
-          nextClassName="page-item"
-          nextLinkClassName="page-link"
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          breakClassName="page-item"
-          breakLinkClassName="page-link"
-          activeClassName="active"
-          disabledClassName="disabled"
-        />
-      </div>
+
+      {errorFilterMessage == "" && (
+        <div className={`mt-3 mb-3 ${styles.container_division}`}>
+          <Table>
+            <thead>
+              <VideoTitle />
+            </thead>
+            <tbody>
+              {filterVideoData.map((info, _) => {
+                return <VideoInfo {...info} key={info.id} />;
+              })}
+            </tbody>
+          </Table>
+          <ReactPaginate
+            breakLabel={"..."}
+            previousLabel={"<"}
+            nextLabel={">"}
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={2}
+            marginPagesDisplayed={1}
+            pageCount={totalPage}
+            renderOnZeroPageCount={null}
+            containerClassName="justify-content-center pagination"
+            previousClassName="page-item"
+            previousLinkClassName="page-link"
+            nextClassName="page-item"
+            nextLinkClassName="page-link"
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            activeClassName="active"
+            disabledClassName="disabled"
+          />
+        </div>
+      )}
+
+      {errorFilterMessage != "" && (
+        <div className={`mt-3 mb-3 ${styles.container_division}`}>
+          <h2 className={styles.container_division_secondHeading}>
+            {errorFilterMessage}
+          </h2>
+        </div>
+      )}
+
       <button className={styles.container_button} disabled={createUserButton}>
         <Link
           to={!createUserButton ? "/Client/Register" : null}
