@@ -1,0 +1,14 @@
+[
+  { "id": "none", "value": "0", "label": "請選擇影片類型" },
+  { "id": "sicknessCare", "value": "1", "label": "疾病照護" },
+  { "id": "activity", "value": "2", "label": "活動" },
+  { "id": "eat", "value": "3", "label": "進食" },
+  {
+    "id": "preventingTube/CatheterDislodgement",
+    "value": "4",
+    "label": "管路照護及異常處理"
+  },
+  { "id": "skinCare", "value": "5", "label": "皮膚照護" },
+  { "id": "woundCare", "value": "6", "label": "傷口照護" },
+  { "id": "preventionComplications", "value": "7", "label": "預防合併症" }
+]

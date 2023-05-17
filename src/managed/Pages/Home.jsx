@@ -1,5 +1,6 @@
 import limitPage from "../JsonFile/FilterPageContentSize.json";
 import LanguageList from "../JsonFile/SelectLanguageList.json";
+import ClassList from "../JsonFile/SelectClassTypeList.json";
 import { React, useEffect, useState } from "react";
 import {
   Form,
@@ -376,14 +377,13 @@ export default function Home() {
           }}
           style={{ width: "200px" }}
         >
-          <option value="0">請選擇影片類型</option>
-          <option value="1">疾病照護</option>
-          <option value="2">活動</option>
-          <option value="3">進食</option>
-          <option value="4">管路照護及異常處理</option>
-          <option value="5">皮膚照護</option>
-          <option value="6">傷口照護</option>
-          <option value="7">預防合併症</option>
+          {ClassList.map((item, _) => {
+            return (
+              <option key={item.id} value={item.value}>
+                {item.label}
+              </option>
+            );
+          })}
         </Form.Select>
         <Form.Select
           className="me-auto"
