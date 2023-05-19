@@ -54,3 +54,18 @@
   }
 }
 
+.linkContainer_link{
+  text-align: center;
+  text-decoration: none;
+  border:  1px solid #772670;;
+  border-radius: 5px;
+  color: #9870AA;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  &:hover{
+    text-decoration: none;
+    color: #AE6FA9;
+    background-color: #E2D2E9;
+  }
+}
+

@@ -18,6 +18,7 @@ import Loading from "../../components/Loading";
 import ReactPaginate from "react-paginate";
 import { Link, redirect } from "react-router-dom";
 import ToolTipBtn from "../../components/ToolTipBtn";
+import BtnBootstrap from "../../components/BtnBootstrap";
 
 export default function Home() {
   // limit video data size in one page
@@ -35,9 +36,8 @@ export default function Home() {
       video_class_index: "",
     },
   ]);
-
+  // 利用選單過濾影片資料
   const [filterVideoData, setFilterVideoData] = useState(videoData);
-
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [selectVideoindex, setSelectVideoindex] = useState([]);
   const [selectVideoName, setSelectVideoName] = useState([]);
@@ -65,6 +65,16 @@ export default function Home() {
   const endOffset = itemOffset + size;
   // get current page video data
   const currentItem = videoData.slice(itemOffset, endOffset);
+  // 主頁上方Navbar選單(新增/刪除影片)
+  const [showAddVideoModal, setShowAddVideoModal] = useState(false);
+  const [showDeleteVideoModal, setShowDeleteVideoModal] = useState(false);
+
+  const handleShowAddVideoModal = () => setShowAddVideoModal(true);
+  const handleCloseAddVideoModal = () => setShowAddVideoModal(false);
+
+  const handleShowDeleteVideoModal = () => setShowDeleteVideoModal(true);
+  const handleCloseDeleteVideoModal = () => setShowDeleteVideoModal(false);
+
   // first render, get video data
   useEffect(() => {
     let ignore = false;
@@ -325,7 +335,7 @@ export default function Home() {
               placement="bottom"
               btnAriaLabel="新增影片"
               btnOnclickEventName={() => {
-                console.log("you click me add video");
+                handleShowAddVideoModal();
               }}
               btnText={
                 <i
@@ -486,6 +496,32 @@ export default function Home() {
           </b>
         </Link>
       </button>
+      <Modal show={showAddVideoModal} onHide={handleCloseAddVideoModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>請選擇新增類型</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className={`d-flex flex-column justify-content-center`}>
+            <Link
+              to={{
+                pathname: "/Pratice",
+              }}
+              className={styles.linkContainer_link}
+            >
+              <h3 className="mt-1 mb-1">練習用表單</h3>
+            </Link>
+
+            <Link
+              to={{
+                pathname: "/Pratice",
+              }}
+              className={styles.linkContainer_link}
+            >
+              <h3 className="mt-1 mb-1">測驗用表單</h3>
+            </Link>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
