@@ -11,12 +11,20 @@ import Exam from "./managed/Pages/Exam";
 import VideoPlayer from "./managed/Pages/VideoPlayer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import {
+  GoogleReCaptchaProvider,
+  GoogleReCaptcha,
+} from "react-google-recaptcha-v3";
 import "./styles/app.css";
+import ManageAccount from "./managed/Pages/ManageAccount";
 
 function App() {
   return (
     // Routes 若有網址則如第一範例/Register前面須加上/#組合起來為/#/Register
     //  <Route exact path="/" element={<UserLoginForm />} />
+    // <GoogleReCaptchaProvider
+    //   reCaptchaKey={import.meta.env.VITE_REACT_APP_SITE_KEY}
+    // >
     <div className="app">
       <Header />
       <main className="app_main">
@@ -27,10 +35,12 @@ function App() {
           <Route path="/Pratice" element={<Pratice />} />
           <Route path="/Exam" element={<Exam />} />
           <Route path="/Video" element={<VideoPlayer />} />
+          <Route path="/ManageClientAccount" element={<ManageAccount />} />
         </Routes>
       </main>
       <Footer />
     </div>
+    // </GoogleReCaptchaProvider>
   );
 }
 

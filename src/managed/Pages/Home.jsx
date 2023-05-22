@@ -1,7 +1,7 @@
 import limitPage from "../JsonFile/FilterPageContentSize.json";
 import LanguageList from "../JsonFile/SelectLanguageList.json";
 import ClassList from "../JsonFile/SelectClassTypeList.json";
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useState, useRef } from "react";
 import {
   Form,
   Table,
@@ -11,7 +11,6 @@ import {
   Container,
 } from "react-bootstrap";
 import { get, post } from "../axios";
-import styles from "../../styles/pages/HomePage.module.scss";
 import { check } from "prettier";
 import StatusCode from "../../sys/StatusCode";
 import Loading from "../../components/Loading";
@@ -19,6 +18,10 @@ import ReactPaginate from "react-paginate";
 import { Link, redirect } from "react-router-dom";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import BtnBootstrap from "../../components/BtnBootstrap";
+import ReCAPTCHA from "react-google-recaptcha";
+import ToastAlert from "../../components/ToastAlert";
+import { toast } from "react-toastify";
+import styles from "../../styles/pages/HomePage.module.scss";
 
 export default function Home() {
   // limit video data size in one page
@@ -65,6 +68,8 @@ export default function Home() {
   const endOffset = itemOffset + size;
   // get current page video data
   const currentItem = videoData.slice(itemOffset, endOffset);
+
+  const [disabledDelBtn, setDisabledDelBtn] = useState(false);
   // 主頁上方Navbar選單(新增/刪除影片)
   const [showAddVideoModal, setShowAddVideoModal] = useState(false);
   const [showDeleteVideoModal, setShowDeleteVideoModal] = useState(false);
@@ -72,8 +77,30 @@ export default function Home() {
   const handleShowAddVideoModal = () => setShowAddVideoModal(true);
   const handleCloseAddVideoModal = () => setShowAddVideoModal(false);
 
-  const handleShowDeleteVideoModal = () => setShowDeleteVideoModal(true);
+  const handleShowDeleteVideoModal = () => {
+    if (selectVideoindex.length == 0) {
+      toast.error("請勾選影片，再點選刪除按鍵", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setDisabledDelBtn(true);
+      setTimeout(() => {
+        setDisabledDelBtn(false);
+      }, 3000);
+    } else {
+      setShowDeleteVideoModal(true);
+    }
+  };
+
   const handleCloseDeleteVideoModal = () => setShowDeleteVideoModal(false);
+
+  const captchaRef = useRef(null);
 
   // first render, get video data
   useEffect(() => {
@@ -364,8 +391,12 @@ export default function Home() {
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="刪除影片"
+              btnDisabled={
+                (selectVideoindex.length == 0 ? true : false) ||
+                (disabledDelBtn ? true : false)
+              }
               btnOnclickEventName={() => {
-                console.log("you click me delete video");
+                handleShowDeleteVideoModal();
               }}
               btnText={
                 <i
@@ -522,6 +553,37 @@ export default function Home() {
           </div>
         </Modal.Body>
       </Modal>
+      {selectVideoindex.length != 0 && (
+        <Modal show={showDeleteVideoModal} onHide={handleCloseDeleteVideoModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>請再次確認刪除的影片</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              <ReCAPTCHA
+                style={{ textAlign: "center" }}
+                theme="light"
+                sitekey={import.meta.env.VITE_REACT_APP_SITE_KEY_2}
+                ref={captchaRef}
+                badge="inline"
+              />
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <BtnBootstrap
+              variant="secondary"
+              onClickEventName={() => {
+                const token = captchaRef.current.getValue();
+                console.log(token);
+                captchaRef.current.reset();
+              }}
+              text={"送出"}
+            />
+          </Modal.Footer>
+        </Modal>
+      )}
+
+      <ToastAlert position="top-center" />
     </div>
   );
 }
