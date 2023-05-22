@@ -69,6 +69,8 @@ export default function Home() {
   // get current page video data
   const currentItem = videoData.slice(itemOffset, endOffset);
 
+  // track current page video data size
+  const [disabledEditBtn, setDisabledEditBtn] = useState(false);
   const [disabledDelBtn, setDisabledDelBtn] = useState(false);
   // 主頁上方Navbar選單(新增/刪除影片)
   const [showAddVideoModal, setShowAddVideoModal] = useState(false);
@@ -76,6 +78,27 @@ export default function Home() {
 
   const handleShowAddVideoModal = () => setShowAddVideoModal(true);
   const handleCloseAddVideoModal = () => setShowAddVideoModal(false);
+
+  const handleEditVideo = () => {
+    if (selectVideoindex.length == 0) {
+      toast.error("請勾選影片，再點選編輯按鍵", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setDisabledEditBtn(true);
+      setTimeout(() => {
+        setDisabledEditBtn(false);
+      }, 3000);
+    } else {
+      // redirect("/Pratice");
+    }
+  };
 
   const handleShowDeleteVideoModal = () => {
     if (selectVideoindex.length == 0) {
@@ -101,6 +124,12 @@ export default function Home() {
   const handleCloseDeleteVideoModal = () => setShowDeleteVideoModal(false);
 
   const captchaRef = useRef(null);
+  // 刪除影片送出事件
+  const handleDeleteSubmit = async (event) => {
+    event.preventDefault();
+    const token = captchaRef.current.getValue();
+    token == "" && toast.error("請勾選我不是機器人", { theme: "light" });
+  };
 
   // first render, get video data
   useEffect(() => {
@@ -376,9 +405,11 @@ export default function Home() {
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="修改影片"
-              btnOnclickEventName={() => {
-                console.log("you click me rewrite video");
-              }}
+              btnDisabled={
+                (selectVideoindex.length == 0 ? true : false) ||
+                (disabledEditBtn ? true : false)
+              }
+              btnOnclickEventName={handleEditVideo}
               btnText={
                 <i
                   className="bi bi-pencil-square"
@@ -527,6 +558,7 @@ export default function Home() {
           </b>
         </Link>
       </button>
+      {/* 新增影片懸浮視窗，會導引至所選擇的表單中 */}
       <Modal show={showAddVideoModal} onHide={handleCloseAddVideoModal}>
         <Modal.Header closeButton>
           <Modal.Title>請選擇新增類型</Modal.Title>
@@ -553,12 +585,16 @@ export default function Home() {
           </div>
         </Modal.Body>
       </Modal>
+      {/* 刪除影片懸浮視窗 */}
       {selectVideoindex.length != 0 && (
         <Modal show={showDeleteVideoModal} onHide={handleCloseDeleteVideoModal}>
           <Modal.Header closeButton>
             <Modal.Title>請再次確認刪除的影片</Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            <p style={{ color: "red" }}>
+              若影片確認後無誤，請勾選我不是機器人後送出
+            </p>
             <div>
               <ReCAPTCHA
                 style={{ textAlign: "center" }}
@@ -570,14 +606,14 @@ export default function Home() {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <BtnBootstrap
-              variant="secondary"
-              onClickEventName={() => {
-                const token = captchaRef.current.getValue();
-                console.log(token);
-                captchaRef.current.reset();
-              }}
-              text={"送出"}
+            <ToolTipBtn
+              placement="bottom"
+              btnAriaLabel="送出"
+              btnOnclickEventName={handleDeleteSubmit}
+              btnSize="nm"
+              btnText="送出"
+              btnVariant="primary"
+              tooltipText="送出"
             />
           </Modal.Footer>
         </Modal>
