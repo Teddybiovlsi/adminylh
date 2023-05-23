@@ -56,29 +56,6 @@ export default function FrontEndRegistration() {
   // 限制重複點擊
   const [disabledBtn, setDisabledBtn] = useState(false);
 
-  useEffect(() => {
-    if (selectVideoLanguage == 0 && selectVideoType == 0) {
-      setVideoFilterData(videoData);
-    } else if (selectVideoType == 0 && selectVideoLanguage != 0) {
-      setVideoFilterData(
-        videoData.filter(
-          (item) => item.video_language_index == selectVideoLanguage
-        )
-      );
-    } else if (selectVideoType != 0 && selectVideoLanguage == 0) {
-      setVideoFilterData(
-        videoData.filter((item) => item.video_class_index == selectVideoType)
-      );
-    } else {
-      setVideoFilterData(
-        videoData.filter(
-          (item) =>
-            item.video_class_index == selectVideoType &&
-            item.video_language_index == selectVideoLanguage
-        )
-      );
-    }
-  }, [selectVideoType, selectVideoLanguage]);
 
   useEffect(() => {
     if (videoData.length === videoTempIndex.length) {
