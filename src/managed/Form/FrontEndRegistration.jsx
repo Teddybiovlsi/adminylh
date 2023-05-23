@@ -31,7 +31,6 @@ import ToastAlert from "../../components/ToastAlert";
 import FormIdentity from "./shared/FormIdentity";
 import { Stepper, Step } from "react-form-stepper";
 import styles from "../../styles/Form/ClientRegistration.module.scss";
-import { set } from "lodash";
 
 export default function FrontEndRegistration() {
   const location = useLocation();
