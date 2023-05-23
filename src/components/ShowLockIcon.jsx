@@ -15,7 +15,7 @@ export default function ShowLockIcon({
           placement={placement}
           overlay={<Tooltip id={`tooltip-${placement}`}>{tooltipText}</Tooltip>}
         >
-          <i style={{ color: "Green" }} class="bi bi-unlock-fill"></i>
+          <i style={{ color: "Green" }} className="bi bi-unlock-fill"></i>
         </OverlayTrigger>
       </>
     );
@@ -27,7 +27,7 @@ export default function ShowLockIcon({
           placement={placement}
           overlay={<Tooltip id={`tooltip-${placement}`}>{tooltipText}</Tooltip>}
         >
-          <i style={{ color: "red" }} class="bi bi-lock-fill"></i>
+          <i style={{ color: "red" }} className="bi bi-lock-fill"></i>
         </OverlayTrigger>
       </>
     );

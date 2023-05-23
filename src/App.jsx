@@ -16,7 +16,7 @@ import {
   GoogleReCaptcha,
 } from "react-google-recaptcha-v3";
 import "./styles/app.css";
-import ManageAccount from "./managed/Pages/ManageAccount";
+import ManageClientAccount from "./managed/Pages/ManageClientAccount";
 
 function App() {
   return (
@@ -35,7 +35,7 @@ function App() {
           <Route path="/Pratice" element={<Pratice />} />
           <Route path="/Exam" element={<Exam />} />
           <Route path="/Video" element={<VideoPlayer />} />
-          <Route path="/ManageClientAccount" element={<ManageAccount />} />
+          <Route path="/ManageClientAccount" element={<ManageClientAccount />} />
         </Routes>
       </main>
       <Footer />
