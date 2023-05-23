@@ -592,6 +592,7 @@ export default function Home() {
             <Modal.Title>請再次確認刪除的影片</Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            
             <p style={{ color: "red" }}>
               若影片確認後無誤，請勾選我不是機器人後送出
             </p>
