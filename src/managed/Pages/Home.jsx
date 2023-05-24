@@ -272,9 +272,6 @@ export default function Home() {
   const handleSelectVideoindex = (ID) => {
     // if selectVideoindex includes ID, set selectVideoindex to selectVideoindex filter ID
     // otherwise, set selectVideoindex to selectVideoindex add ID
-    // selectVideoLanguage.includes(ID)
-    //   ? setSelectVideoindex(selectVideoindex.filter((item) => item !== ID))
-    //   : setSelectVideoindex([...selectVideoindex, ID]);
     setSelectVideoindex(
       selectVideoindex.includes(ID)
         ? selectVideoindex.filter((item) => item !== ID)

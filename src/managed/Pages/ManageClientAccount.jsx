@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
-import { Container, Navbar, Table } from 'react-bootstrap';
+import { Container, Modal, Navbar, Table } from 'react-bootstrap';
 import ToolTipBtn from '../../components/ToolTipBtn';
 import ShowLockIcon from '../../components/ShowLockIcon';
 import ShowInfoIcon from '../../components/ShowInfoIcon';
 import styles from '../../styles/Form/ClientRegistration.module.scss';
 import { get } from '../axios';
+import { set } from 'lodash';
 
 export default function ManageClientAccount() {
   const handleSelectAllAccount = () => {};
   const [accountInfo, setAccountInfo] = React.useState([]);
   // 用來儲存篩選後的資料
-  const [filteraccountInfo, setFilteraccountInfo] = React.useState([]);
+  const [filteraccountInfo, setFilteraccountInfo] = React.useState(null);
 
   // 若帳號資訊尚未載入完成，則顯示Loading
   const [loading, setLoading] = React.useState(false);
@@ -38,7 +39,7 @@ export default function ManageClientAccount() {
       fetchaAccountData({
         api: 'account',
       });
-    }, 10000);
+    }, 5 * 60 * 1000);
   }, []);
 
   const fetchaAccountData = async ({ api }) => {
@@ -57,7 +58,6 @@ export default function ManageClientAccount() {
       // if checkIsArray is true, set videoData to data
       // otherwise, set videoData to [data]
       setAccountInfo(checkIsArray ? data : [data]);
-      setFilteraccountInfo(checkIsArray ? data : [data]);
       // 將 loading 設為 false
       setLoading(false);
       // clear error message
@@ -95,6 +95,16 @@ export default function ManageClientAccount() {
       return name;
     }
   };
+
+  // 懸浮視窗Modal
+  // 顯示帳號資訊
+  const AccountInfoModal = (user_account) => {
+    setFilteraccountInfo(
+      accountInfo.filter((item) => item.client_account == user_account)
+    );
+  };
+
+  const handleCloseAccountModal = () => setFilteraccountInfo(null);
 
   // 表格標題
   const AccountTitle = () => {
@@ -243,7 +253,9 @@ export default function ManageClientAccount() {
                     <ShowInfoIcon
                       placement='bottom'
                       btnAriaLabel='帳號資訊'
-                      // btnOnclickEventName={}
+                      btnOnclickEventName={() => {
+                        AccountInfoModal(item.client_account);
+                      }}
                       btnSize='sm'
                       tooltipText='帳號資訊'
                     />
@@ -253,6 +265,24 @@ export default function ManageClientAccount() {
             })}
           </tbody>
         </Table>
+        <Modal
+          show={filteraccountInfo != null}
+          onHide={handleCloseAccountModal}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>帳號資訊</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {filteraccountInfo != null && (
+              <div>
+                <p>帳號：{filteraccountInfo[0].client_account}</p>
+                <p>姓名：{filteraccountInfo[0].client_name}</p>
+                <p>聯絡信箱：{filteraccountInfo[0].client_email}</p>
+                <p>登入次數：{filteraccountInfo[0].client_login_times}</p>
+              </div>
+            )}
+          </Modal.Body>
+        </Modal>
       </div>
     </div>
   );
