@@ -6,12 +6,15 @@ import ShowLockIcon from '../../components/ShowLockIcon';
 import ShowInfoIcon from '../../components/ShowInfoIcon';
 import CustomState from '../JsonFile/SelectCustomerState.json';
 import styles from '../../styles/Form/ClientRegistration.module.scss';
+import { set } from 'lodash';
+import Loading from '../../components/Loading';
+import LoadingComponent from '../../components/LoadingComponent';
 
 export default function ManageClientAccount() {
   const handleSelectAllAccount = () => {};
   const [accountInfo, setAccountInfo] = React.useState([]);
   // 用來儲存篩選後的資料
-  const [filteraccountInfo, setFilteraccountInfo] = React.useState(null);
+  const [filteraccountInfo, setFilteraccountInfo] = React.useState([]);
   // 用來儲存篩選後的資料，用於懸浮視窗Modal
   const [filterPersonInfo, setFilterPersonInfo] = React.useState(null);
   // 用來儲存用戶狀態(啟用/停用)
@@ -21,6 +24,8 @@ export default function ManageClientAccount() {
   const [loading, setLoading] = React.useState(false);
   // 若帳號資訊載入失敗，則顯示錯誤訊息
   const [errorMessage, setErrorMessage] = React.useState('');
+
+  const [errorFilterMessage, setErrorFilterMessage] = React.useState('');
 
   // first render, get acoount data
   useEffect(() => {
@@ -46,16 +51,28 @@ export default function ManageClientAccount() {
       });
     }, 5 * 60 * 1000);
   }, []);
-
+  // 用戶狀態(啟用/停用)改變時，重新選擇資料
   useEffect(() => {
     if (userState == 0) {
-      console.log('啟用');
+      setFilteraccountInfo(
+        accountInfo.filter((item) => item.client_is_lock == 0)
+      );
     } else if (userState == 1) {
-      console.log('停用');
+      setFilteraccountInfo(
+        accountInfo.filter((item) => item.client_is_lock == 1)
+      );
     } else {
-      console.log('全部');
+      setFilteraccountInfo(accountInfo);
     }
   }, [userState]);
+
+  useEffect(() => {
+    if (filteraccountInfo.length == 0) {
+      setErrorFilterMessage('該區段查無資料，請重新選擇');
+    } else {
+      setErrorFilterMessage('');
+    }
+  }, [filteraccountInfo]);
 
   const fetchaAccountData = async ({ api }) => {
     try {
@@ -73,6 +90,8 @@ export default function ManageClientAccount() {
       // if checkIsArray is true, set videoData to data
       // otherwise, set videoData to [data]
       setAccountInfo(checkIsArray ? data : [data]);
+      // 將預設篩選後的資料設為 data
+      setFilteraccountInfo(checkIsArray ? data : [data]);
       // 將 loading 設為 false
       setLoading(false);
       // clear error message
@@ -156,6 +175,22 @@ export default function ManageClientAccount() {
       </tr>
     );
   };
+  if (loading) {
+    return <LoadingComponent title='帳號資訊欄位' text='帳號資訊載入中' />;
+  }
+
+  if (errorMessage) {
+    return (
+      <div className='container'>
+        <h1 className={styles.container_firstHeading}>帳號資訊欄位</h1>
+        <div className={styles.container_division}>
+          <h2 className={styles.container_division_secondHeading}>
+            {errorMessage}
+          </h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='container pb-4'>
@@ -244,63 +279,80 @@ export default function ManageClientAccount() {
         </Form.Select>
       </div>
       <div className={`mt-3 mb-3 ${styles.container_division}`}>
-        <Table>
-          <thead>
-            <AccountTitle />
-          </thead>
-          <tbody>
-            {accountInfo.map((item, index) => {
-              return (
-                <tr key={index}>
-                  <td className={styles.container_division_table_rowTable_data}>
-                    <input
-                      type='checkbox'
-                      // checked video by video ID
-                      // checked={selectVideoindex.includes(id)}
-                      // onChange={() => {
-                      //   handleSelectVideoindex(id);
-                      // }}
-                      // value={id}
-                      className={
-                        styles.container_division_table_rowTable_data_checkbox
-                      }
-                    />
-                  </td>
-                  <td className={styles.container_division_table_rowTable_data}>
-                    {handleIdAccount(item.client_account)}
-                  </td>
-                  <td className={styles.container_division_table_rowTable_data}>
-                    {handleNameAccount(item.client_name)}
-                  </td>
-                  <td className={styles.container_division_table_rowTable_data}>
-                    <ShowLockIcon
-                      placement='bottom'
-                      islock={item.client_is_lock}
-                      tooltipText={
-                        item.client_is_lock === 0 ? '開放使用中' : '鎖定中'
-                      }
-                    />
-                  </td>
-                  <td className={styles.container_division_table_rowTable_data}>
-                    <ShowInfoIcon
-                      placement='bottom'
-                      btnAriaLabel='帳號資訊'
-                      btnOnclickEventName={() => {
-                        AccountInfoModal(item.client_account);
-                      }}
-                      btnSize='sm'
-                      tooltipText='帳號資訊'
-                    />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
-        <Modal
-          show={filterPersonInfo != null}
-          onHide={handleCloseAccountModal}
-        >
+        {errorFilterMessage == '' && (
+          <Table>
+            <thead>
+              <AccountTitle />
+            </thead>
+            <tbody>
+              {filteraccountInfo.map((item, index) => {
+                return (
+                  <tr key={index}>
+                    <td
+                      className={styles.container_division_table_rowTable_data}
+                    >
+                      <input
+                        type='checkbox'
+                        // checked video by video ID
+                        // checked={selectVideoindex.includes(id)}
+                        // onChange={() => {
+                        //   handleSelectVideoindex(id);
+                        // }}
+                        // value={id}
+                        className={
+                          styles.container_division_table_rowTable_data_checkbox
+                        }
+                      />
+                    </td>
+                    <td
+                      className={styles.container_division_table_rowTable_data}
+                    >
+                      {handleIdAccount(item.client_account)}
+                    </td>
+                    <td
+                      className={styles.container_division_table_rowTable_data}
+                    >
+                      {handleNameAccount(item.client_name)}
+                    </td>
+                    <td
+                      className={styles.container_division_table_rowTable_data}
+                    >
+                      <ShowLockIcon
+                        placement='bottom'
+                        islock={item.client_is_lock}
+                        tooltipText={
+                          item.client_is_lock === 0 ? '開放使用中' : '鎖定中'
+                        }
+                      />
+                    </td>
+                    <td
+                      className={styles.container_division_table_rowTable_data}
+                    >
+                      <ShowInfoIcon
+                        placement='bottom'
+                        btnAriaLabel='帳號資訊'
+                        btnOnclickEventName={() => {
+                          AccountInfoModal(item.client_account);
+                        }}
+                        btnSize='sm'
+                        tooltipText='帳號資訊'
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        )}
+        {errorFilterMessage != '' && (
+          <div className={`mt-3 mb-3 ${styles.container_division}`}>
+            <h2 className={styles.container_division_secondHeading}>
+              {errorFilterMessage}
+            </h2>
+          </div>
+        )}
+
+        <Modal show={filterPersonInfo != null} onHide={handleCloseAccountModal}>
           <Modal.Header closeButton>
             <Modal.Title>帳號資訊</Modal.Title>
           </Modal.Header>
