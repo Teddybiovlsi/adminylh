@@ -1,17 +1,21 @@
 import React, { useEffect } from 'react';
-import { Container, Modal, Navbar, Table } from 'react-bootstrap';
+import { get } from '../axios';
+import { Container, Form, Modal, Navbar, Table } from 'react-bootstrap';
 import ToolTipBtn from '../../components/ToolTipBtn';
 import ShowLockIcon from '../../components/ShowLockIcon';
 import ShowInfoIcon from '../../components/ShowInfoIcon';
+import CustomState from '../JsonFile/SelectCustomerState.json';
 import styles from '../../styles/Form/ClientRegistration.module.scss';
-import { get } from '../axios';
-import { set } from 'lodash';
 
 export default function ManageClientAccount() {
   const handleSelectAllAccount = () => {};
   const [accountInfo, setAccountInfo] = React.useState([]);
   // 用來儲存篩選後的資料
   const [filteraccountInfo, setFilteraccountInfo] = React.useState(null);
+  // 用來儲存篩選後的資料，用於懸浮視窗Modal
+  const [filterPersonInfo, setFilterPersonInfo] = React.useState(null);
+  // 用來儲存用戶狀態(啟用/停用)
+  const [userState, setUserState] = React.useState('');
 
   // 若帳號資訊尚未載入完成，則顯示Loading
   const [loading, setLoading] = React.useState(false);
@@ -34,6 +38,7 @@ export default function ManageClientAccount() {
   }, []);
 
   // after first render, get account data every 5 minutes
+  // 因為單位是毫秒，所以 5 * 60 * 1000 = 5 分鐘
   useEffect(() => {
     setInterval(() => {
       fetchaAccountData({
@@ -41,6 +46,16 @@ export default function ManageClientAccount() {
       });
     }, 5 * 60 * 1000);
   }, []);
+
+  useEffect(() => {
+    if (userState == 0) {
+      console.log('啟用');
+    } else if (userState == 1) {
+      console.log('停用');
+    } else {
+      console.log('全部');
+    }
+  }, [userState]);
 
   const fetchaAccountData = async ({ api }) => {
     try {
@@ -99,12 +114,12 @@ export default function ManageClientAccount() {
   // 懸浮視窗Modal
   // 顯示帳號資訊
   const AccountInfoModal = (user_account) => {
-    setFilteraccountInfo(
+    setFilterPersonInfo(
       accountInfo.filter((item) => item.client_account == user_account)
     );
   };
 
-  const handleCloseAccountModal = () => setFilteraccountInfo(null);
+  const handleCloseAccountModal = () => setFilterPersonInfo(null);
 
   // 表格標題
   const AccountTitle = () => {
@@ -211,6 +226,23 @@ export default function ManageClientAccount() {
           </div>
         </Container>
       </Navbar>
+      <div className={styles.container_division_select}>
+        <Form.Select
+          aria-label='請選擇使用者狀態'
+          onChange={(event) => {
+            setUserState(event.target.value);
+          }}
+          style={{ width: '200px' }}
+        >
+          {CustomState.map((item, _) => {
+            return (
+              <option key={item.id} value={item.value}>
+                {item.label}
+              </option>
+            );
+          })}
+        </Form.Select>
+      </div>
       <div className={`mt-3 mb-3 ${styles.container_division}`}>
         <Table>
           <thead>
@@ -266,19 +298,19 @@ export default function ManageClientAccount() {
           </tbody>
         </Table>
         <Modal
-          show={filteraccountInfo != null}
+          show={filterPersonInfo != null}
           onHide={handleCloseAccountModal}
         >
           <Modal.Header closeButton>
             <Modal.Title>帳號資訊</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {filteraccountInfo != null && (
+            {filterPersonInfo != null && (
               <div>
-                <p>帳號：{filteraccountInfo[0].client_account}</p>
-                <p>姓名：{filteraccountInfo[0].client_name}</p>
-                <p>聯絡信箱：{filteraccountInfo[0].client_email}</p>
-                <p>登入次數：{filteraccountInfo[0].client_login_times}</p>
+                <p>帳號：{filterPersonInfo[0].client_account}</p>
+                <p>姓名：{filterPersonInfo[0].client_name}</p>
+                <p>聯絡信箱：{filterPersonInfo[0].client_email}</p>
+                <p>登入次數：{filterPersonInfo[0].client_login_times}</p>
               </div>
             )}
           </Modal.Body>
