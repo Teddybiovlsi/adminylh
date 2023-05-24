@@ -22,6 +22,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 import styles from "../../styles/pages/HomePage.module.scss";
+import LoadingComponent from "../../components/LoadingComponent";
 
 export default function Home() {
   // limit video data size in one page
@@ -354,14 +355,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="container">
-        <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
-        <div className={styles.container_division}>
-          <h2 className={styles.container_division_secondHeading}>
-            <Loading text="資訊載入中" />
-          </h2>
-        </div>
-      </div>
+      <LoadingComponent title="影片資訊欄位" text="資訊載入中" />
     );
   }
 
