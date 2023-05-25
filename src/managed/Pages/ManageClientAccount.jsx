@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
-import { get } from '../axios';
-import { Container, Form, Modal, Navbar, Table } from 'react-bootstrap';
-import ToolTipBtn from '../../components/ToolTipBtn';
-import ShowLockIcon from '../../components/ShowLockIcon';
-import ShowInfoIcon from '../../components/ShowInfoIcon';
-import CustomState from '../JsonFile/SelectCustomerState.json';
-import styles from '../../styles/Form/ClientRegistration.module.scss';
-import { set } from 'lodash';
-import Loading from '../../components/Loading';
-import LoadingComponent from '../../components/LoadingComponent';
+import React, { useEffect } from "react";
+import { get } from "../axios";
+import { Container, Form, Modal, Navbar, Table } from "react-bootstrap";
+import ToolTipBtn from "../../components/ToolTipBtn";
+import ShowLockIcon from "../../components/ShowLockIcon";
+import ShowInfoIcon from "../../components/ShowInfoIcon";
+import CustomState from "../JsonFile/SelectCustomerState.json";
+import styles from "../../styles/Form/ClientRegistration.module.scss";
+import { set } from "lodash";
+import Loading from "../../components/Loading";
+import LoadingComponent from "../../components/LoadingComponent";
+import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 
 export default function ManageClientAccount() {
   const handleSelectAllAccount = () => {};
@@ -18,14 +19,14 @@ export default function ManageClientAccount() {
   // 用來儲存篩選後的資料，用於懸浮視窗Modal
   const [filterPersonInfo, setFilterPersonInfo] = React.useState(null);
   // 用來儲存用戶狀態(啟用/停用)
-  const [userState, setUserState] = React.useState('');
+  const [userState, setUserState] = React.useState("");
 
   // 若帳號資訊尚未載入完成，則顯示Loading
   const [loading, setLoading] = React.useState(false);
   // 若帳號資訊載入失敗，則顯示錯誤訊息
-  const [errorMessage, setErrorMessage] = React.useState('');
+  const [errorMessage, setErrorMessage] = React.useState("");
 
-  const [errorFilterMessage, setErrorFilterMessage] = React.useState('');
+  const [errorFilterMessage, setErrorFilterMessage] = React.useState("");
 
   // first render, get acoount data
   useEffect(() => {
@@ -34,7 +35,7 @@ export default function ManageClientAccount() {
       // set loading to true
       setLoading(true);
       fetchaAccountData({
-        api: 'account',
+        api: "account",
       });
     }
     return () => {
@@ -47,7 +48,7 @@ export default function ManageClientAccount() {
   useEffect(() => {
     setInterval(() => {
       fetchaAccountData({
-        api: 'account',
+        api: "account",
       });
     }, 5 * 60 * 1000);
   }, []);
@@ -68,9 +69,9 @@ export default function ManageClientAccount() {
 
   useEffect(() => {
     if (filteraccountInfo.length == 0) {
-      setErrorFilterMessage('該區段查無資料，請重新選擇');
+      setErrorFilterMessage("該區段查無資料，請重新選擇");
     } else {
-      setErrorFilterMessage('');
+      setErrorFilterMessage("");
     }
   }, [filteraccountInfo]);
 
@@ -95,7 +96,7 @@ export default function ManageClientAccount() {
       // 將 loading 設為 false
       setLoading(false);
       // clear error message
-      setErrorMessage('');
+      setErrorMessage("");
     } catch (error) {
       // if catch error, clear videoData
       setVideoData([]);
@@ -112,19 +113,19 @@ export default function ManageClientAccount() {
   // 將身分證敏感資訊做處理
   const handleIdAccount = (account) => {
     if (account.length === 10) {
-      return account.slice(0, 3) + '***' + account.slice(6, 10);
+      return account.slice(0, 3) + "***" + account.slice(6, 10);
     } else if (account.length === 11) {
-      return account.slice(0, 3) + '***' + account.slice(7, 11);
+      return account.slice(0, 3) + "***" + account.slice(7, 11);
     }
   };
   // 將姓名敏感資訊做處理
   const handleNameAccount = (name) => {
     if (name.length === 3) {
-      return name.slice(0, 1) + 'O' + name.slice(2, 3);
+      return name.slice(0, 1) + "O" + name.slice(2, 3);
     } else if (name.length === 4) {
-      return name.slice(0, 1) + 'OO' + name.slice(3, 4);
+      return name.slice(0, 1) + "OO" + name.slice(3, 4);
     } else if (name.length === 2) {
-      return name.slice(0, 1) + 'O';
+      return name.slice(0, 1) + "O";
     } else {
       return name;
     }
@@ -148,7 +149,7 @@ export default function ManageClientAccount() {
           className={styles.container_division_table_rowTable_headingCheckBox}
         >
           <input
-            type='checkbox'
+            type="checkbox"
             // onChange={() => {
             //   handleSelectAllVideo();
             // }}
@@ -176,74 +177,67 @@ export default function ManageClientAccount() {
     );
   };
   if (loading) {
-    return <LoadingComponent title='帳號資訊欄位' text='帳號資訊載入中' />;
+    return <LoadingComponent title="帳號資訊欄位" text="帳號資訊載入中" />;
   }
 
   if (errorMessage) {
     return (
-      <div className='container'>
-        <h1 className={styles.container_firstHeading}>帳號資訊欄位</h1>
-        <div className={styles.container_division}>
-          <h2 className={styles.container_division_secondHeading}>
-            {errorMessage}
-          </h2>
-        </div>
-      </div>
+      <ErrorMessageComponent title="帳號資訊欄位" errorMessage={errorMessage} />
     );
   }
 
   return (
-    <div className='container pb-4'>
+    <div className="container pb-4">
       <h1 className={styles.container_firstHeading}>帳號資訊欄位</h1>
-      <Navbar bg='light' variant='light'>
+      <Navbar bg="light" variant="light">
         <Container>
-          <div className='me-auto'>
+          <div className="me-auto">
             <ToolTipBtn
-              placement='bottom'
-              btnAriaLabel='批次新增'
+              placement="bottom"
+              btnAriaLabel="批次新增"
               // btnOnclickEventName=
               btnText={
                 <i
-                  className='bi bi-person-plus-fill'
-                  style={{ fontSize: 1.2 + 'rem' }}
+                  className="bi bi-person-plus-fill"
+                  style={{ fontSize: 1.2 + "rem" }}
                 ></i>
               }
-              btnVariant='light'
-              tooltipText='批次新增帳號'
+              btnVariant="light"
+              tooltipText="批次新增帳號"
             />
             <ToolTipBtn
-              placement='bottom'
-              btnAriaLabel='編輯帳號'
+              placement="bottom"
+              btnAriaLabel="編輯帳號"
               // btnDisabled={
               // }
               // btnOnclickEventName={handleEditVideo}
               btnText={
                 <i
-                  className='bi bi-pencil-square'
-                  style={{ fontSize: 1.2 + 'rem' }}
+                  className="bi bi-pencil-square"
+                  style={{ fontSize: 1.2 + "rem" }}
                 ></i>
               }
-              btnVariant='light'
-              tooltipText='編輯帳號'
+              btnVariant="light"
+              tooltipText="編輯帳號"
             />
             <ToolTipBtn
-              placement='bottom'
-              btnAriaLabel='解鎖帳號'
+              placement="bottom"
+              btnAriaLabel="解鎖帳號"
               // btnDisabled={
               // }
               // btnOnclickEventName={handleEditVideo}
               btnText={
                 <i
-                  className='bi bi-unlock-fill'
-                  style={{ fontSize: 1.2 + 'rem' }}
+                  className="bi bi-unlock-fill"
+                  style={{ fontSize: 1.2 + "rem" }}
                 ></i>
               }
-              btnVariant='light'
-              tooltipText='解鎖帳號'
+              btnVariant="light"
+              tooltipText="解鎖帳號"
             />
             <ToolTipBtn
-              placement='bottom'
-              btnAriaLabel='刪除帳號'
+              placement="bottom"
+              btnAriaLabel="刪除帳號"
               // btnDisabled={
               // }
               // btnOnclickEventName={() => {
@@ -251,23 +245,23 @@ export default function ManageClientAccount() {
               // }}
               btnText={
                 <i
-                  className='bi bi-trash3-fill'
-                  style={{ fontSize: 1.2 + 'rem' }}
+                  className="bi bi-trash3-fill"
+                  style={{ fontSize: 1.2 + "rem" }}
                 ></i>
               }
-              btnVariant='light'
-              tooltipText='刪除帳號'
+              btnVariant="light"
+              tooltipText="刪除帳號"
             />
           </div>
         </Container>
       </Navbar>
       <div className={styles.container_division_select}>
         <Form.Select
-          aria-label='請選擇使用者狀態'
+          aria-label="請選擇使用者狀態"
           onChange={(event) => {
             setUserState(event.target.value);
           }}
-          style={{ width: '200px' }}
+          style={{ width: "200px" }}
         >
           {CustomState.map((item, _) => {
             return (
@@ -279,7 +273,7 @@ export default function ManageClientAccount() {
         </Form.Select>
       </div>
       <div className={`mt-3 mb-3 ${styles.container_division}`}>
-        {errorFilterMessage == '' && (
+        {errorFilterMessage == "" && (
           <Table>
             <thead>
               <AccountTitle />
@@ -292,7 +286,7 @@ export default function ManageClientAccount() {
                       className={styles.container_division_table_rowTable_data}
                     >
                       <input
-                        type='checkbox'
+                        type="checkbox"
                         // checked video by video ID
                         // checked={selectVideoindex.includes(id)}
                         // onChange={() => {
@@ -318,10 +312,10 @@ export default function ManageClientAccount() {
                       className={styles.container_division_table_rowTable_data}
                     >
                       <ShowLockIcon
-                        placement='bottom'
+                        placement="bottom"
                         islock={item.client_is_lock}
                         tooltipText={
-                          item.client_is_lock === 0 ? '開放使用中' : '鎖定中'
+                          item.client_is_lock === 0 ? "開放使用中" : "鎖定中"
                         }
                       />
                     </td>
@@ -329,13 +323,13 @@ export default function ManageClientAccount() {
                       className={styles.container_division_table_rowTable_data}
                     >
                       <ShowInfoIcon
-                        placement='bottom'
-                        btnAriaLabel='帳號資訊'
+                        placement="bottom"
+                        btnAriaLabel="帳號資訊"
                         btnOnclickEventName={() => {
                           AccountInfoModal(item.client_account);
                         }}
-                        btnSize='sm'
-                        tooltipText='帳號資訊'
+                        btnSize="sm"
+                        tooltipText="帳號資訊"
                       />
                     </td>
                   </tr>
@@ -344,7 +338,7 @@ export default function ManageClientAccount() {
             </tbody>
           </Table>
         )}
-        {errorFilterMessage != '' && (
+        {errorFilterMessage != "" && (
           <div className={`mt-3 mb-3 ${styles.container_division}`}>
             <h2 className={styles.container_division_secondHeading}>
               {errorFilterMessage}

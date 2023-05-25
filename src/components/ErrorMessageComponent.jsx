@@ -7,7 +7,7 @@ export default function ErrorMessageComponent({
 }) {
   return (
     <div className="container">
-      <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
+      <h1 className={styles.container_firstHeading}>{title}</h1>
       <div className={styles.container_division}>
         <h2 className={styles.container_division_secondHeading}>
           {errorMessage}
