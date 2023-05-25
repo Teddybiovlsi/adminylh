@@ -14,6 +14,8 @@ import styles from "../../styles/pages/HomePage.module.scss";
 export default function ManageClientAccount() {
   const handleSelectAllAccount = () => {};
   const [accountInfo, setAccountInfo] = React.useState([]);
+
+  const [searchInfo, setSearchInfo] = React.useState("");
   // 用來儲存篩選後的資料
   const [filteraccountInfo, setFilteraccountInfo] = React.useState([]);
   // 用來儲存篩選後的資料，用於懸浮視窗Modal
@@ -139,6 +141,22 @@ export default function ManageClientAccount() {
       return name;
     }
   };
+  useEffect(() => {
+    // 若搜尋欄位不為空，則顯示搜尋結果
+    if (searchInfo !== "") {
+      setFilteraccountInfo(
+        accountInfo.filter((item) => {
+          return (
+            item.client_account.includes(searchInfo) ||
+            item.client_name.includes(searchInfo)
+          );
+        })
+      );
+    } else {
+      setFilteraccountInfo(accountInfo);
+    }
+  }, [searchInfo]);
+
   // 若帳號欄位有任一被勾選，則編輯、解鎖、刪除按鈕皆可使用
   useEffect(() => {
     if (selectAccount.length === 0) {
@@ -346,6 +364,15 @@ export default function ManageClientAccount() {
               }
               btnVariant="light"
               tooltipText="刪除帳號"
+            />
+          </div>
+          <div className="d-flex">
+            <Form.Control
+              type="text"
+              placeholder="搜尋"
+              onChange={(event) => {
+                setSearchInfo(event.target.value);
+              }}
             />
           </div>
         </Container>
