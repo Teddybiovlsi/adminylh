@@ -5,11 +5,11 @@ import ToolTipBtn from "../../components/ToolTipBtn";
 import ShowLockIcon from "../../components/ShowLockIcon";
 import ShowInfoIcon from "../../components/ShowInfoIcon";
 import CustomState from "../JsonFile/SelectCustomerState.json";
-import styles from "../../styles/Form/ClientRegistration.module.scss";
 import { set } from "lodash";
 import Loading from "../../components/Loading";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
+import styles from "../../styles/pages/HomePage.module.scss";
 
 export default function ManageClientAccount() {
   const handleSelectAllAccount = () => {};
@@ -50,7 +50,7 @@ export default function ManageClientAccount() {
       fetchaAccountData({
         api: "account",
       });
-    }, 5 * 60 * 1000);
+    }, 5 * 1000);
   }, []);
   // 用戶狀態(啟用/停用)改變時，重新選擇資料
   useEffect(() => {
@@ -255,9 +255,9 @@ export default function ManageClientAccount() {
           </div>
         </Container>
       </Navbar>
-      <div className={styles.container_division_select}>
+      <div>
         <Form.Select
-          aria-label="請選擇使用者狀態"
+          aria-label="請選擇用戶狀態"
           onChange={(event) => {
             setUserState(event.target.value);
           }}
