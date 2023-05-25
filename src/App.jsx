@@ -9,14 +9,16 @@ import Home from "./managed/Pages/Home";
 import Pratice from "./managed/Pages/Pratice";
 import Exam from "./managed/Pages/Exam";
 import VideoPlayer from "./managed/Pages/VideoPlayer";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
 import {
   GoogleReCaptchaProvider,
   GoogleReCaptcha,
 } from "react-google-recaptcha-v3";
 import "./styles/app.css";
 import ManageClientAccount from "./managed/Pages/ManageClientAccount";
+import AboutUs from "./managed/Pages/AboutUs";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+// import "react-bootstrap-table-next";
 
 function App() {
   return (
@@ -35,7 +37,11 @@ function App() {
           <Route path="/Pratice" element={<Pratice />} />
           <Route path="/Exam" element={<Exam />} />
           <Route path="/Video" element={<VideoPlayer />} />
-          <Route path="/ManageClientAccount" element={<ManageClientAccount />} />
+          <Route
+            path="/ManageClientAccount"
+            element={<ManageClientAccount />}
+          />
+          <Route path="/aboutus" element={<AboutUs />} />
         </Routes>
       </main>
       <Footer />

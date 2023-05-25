@@ -18,15 +18,24 @@ export default function ManageClientAccount() {
   const [filteraccountInfo, setFilteraccountInfo] = React.useState([]);
   // 用來儲存篩選後的資料，用於懸浮視窗Modal
   const [filterPersonInfo, setFilterPersonInfo] = React.useState(null);
-  // 用來儲存用戶狀態(啟用/停用)
+  // 用來儲存是否全選帳號
+  const [isCheckAllAccount, setIsCheckAllAccount] = React.useState(false);
+  // 用來儲存選擇的帳號
+  const [selectAccount, setSelectAccount] = React.useState([]);
+  // 用來儲存用戶狀態(正常使用中/鎖定中)
   const [userState, setUserState] = React.useState("");
-
+  // 用來儲存使用者傳入之Excel檔案
+  const [sheetData, setSheetData] = React.useState([]);
   // 若帳號資訊尚未載入完成，則顯示Loading
   const [loading, setLoading] = React.useState(false);
   // 若帳號資訊載入失敗，則顯示錯誤訊息
   const [errorMessage, setErrorMessage] = React.useState("");
-
+  // 若篩選後的資料為空，則顯示錯誤訊息
   const [errorFilterMessage, setErrorFilterMessage] = React.useState("");
+  // 若沒有選擇任何帳號，則禁用編輯、解鎖、刪除按鈕
+  const [isDisableEditBtn, setIsDisableEditBtn] = React.useState(true);
+  const [isDisableUnlockBtn, setIsDisableUnlockBtn] = React.useState(true);
+  const [isDisableDeleteBtn, setIsDisableDeleteBtn] = React.useState(true);
 
   // first render, get acoount data
   useEffect(() => {
@@ -50,7 +59,7 @@ export default function ManageClientAccount() {
       fetchaAccountData({
         api: "account",
       });
-    }, 5 * 1000);
+    }, 5 * 60 * 1000);
   }, []);
   // 用戶狀態(啟用/停用)改變時，重新選擇資料
   useEffect(() => {
@@ -130,6 +139,45 @@ export default function ManageClientAccount() {
       return name;
     }
   };
+  // 若帳號欄位有任一被勾選，則編輯、解鎖、刪除按鈕皆可使用
+  useEffect(() => {
+    if (selectAccount.length === 0) {
+      setIsDisableEditBtn(true);
+      setIsDisableUnlockBtn(true);
+      setIsDisableDeleteBtn(true);
+    } else {
+      setIsDisableEditBtn(false);
+      setIsDisableUnlockBtn(false);
+      setIsDisableDeleteBtn(false);
+    }
+  }, [selectAccount]);
+  // 若帳號欄位全部被勾選，則全選按鈕勾選
+  useEffect(() => {
+    // 在初始render時，selectAccount為空陣列，也因為filteraccountInfo也為空陣列
+    // 若沒有加上selectAccount.length > 0，則會導致isCheckAllAccount一直為true
+    selectAccount.length > 0 &&
+      (selectAccount.length === filteraccountInfo.length
+        ? setIsCheckAllAccount(true)
+        : setIsCheckAllAccount(false));
+  }, [selectAccount]);
+
+  // 全選帳號
+  const handleSelectAllVideo = () => {
+    setIsCheckAllAccount(!isCheckAllAccount);
+
+    isCheckAllAccount
+      ? setSelectAccount([])
+      : setSelectAccount(filteraccountInfo.map((item) => item.client_account));
+  };
+
+  // 單一選擇帳號
+  const handleSelectAccount = (account) => {
+    setSelectAccount(
+      selectAccount.includes(account)
+        ? selectAccount.filter((item) => item !== account)
+        : [...selectAccount, account]
+    );
+  };
 
   // 懸浮視窗Modal
   // 顯示帳號資訊
@@ -150,10 +198,10 @@ export default function ManageClientAccount() {
         >
           <input
             type="checkbox"
-            // onChange={() => {
-            //   handleSelectAllVideo();
-            // }}
-            // checked={isCheckAllVideo}
+            onChange={() => {
+              handleSelectAllVideo();
+            }}
+            checked={isCheckAllAccount}
             className={
               styles.container_division_table_rowTable_heading_checkbox
             }
@@ -176,6 +224,50 @@ export default function ManageClientAccount() {
       </tr>
     );
   };
+
+  const AccountInfo = ({ client_name, client_account, client_is_lock }) => {
+    return (
+      <tr>
+        <td className={styles.container_division_table_rowTable_data}>
+          <input
+            type="checkbox"
+            // checked client by client account
+            checked={selectAccount.includes(client_account)}
+            onChange={() => {
+              handleSelectAccount(client_account);
+            }}
+            value={client_account}
+            className={styles.container_division_table_rowTable_data_checkbox}
+          />
+        </td>
+        <td className={styles.container_division_table_rowTable_data}>
+          {handleIdAccount(client_account)}
+        </td>
+        <td className={styles.container_division_table_rowTable_data}>
+          {handleNameAccount(client_name)}
+        </td>
+        <td className={styles.container_division_table_rowTable_data}>
+          <ShowLockIcon
+            placement="bottom"
+            islock={client_is_lock}
+            tooltipText={client_is_lock === 0 ? "開放使用中" : "鎖定中"}
+          />
+        </td>
+        <td className={styles.container_division_table_rowTable_data}>
+          <ShowInfoIcon
+            placement="bottom"
+            btnAriaLabel="帳號資訊"
+            btnOnclickEventName={() => {
+              AccountInfoModal(client_account);
+            }}
+            btnSize="sm"
+            tooltipText="帳號資訊"
+          />
+        </td>
+      </tr>
+    );
+  };
+
   if (loading) {
     return <LoadingComponent title="帳號資訊欄位" text="帳號資訊載入中" />;
   }
@@ -208,6 +300,7 @@ export default function ManageClientAccount() {
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="編輯帳號"
+              btnDisabled={isDisableEditBtn}
               // btnDisabled={
               // }
               // btnOnclickEventName={handleEditVideo}
@@ -223,6 +316,7 @@ export default function ManageClientAccount() {
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="解鎖帳號"
+              btnDisabled={isDisableUnlockBtn}
               // btnDisabled={
               // }
               // btnOnclickEventName={handleEditVideo}
@@ -238,6 +332,7 @@ export default function ManageClientAccount() {
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="刪除帳號"
+              btnDisabled={isDisableDeleteBtn}
               // btnDisabled={
               // }
               // btnOnclickEventName={() => {
@@ -280,60 +375,7 @@ export default function ManageClientAccount() {
             </thead>
             <tbody>
               {filteraccountInfo.map((item, index) => {
-                return (
-                  <tr key={index}>
-                    <td
-                      className={styles.container_division_table_rowTable_data}
-                    >
-                      <input
-                        type="checkbox"
-                        // checked video by video ID
-                        // checked={selectVideoindex.includes(id)}
-                        // onChange={() => {
-                        //   handleSelectVideoindex(id);
-                        // }}
-                        // value={id}
-                        className={
-                          styles.container_division_table_rowTable_data_checkbox
-                        }
-                      />
-                    </td>
-                    <td
-                      className={styles.container_division_table_rowTable_data}
-                    >
-                      {handleIdAccount(item.client_account)}
-                    </td>
-                    <td
-                      className={styles.container_division_table_rowTable_data}
-                    >
-                      {handleNameAccount(item.client_name)}
-                    </td>
-                    <td
-                      className={styles.container_division_table_rowTable_data}
-                    >
-                      <ShowLockIcon
-                        placement="bottom"
-                        islock={item.client_is_lock}
-                        tooltipText={
-                          item.client_is_lock === 0 ? "開放使用中" : "鎖定中"
-                        }
-                      />
-                    </td>
-                    <td
-                      className={styles.container_division_table_rowTable_data}
-                    >
-                      <ShowInfoIcon
-                        placement="bottom"
-                        btnAriaLabel="帳號資訊"
-                        btnOnclickEventName={() => {
-                          AccountInfoModal(item.client_account);
-                        }}
-                        btnSize="sm"
-                        tooltipText="帳號資訊"
-                      />
-                    </td>
-                  </tr>
-                );
+                return <AccountInfo key={index} {...item} />;
               })}
             </tbody>
           </Table>
