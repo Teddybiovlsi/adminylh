@@ -23,6 +23,7 @@ import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 import styles from "../../styles/pages/HomePage.module.scss";
 import LoadingComponent from "../../components/LoadingComponent";
+import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 
 export default function Home() {
   // limit video data size in one page
@@ -354,21 +355,12 @@ export default function Home() {
   };
 
   if (loading) {
-    return (
-      <LoadingComponent title="影片資訊欄位" text="資訊載入中" />
-    );
+    return <LoadingComponent title="影片資訊欄位" text="資訊載入中" />;
   }
 
   if (errorMessage) {
     return (
-      <div className="container">
-        <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
-        <div className={styles.container_division}>
-          <h2 className={styles.container_division_secondHeading}>
-            {errorMessage}
-          </h2>
-        </div>
-      </div>
+      <ErrorMessageComponent title="影片資訊欄位" errorMessage={errorMessage} />
     );
   }
 
@@ -583,7 +575,6 @@ export default function Home() {
             <Modal.Title>請再次確認刪除的影片</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            
             <p style={{ color: "red" }}>
               若影片確認後無誤，請勾選我不是機器人後送出
             </p>
