@@ -83,6 +83,12 @@ export default function ManageClientAccount() {
       setErrorFilterMessage("該區段查無資料，請重新選擇");
     } else {
       setErrorFilterMessage("");
+      // 在filteraccountInfo有所變動時，檢查是否長度一致，若一致則全選，反之則取消全選
+      if (filteraccountInfo.length === selectAccount.length) {
+        setIsCheckAllAccount(true);
+      } else {
+        setIsCheckAllAccount(false);
+      }
     }
   }, [filteraccountInfo]);
 
@@ -172,8 +178,8 @@ export default function ManageClientAccount() {
   // 若帳號欄位全部被勾選，則全選按鈕勾選
   useEffect(() => {
     // 在初始render時，selectAccount為空陣列，也因為filteraccountInfo也為空陣列
-    // 若沒有加上selectAccount.length > 0，則會導致isCheckAllAccount一直為true
-    selectAccount.length > 0 &&
+    // filteraccountInfo.length > 0，則會導致isCheckAllAccount一直為true
+    filteraccountInfo.length > 0 &&
       (selectAccount.length === filteraccountInfo.length
         ? setIsCheckAllAccount(true)
         : setIsCheckAllAccount(false));
