@@ -18,7 +18,7 @@ import ManageClientAccount from "./managed/Pages/ManageClientAccount";
 import AboutUs from "./managed/Pages/AboutUs";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-// import "react-bootstrap-table-next";
+import MultiAddUser from "./managed/Pages/MultiAddUser";
 
 function App() {
   return (
@@ -41,6 +41,7 @@ function App() {
             path="/ManageClientAccount"
             element={<ManageClientAccount />}
           />
+          <Route path="/MultiAddUser" element={<MultiAddUser />} />
           <Route path="/aboutus" element={<AboutUs />} />
         </Routes>
       </main>

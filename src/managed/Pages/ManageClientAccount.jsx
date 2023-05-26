@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { get } from "../axios";
 import { Container, Form, Modal, Navbar, Table } from "react-bootstrap";
 import ToolTipBtn from "../../components/ToolTipBtn";
@@ -10,35 +10,51 @@ import Loading from "../../components/Loading";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import styles from "../../styles/pages/HomePage.module.scss";
+import { useNavigate } from "react-router-dom";
 
 export default function ManageClientAccount() {
   const handleSelectAllAccount = () => {};
-  const [accountInfo, setAccountInfo] = React.useState([]);
+  const [accountInfo, setAccountInfo] = useState([]);
 
-  const [searchInfo, setSearchInfo] = React.useState("");
+  const [searchInfo, setSearchInfo] = useState("");
   // 用來儲存篩選後的資料
-  const [filteraccountInfo, setFilteraccountInfo] = React.useState([]);
+  const [filteraccountInfo, setFilteraccountInfo] = useState([]);
   // 用來儲存篩選後的資料，用於懸浮視窗Modal
-  const [filterPersonInfo, setFilterPersonInfo] = React.useState(null);
+  const [filterPersonInfo, setFilterPersonInfo] = useState(null);
   // 用來儲存是否全選帳號
-  const [isCheckAllAccount, setIsCheckAllAccount] = React.useState(false);
+  const [isCheckAllAccount, setIsCheckAllAccount] = useState(false);
   // 用來儲存選擇的帳號
-  const [selectAccount, setSelectAccount] = React.useState([]);
+  const [selectAccount, setSelectAccount] = useState([]);
   // 用來儲存用戶狀態(正常使用中/鎖定中)
-  const [userState, setUserState] = React.useState("");
+  const [userState, setUserState] = useState("");
   // 用來儲存使用者傳入之Excel檔案
-  const [sheetData, setSheetData] = React.useState([]);
+  const [sheetData, setSheetData] = useState([]);
   // 若帳號資訊尚未載入完成，則顯示Loading
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
   // 若帳號資訊載入失敗，則顯示錯誤訊息
-  const [errorMessage, setErrorMessage] = React.useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   // 若篩選後的資料為空，則顯示錯誤訊息
-  const [errorFilterMessage, setErrorFilterMessage] = React.useState("");
+  const [errorFilterMessage, setErrorFilterMessage] = useState("");
   // 若沒有選擇任何帳號，則禁用編輯、解鎖、刪除按鈕
-  const [isDisableEditBtn, setIsDisableEditBtn] = React.useState(true);
-  const [isDisableUnlockBtn, setIsDisableUnlockBtn] = React.useState(true);
-  const [isDisableDeleteBtn, setIsDisableDeleteBtn] = React.useState(true);
+  const [isDisableEditBtn, setIsDisableEditBtn] = useState(true);
+  const [isDisableUnlockBtn, setIsDisableUnlockBtn] = useState(true);
+  const [isDisableDeleteBtn, setIsDisableDeleteBtn] = useState(true);
 
+  // 以下是帳號資訊欄位上方功能列的選項
+  // 批次新增帳號
+
+  let navigate = useNavigate();
+  const handleMultiAddAccount = () => {
+    navigate("/MultiAddUser");
+  };
+  // 編輯帳號
+  const handleEditAccount = () => {};
+  // 解鎖帳號
+  const handleUnlockAccount = () => {};
+  // 刪除帳號
+  const handleDeleteAccount = () => {};
+
+  // 以下是帳號資訊欄取得資料的流程
   // first render, get acoount data
   useEffect(() => {
     let ignore = false;
@@ -77,7 +93,7 @@ export default function ManageClientAccount() {
       setFilteraccountInfo(accountInfo);
     }
   }, [userState]);
-
+  // 當篩選後的資料長度為0時，顯示錯誤訊息
   useEffect(() => {
     if (filteraccountInfo.length == 0) {
       setErrorFilterMessage("該區段查無資料，請重新選擇");
@@ -311,7 +327,7 @@ export default function ManageClientAccount() {
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="批次新增"
-              // btnOnclickEventName=
+              btnOnclickEventName={handleMultiAddAccount}
               btnText={
                 <i
                   className="bi bi-person-plus-fill"
@@ -420,7 +436,7 @@ export default function ManageClientAccount() {
             </h2>
           </div>
         )}
-
+        {/* 用戶資訊Modal */}
         <Modal show={filterPersonInfo != null} onHide={handleCloseAccountModal}>
           <Modal.Header closeButton>
             <Modal.Title>帳號資訊</Modal.Title>
