@@ -70,15 +70,6 @@ export default function ManageClientAccount() {
     };
   }, []);
 
-  // after first render, get account data every 5 minutes
-  // 因為單位是毫秒，所以 5 * 60 * 1000 = 5 分鐘
-  useEffect(() => {
-    setInterval(() => {
-      fetchaAccountData({
-        api: "account",
-      });
-    }, 5 * 60 * 1000);
-  }, []);
   // 用戶狀態(啟用/停用)改變時，重新選擇資料
   useEffect(() => {
     if (userState == 0) {
