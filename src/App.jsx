@@ -45,7 +45,6 @@ function App() {
           <Route path="/aboutus" element={<AboutUs />} />
         </Routes>
       </main>
-      <Footer />
     </div>
     // </GoogleReCaptchaProvider>
   );

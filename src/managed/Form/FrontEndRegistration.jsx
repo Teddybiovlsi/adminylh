@@ -55,7 +55,6 @@ export default function FrontEndRegistration() {
   // 限制重複點擊
   const [disabledBtn, setDisabledBtn] = useState(false);
 
-
   useEffect(() => {
     if (videoData.length === videoTempIndex.length) {
       setIsCheckAllVideo(true);
@@ -191,7 +190,7 @@ export default function FrontEndRegistration() {
 
   const [disabledSubmit, setDisabledSubmit] = useState(false);
 
-  // 上船註冊資料
+  // 上傳註冊資料
   const handleSubmit = async () => {
     if (isLastPage) {
       setDisabledSubmit(true);
