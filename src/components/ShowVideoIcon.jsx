@@ -7,7 +7,7 @@ export default function ShowVideoIcon({
   placement = "top",
   tooltipText = "Hello for tooltip",
 }) {
-  if (haveVideo === 0) {
+  if (haveVideo === 1) {
     return (
       <>
         <OverlayTrigger

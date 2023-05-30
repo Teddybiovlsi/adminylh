@@ -11,6 +11,7 @@ import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import styles from "../../styles/pages/HomePage.module.scss";
 import { useNavigate } from "react-router-dom";
+import ShowVideoIcon from "../../components/ShowVideoIcon";
 
 export default function ManageClientAccount() {
   const handleSelectAllAccount = () => {};
@@ -256,7 +257,12 @@ export default function ManageClientAccount() {
     );
   };
 
-  const AccountInfo = ({ client_name, client_account, client_is_lock }) => {
+  const AccountInfo = ({
+    client_name,
+    client_account,
+    client_is_lock,
+    client_have_video,
+  }) => {
     return (
       <tr>
         <td className={styles.container_division_table_rowTable_data}>
@@ -282,6 +288,11 @@ export default function ManageClientAccount() {
             placement="bottom"
             islock={client_is_lock}
             tooltipText={client_is_lock === 0 ? "開放使用中" : "鎖定中"}
+          />
+          <ShowVideoIcon
+            placement="bottom"
+            haveVideo={client_have_video}
+            tooltipText={client_have_video === 0 ? "無影片" : "有影片"}
           />
         </td>
         <td className={styles.container_division_table_rowTable_data}>
