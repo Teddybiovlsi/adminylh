@@ -14,10 +14,12 @@ import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import { useNavigate } from "react-router-dom";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import styles from "../../styles/pages/HomePage.module.scss";
+import { toast } from "react-toastify";
+import ToastAlert from "../../components/ToastAlert";
 
 export default function ManageClientAccount() {
   const [accountInfo, setAccountInfo] = useState([]);
-
+  // 用來儲存搜尋欄位的資料
   const [searchInfo, setSearchInfo] = useState("");
   // 用來儲存篩選後的資料
   const [filteraccountInfo, setFilteraccountInfo] = useState([]);
@@ -80,9 +82,28 @@ export default function ManageClientAccount() {
   // 編輯帳號
   const handleEditAccount = () => {};
   // 解鎖帳號
-  const handleUnlockAccount = () => {};
-  // 刪除帳號
-  const handleDeleteAccount = () => {};
+  const handleUnlockAccount = () => {
+    fetchUnlockAccount({
+      api: `client/${[selectAccount]}/unlock`,
+    });
+    setTimeout(() => {
+      // clear selectAccount
+      setSelectAccount([]);
+      // clear accountInfo
+      setAccountInfo([]);
+      // clear filteraccountInfo
+      setFilteraccountInfo([]);
+      // setLoading to true
+      setLoading(true);
+      // call fetchaAccountData function to reload account data
+      // 設置3秒才重新載入資料，避免資料未在資料庫更新時就重新載入資料
+      setTimeout(() => {
+        fetchaAccountData({
+          api: "account",
+        });
+      }, 3000);
+    }, 2000);
+  };
   // 復原帳號
   const handleRestoreAccount = () => {
     navigate("/RestoreAccount");
@@ -248,6 +269,20 @@ export default function ManageClientAccount() {
       }
       console.log(error);
     }
+  };
+  // 執行解鎖帳號API
+  const fetchUnlockAccount = async ({ api }) => {
+    const id = toast.loading("解鎖中...");
+    try {
+      const response = await get(api);
+      const message = response.data.message;
+      toast.update(id, {
+        render: message,
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    } catch (error) {}
   };
 
   // 將身分證敏感資訊做處理
@@ -477,8 +512,6 @@ export default function ManageClientAccount() {
               placement="bottom"
               btnAriaLabel="編輯帳號"
               btnDisabled={isDisableEditBtn}
-              // btnDisabled={
-              // }
               // btnOnclickEventName={handleEditVideo}
               btnText={
                 <i
@@ -493,9 +526,7 @@ export default function ManageClientAccount() {
               placement="bottom"
               btnAriaLabel="解鎖帳號"
               btnDisabled={isDisableUnlockBtn}
-              // btnDisabled={
-              // }
-              // btnOnclickEventName={handleEditVideo}
+              btnOnclickEventName={handleUnlockAccount}
               btnText={
                 <i
                   className="bi bi-unlock-fill"
@@ -623,6 +654,7 @@ export default function ManageClientAccount() {
           </Modal.Footer>
         </Modal>
       </div>
+      <ToastAlert />
     </div>
   );
 }
