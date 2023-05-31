@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { get } from "../axios";
+import { get, del } from "../axios";
 import { Container, Form, Modal, Navbar, Table } from "react-bootstrap";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import ShowLockIcon from "../../components/ShowLockIcon";
@@ -12,10 +12,10 @@ import Loading from "../../components/Loading";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import { useNavigate } from "react-router-dom";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import styles from "../../styles/pages/HomePage.module.scss";
 
 export default function ManageClientAccount() {
-  const handleSelectAllAccount = () => {};
   const [accountInfo, setAccountInfo] = useState([]);
 
   const [searchInfo, setSearchInfo] = useState("");
@@ -31,8 +31,6 @@ export default function ManageClientAccount() {
   const [userState, setUserState] = useState("");
   // 用來儲存用戶影片狀態(有影片/無影片)
   const [userVideo, setUserVideo] = useState("");
-  // 用來儲存使用者傳入之Excel檔案
-  const [sheetData, setSheetData] = useState([]);
   // 若帳號資訊尚未載入完成，則顯示Loading
   const [loading, setLoading] = useState(false);
   // 若帳號資訊載入失敗，則顯示錯誤訊息
@@ -44,9 +42,37 @@ export default function ManageClientAccount() {
   const [isDisableUnlockBtn, setIsDisableUnlockBtn] = useState(true);
   const [isDisableDeleteBtn, setIsDisableDeleteBtn] = useState(true);
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const handleCloseDeleteModal = () => setShowDeleteModal(false);
+
+  const handleDeleteVideo = () => {
+    // put selectAccount value into an array
+    const data = [selectAccount];
+    // put data array into a hyperlink
+    const api = `client/${data}`;
+    // call fetchDeleteVideo function
+    fetchDeleteAccount({ api });
+    // close delete modal
+    setShowDeleteModal(false);
+    // clear selectAccount
+    setSelectAccount([]);
+    // clear accountInfo
+    setAccountInfo([]);
+    // clear filteraccountInfo
+    setFilteraccountInfo([]);
+    // setLoading to true
+    setLoading(true);
+    // call fetchaAccountData function to reload account data
+    // 設置3秒才重新載入資料，避免資料未在資料庫更新時就重新載入資料
+    setTimeout(() => {
+      fetchaAccountData({
+        api: "account",
+      });
+    }, 3000);
+  };
+
   // 以下是帳號資訊欄位上方功能列的選項
   // 批次新增帳號
-
   let navigate = useNavigate();
   const handleMultiAddAccount = () => {
     navigate("/MultiAddUser");
@@ -57,6 +83,10 @@ export default function ManageClientAccount() {
   const handleUnlockAccount = () => {};
   // 刪除帳號
   const handleDeleteAccount = () => {};
+  // 復原帳號
+  const handleRestoreAccount = () => {
+    navigate("/RestoreAccount");
+  };
 
   // 以下是帳號資訊欄取得資料的流程
   // first render, get acoount data
@@ -201,6 +231,24 @@ export default function ManageClientAccount() {
       }
     }
   };
+  // 執行刪除帳號API
+  const fetchDeleteAccount = async ({ api }) => {
+    try {
+      const response = await del(api);
+      // get response from res.data.data
+      // because res.data.data is a promise
+      // so we need to use await to get the value of res.data.data
+      // and then we can use data to get the value of res.data.data
+      const data = await response.data.data;
+
+      console.log(response);
+    } catch (error) {
+      if (error.response) {
+        setErrorMessage(StatusCode(error.response.status));
+      }
+      console.log(error);
+    }
+  };
 
   // 將身分證敏感資訊做處理
   const handleIdAccount = (account) => {
@@ -266,15 +314,17 @@ export default function ManageClientAccount() {
 
     isCheckAllAccount
       ? setSelectAccount([])
-      : setSelectAccount(filteraccountInfo.map((item) => item.client_account));
+      : setSelectAccount(
+          filteraccountInfo.map((item) => item.client_unique_id)
+        );
   };
 
   // 單一選擇帳號
-  const handleSelectAccount = (account) => {
+  const handleSelectAccount = (clientUniqueId) => {
     setSelectAccount(
-      selectAccount.includes(account)
-        ? selectAccount.filter((item) => item !== account)
-        : [...selectAccount, account]
+      selectAccount.includes(clientUniqueId)
+        ? selectAccount.filter((item) => item !== clientUniqueId)
+        : [...selectAccount, clientUniqueId]
     );
   };
 
@@ -325,6 +375,7 @@ export default function ManageClientAccount() {
   };
 
   const AccountInfo = ({
+    client_unique_id,
     client_name,
     client_account,
     client_is_lock,
@@ -336,11 +387,11 @@ export default function ManageClientAccount() {
           <input
             type="checkbox"
             // checked client by client account
-            checked={selectAccount.includes(client_account)}
+            checked={selectAccount.includes(client_unique_id)}
             onChange={() => {
-              handleSelectAccount(client_account);
+              handleSelectAccount(client_unique_id);
             }}
-            value={client_account}
+            value={client_unique_id}
             className={styles.container_division_table_rowTable_data_checkbox}
           />
         </td>
@@ -400,11 +451,27 @@ export default function ManageClientAccount() {
               btnText={
                 <i
                   className="bi bi-person-plus-fill"
-                  style={{ fontSize: 1.2 + "rem" }}
+                  style={{ fontSize: 1.2 + "rem", color: "green" }}
                 ></i>
               }
               btnVariant="light"
               tooltipText="批次新增帳號"
+            />
+            <ToolTipBtn
+              placement="bottom"
+              btnAriaLabel="刪除帳號"
+              btnDisabled={isDisableDeleteBtn}
+              btnOnclickEventName={() => {
+                setShowDeleteModal(true);
+              }}
+              btnText={
+                <i
+                  className="bi bi-person-x-fill"
+                  style={{ fontSize: 1.2 + "rem", color: "red" }}
+                ></i>
+              }
+              btnVariant="light"
+              tooltipText="刪除帳號"
             />
             <ToolTipBtn
               placement="bottom"
@@ -438,28 +505,11 @@ export default function ManageClientAccount() {
               btnVariant="light"
               tooltipText="解鎖帳號"
             />
-            <ToolTipBtn
-              placement="bottom"
-              btnAriaLabel="刪除帳號"
-              btnDisabled={isDisableDeleteBtn}
-              // btnDisabled={
-              // }
-              // btnOnclickEventName={() => {
 
-              // }}
-              btnText={
-                <i
-                  className="bi bi-person-x-fill"
-                  style={{ fontSize: 1.2 + "rem" }}
-                ></i>
-              }
-              btnVariant="light"
-              tooltipText="刪除帳號"
-            />
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="回收桶"
-              // btnOnclickEventName={}
+              btnOnclickEventName={handleRestoreAccount}
               btnText={
                 <i
                   className="bi bi-trash3-fill"
@@ -549,6 +599,28 @@ export default function ManageClientAccount() {
               </div>
             )}
           </Modal.Body>
+        </Modal>
+        {/* 確認刪除至回收桶Modal */}
+        <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>請確認是否刪除</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>刪除後請至回收桶復原</p>
+            <p>請留意!回收桶之檔案若超過3個月會自動清除</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <BtnBootstrap
+              variant="secondary"
+              onClickEventName={handleCloseDeleteModal}
+              text="取消"
+            />
+            <BtnBootstrap
+              variant="primary"
+              onClickEventName={handleDeleteVideo}
+              text="確認"
+            />
+          </Modal.Footer>
         </Modal>
       </div>
     </div>

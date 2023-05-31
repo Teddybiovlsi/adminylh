@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form, Modal, Table } from "react-bootstrap";
-import * as XLSX from "xlsx";
-import BtnBootstrap from "../../components/BtnBootstrap";
 import ReactPaginate from "react-paginate";
+import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
 import { post } from "../axios";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import styles from "../../styles/pages/HomePage.module.scss";
-import { toast } from "react-toastify";
 
 export default function MultiAddUser() {
   // 建立一個參考變數
