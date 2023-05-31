@@ -217,6 +217,7 @@ export default function MultiAddUser() {
           <div>
             <p>成功：{result.success}個</p>
             <p>重複：{result.repeat}個</p>
+            {result.trash > 0 ? <p>於垃圾桶中：{result.trash}個</p> : null}
             <p>失敗：{result.fail}個</p>
           </div>
         </Modal.Body>

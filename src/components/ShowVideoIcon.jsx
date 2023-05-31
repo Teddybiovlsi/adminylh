@@ -15,7 +15,7 @@ export default function ShowVideoIcon({
           placement={placement}
           overlay={<Tooltip id={`tooltip-${placement}`}>{tooltipText}</Tooltip>}
         >
-          <i style={{ color: "Green" }} class="bi bi-camera-video-fill"></i>
+          <i style={{ color: "Green" }} className="bi bi-camera-video-fill"></i>
         </OverlayTrigger>
       </>
     );
@@ -27,7 +27,10 @@ export default function ShowVideoIcon({
           placement={placement}
           overlay={<Tooltip id={`tooltip-${placement}`}>{tooltipText}</Tooltip>}
         >
-          <i style={{ color: "red" }} class="bi bi-camera-video-off-fill"></i>
+          <i
+            style={{ color: "red" }}
+            className="bi bi-camera-video-off-fill"
+          ></i>
         </OverlayTrigger>
       </>
     );

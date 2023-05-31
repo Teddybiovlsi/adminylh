@@ -4,14 +4,15 @@ import { Container, Form, Modal, Navbar, Table } from "react-bootstrap";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import ShowLockIcon from "../../components/ShowLockIcon";
 import ShowInfoIcon from "../../components/ShowInfoIcon";
+import ShowVideoIcon from "../../components/ShowVideoIcon";
 import CustomState from "../JsonFile/SelectCustomerState.json";
+import CustomVideo from "../JsonFile/SelectCustomerVideo.json";
 import { set } from "lodash";
 import Loading from "../../components/Loading";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
-import styles from "../../styles/pages/HomePage.module.scss";
 import { useNavigate } from "react-router-dom";
-import ShowVideoIcon from "../../components/ShowVideoIcon";
+import styles from "../../styles/pages/HomePage.module.scss";
 
 export default function ManageClientAccount() {
   const handleSelectAllAccount = () => {};
@@ -28,6 +29,8 @@ export default function ManageClientAccount() {
   const [selectAccount, setSelectAccount] = useState([]);
   // 用來儲存用戶狀態(正常使用中/鎖定中)
   const [userState, setUserState] = useState("");
+  // 用來儲存用戶影片狀態(有影片/無影片)
+  const [userVideo, setUserVideo] = useState("");
   // 用來儲存使用者傳入之Excel檔案
   const [sheetData, setSheetData] = useState([]);
   // 若帳號資訊尚未載入完成，則顯示Loading
@@ -74,17 +77,81 @@ export default function ManageClientAccount() {
   // 用戶狀態(啟用/停用)改變時，重新選擇資料
   useEffect(() => {
     if (userState == 0) {
-      setFilteraccountInfo(
-        accountInfo.filter((item) => item.client_is_lock == 0)
-      );
+      if (userVideo == 0) {
+        setFilteraccountInfo(
+          accountInfo.filter(
+            (item) => item.client_is_lock == 0 && item.client_have_video == 0
+          )
+        );
+      } else if (userVideo == 1) {
+        setFilteraccountInfo(
+          accountInfo.filter(
+            (item) => item.client_is_lock == 0 && item.client_have_video == 1
+          )
+        );
+      } else {
+        setFilteraccountInfo(
+          accountInfo.filter((item) => item.client_is_lock == 0)
+        );
+      }
     } else if (userState == 1) {
-      setFilteraccountInfo(
-        accountInfo.filter((item) => item.client_is_lock == 1)
-      );
+      if (userVideo == 0) {
+        setFilteraccountInfo(
+          accountInfo.filter(
+            (item) => item.client_is_lock == 1 && item.client_have_video == 0
+          )
+        );
+      } else if (userVideo == 1) {
+        setFilteraccountInfo(
+          accountInfo.filter(
+            (item) => item.client_is_lock == 1 && item.client_have_video == 1
+          )
+        );
+      } else {
+        setFilteraccountInfo(
+          accountInfo.filter((item) => item.client_is_lock == 1)
+        );
+      }
+    } else if (userVideo == 0) {
+      if (userState == 0) {
+        setFilteraccountInfo(
+          accountInfo.filter(
+            (item) => item.client_is_lock == 0 && item.client_have_video == 0
+          )
+        );
+      } else if (userState == 1) {
+        setFilteraccountInfo(
+          accountInfo.filter(
+            (item) => item.client_is_lock == 1 && item.client_have_video == 0
+          )
+        );
+      } else {
+        setFilteraccountInfo(
+          accountInfo.filter((item) => item.client_have_video == 0)
+        );
+      }
+    } else if (userVideo == 1) {
+      if (userState == 0) {
+        setFilteraccountInfo(
+          accountInfo.filter(
+            (item) => item.client_is_lock == 0 && item.client_have_video == 1
+          )
+        );
+      } else if (userState == 1) {
+        setFilteraccountInfo(
+          accountInfo.filter(
+            (item) => item.client_is_lock == 1 && item.client_have_video == 1
+          )
+        );
+      } else {
+        setFilteraccountInfo(
+          accountInfo.filter((item) => item.client_have_video == 1)
+        );
+      }
     } else {
       setFilteraccountInfo(accountInfo);
     }
-  }, [userState]);
+  }, [userState, userVideo]);
   // 當篩選後的資料長度為0時，顯示錯誤訊息
   useEffect(() => {
     if (filteraccountInfo.length == 0) {
@@ -382,14 +449,28 @@ export default function ManageClientAccount() {
               // }}
               btnText={
                 <i
-                  className="bi bi-trash3-fill"
+                  className="bi bi-person-x-fill"
                   style={{ fontSize: 1.2 + "rem" }}
                 ></i>
               }
               btnVariant="light"
               tooltipText="刪除帳號"
             />
+            <ToolTipBtn
+              placement="bottom"
+              btnAriaLabel="回收桶"
+              // btnOnclickEventName={}
+              btnText={
+                <i
+                  className="bi bi-trash3-fill"
+                  style={{ fontSize: 1.2 + "rem" }}
+                ></i>
+              }
+              btnVariant="light"
+              tooltipText="回收桶"
+            />
           </div>
+
           <div className="d-flex">
             <Form.Control
               type="text"
@@ -401,13 +482,28 @@ export default function ManageClientAccount() {
           </div>
         </Container>
       </Navbar>
-      <div>
+      <div className="d-flex flex-row-reverse m-2">
         <Form.Select
-          aria-label="請選擇用戶狀態"
+          aria-label="請選擇用戶影片狀態"
+          onChange={(event) => {
+            setUserVideo(event.target.value);
+          }}
+          style={{ width: "220px" }}
+        >
+          {CustomVideo.map((item, _) => {
+            return (
+              <option key={item.id} value={item.value}>
+                {item.label}
+              </option>
+            );
+          })}
+        </Form.Select>
+        <Form.Select
+          aria-label="請選擇用戶帳號狀態"
           onChange={(event) => {
             setUserState(event.target.value);
           }}
-          style={{ width: "200px" }}
+          style={{ width: "220px" }}
         >
           {CustomState.map((item, _) => {
             return (
