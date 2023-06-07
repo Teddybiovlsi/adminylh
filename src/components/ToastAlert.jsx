@@ -5,13 +5,14 @@ import { Flip } from "react-toastify";
 export default function ToastAlert({
   ThemeMode = "light",
   position = "top-right",
+  autocloseTime = 3000,
 }) {
   return (
     <ToastContainer
       position={position}
       transition={Flip}
       limit={1}
-      autoClose={3000}
+      autoClose={autocloseTime}
       hideProgressBar={false}
       newestOnTop={false}
       closeOnClick

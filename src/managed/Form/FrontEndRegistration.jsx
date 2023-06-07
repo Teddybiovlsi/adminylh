@@ -33,6 +33,11 @@ import { Stepper, Step } from "react-form-stepper";
 import styles from "../../styles/Form/ClientRegistration.module.scss";
 
 export default function FrontEndRegistration() {
+  // check if useLocation.state is null
+  if (!useLocation().state) {
+    return <Navigate to="/" />;
+  }
+
   const location = useLocation();
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [videoIndex, setVideoIndex] = useState(location.state?.videoIndex);
@@ -284,19 +289,24 @@ export default function FrontEndRegistration() {
             <h5>
               若影片無誤請按下一步，<b>進行創建帳號</b>
             </h5>
-
-            <Table>
-              <thead>
-                <tr>
-                  <th>影片名稱</th>
-                </tr>
-              </thead>
-              <tbody>
-                {videoName.map((info, index) => {
-                  return <ShowClientVideoTable name={info} key={index} />;
-                })}
-              </tbody>
-            </Table>
+            {videoName.length !== 0 ? (
+              <Table>
+                <thead>
+                  <tr>
+                    <th>影片名稱</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {videoName.map((info, index) => {
+                    return <ShowClientVideoTable name={info} key={index} />;
+                  })}
+                </tbody>
+              </Table>
+            ) : (
+              <div>
+                <h5>目前無影片</h5>
+              </div>
+            )}
           </div>
         );
       case 1:

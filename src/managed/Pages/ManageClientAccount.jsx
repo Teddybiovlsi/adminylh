@@ -11,7 +11,7 @@ import { set } from "lodash";
 import Loading from "../../components/Loading";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import styles from "../../styles/pages/HomePage.module.scss";
 import { toast } from "react-toastify";
@@ -40,9 +40,10 @@ export default function ManageClientAccount() {
   // 若篩選後的資料為空，則顯示錯誤訊息
   const [errorFilterMessage, setErrorFilterMessage] = useState("");
   // 若沒有選擇任何帳號，則禁用編輯、解鎖、刪除按鈕
-  const [isDisableEditBtn, setIsDisableEditBtn] = useState(true);
-  const [isDisableUnlockBtn, setIsDisableUnlockBtn] = useState(true);
-  const [isDisableDeleteBtn, setIsDisableDeleteBtn] = useState(true);
+  const [isDisableMultiAddBtn, setIsDisableMultiAddBtn] = useState(false);
+  const [isDisableEditBtn, setIsDisableEditBtn] = useState(false);
+  const [isDisableUnlockBtn, setIsDisableUnlockBtn] = useState(false);
+  const [isDisableDeleteBtn, setIsDisableDeleteBtn] = useState(false);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
@@ -79,6 +80,11 @@ export default function ManageClientAccount() {
   const handleMultiAddAccount = () => {
     navigate("/MultiAddUser");
   };
+  // 批次新增帳戶影片
+  const handleMultiAddVideo = () => {
+    navigate("/MultiAddVideo", { state: { ClientAcc: selectAccount } });
+  };
+
   // 編輯帳號
   const handleEditAccount = () => {};
   // 解鎖帳號
@@ -241,9 +247,6 @@ export default function ManageClientAccount() {
       // clear error message
       setErrorMessage("");
     } catch (error) {
-      // if catch error, clear videoData
-      setVideoData([]);
-      // setFilterVideoData([]);
       // 將 loading 設為 false
       setLoading(false);
       // if error.response is true, get error message
@@ -325,12 +328,8 @@ export default function ManageClientAccount() {
   useEffect(() => {
     if (selectAccount.length === 0) {
       setIsDisableEditBtn(true);
-      setIsDisableUnlockBtn(true);
-      setIsDisableDeleteBtn(true);
     } else {
       setIsDisableEditBtn(false);
-      setIsDisableUnlockBtn(false);
-      setIsDisableDeleteBtn(false);
     }
   }, [selectAccount]);
   // 若帳號欄位全部被勾選，則全選按鈕勾選
@@ -497,7 +496,17 @@ export default function ManageClientAccount() {
               btnAriaLabel="刪除帳號"
               btnDisabled={isDisableDeleteBtn}
               btnOnclickEventName={() => {
-                setShowDeleteModal(true);
+                if (selectAccount.length === 0) {
+                  setIsDisableDeleteBtn(true);
+                  toast.error("請選擇要刪除的帳號", {
+                    autoClose: 1500,
+                  });
+                  setTimeout(() => {
+                    setIsDisableDeleteBtn(false);
+                  }, 2000);
+                } else {
+                  setShowDeleteModal(true);
+                }
               }}
               btnText={
                 <i
@@ -510,8 +519,33 @@ export default function ManageClientAccount() {
             />
             <ToolTipBtn
               placement="bottom"
+              btnAriaLabel="批次新增帳號影片"
+              btnOnclickEventName={() => {
+                if (selectAccount.length === 0) {
+                  setIsDisableMultiAddBtn(true);
+                  toast.error("請選擇要新增影片的帳號", {
+                    autoClose: 1500,
+                  });
+                  setTimeout(() => {
+                    setIsDisableMultiAddBtn(false);
+                  }, 2000);
+                } else {
+                  handleMultiAddVideo();
+                }
+              }}
+              btnText={
+                <i
+                  className="bi bi-pencil-fill"
+                  style={{ fontSize: 1.2 + "rem", color: "blue" }}
+                ></i>
+              }
+              btnVariant="light"
+              tooltipText="批次新增帳號影片"
+            />
+
+            <ToolTipBtn
+              placement="bottom"
               btnAriaLabel="編輯帳號"
-              btnDisabled={isDisableEditBtn}
               // btnOnclickEventName={handleEditVideo}
               btnText={
                 <i
@@ -526,7 +560,17 @@ export default function ManageClientAccount() {
               placement="bottom"
               btnAriaLabel="解鎖帳號"
               btnDisabled={isDisableUnlockBtn}
-              btnOnclickEventName={handleUnlockAccount}
+              btnOnclickEventName={() => {
+                if (selectAccount.length === 0) {
+                  setIsDisableUnlockBtn(true);
+                  toast.error("請選擇要解鎖的帳號", {
+                    autoClose: 1500,
+                  });
+                  setTimeout(() => {
+                    setIsDisableUnlockBtn(false);
+                  }, 2000);
+                }
+              }}
               btnText={
                 <i
                   className="bi bi-unlock-fill"

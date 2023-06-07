@@ -20,6 +20,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import MultiAddUser from "./managed/Pages/MultiAddUser";
 import RestoreAccount from "./managed/Pages/RestoreAccount";
+import EditClientVideoID from "./managed/Pages/EditClientVideoID";
 
 function App() {
   return (
@@ -43,8 +44,8 @@ function App() {
             element={<ManageClientAccount />}
           />
           <Route path="/MultiAddUser" element={<MultiAddUser />} />
+          <Route path="/MultiAddVideo" element={<EditClientVideoID />} />
           <Route path="/RestoreAccount" element={<RestoreAccount />} />
-
           <Route path="/aboutus" element={<AboutUs />} />
         </Routes>
       </main>
