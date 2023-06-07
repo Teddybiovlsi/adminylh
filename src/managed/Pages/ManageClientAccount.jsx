@@ -13,9 +13,9 @@ import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import { useNavigate, Navigate } from "react-router-dom";
 import BtnBootstrap from "../../components/BtnBootstrap";
-import styles from "../../styles/pages/HomePage.module.scss";
 import { toast } from "react-toastify";
 import ToastAlert from "../../components/ToastAlert";
+import styles from "../../styles/pages/ManageClientAccount.module.scss";
 
 export default function ManageClientAccount() {
   const [accountInfo, setAccountInfo] = useState([]);
@@ -376,34 +376,19 @@ export default function ManageClientAccount() {
   const AccountTitle = () => {
     return (
       <tr>
-        <th
-          className={styles.container_division_table_rowTable_headingCheckBox}
-        >
+        <th>
           <input
             type="checkbox"
             onChange={() => {
               handleSelectAllVideo();
             }}
             checked={isCheckAllAccount}
-            className={
-              styles.container_division_table_rowTable_heading_checkbox
-            }
           />
         </th>
-        <th className={styles.container_division_table_rowTable_headingType}>
-          帳號
-        </th>
-        <th
-          className={styles.container_division_table_rowTable_headingLanguage}
-        >
-          姓名
-        </th>
-        <th className={styles.container_division_table_rowTable_headingName}>
-          狀態
-        </th>
-        <th className={styles.container_division_table_rowTable_headingName}>
-          資訊
-        </th>
+        <th>帳號</th>
+        <th>姓名</th>
+        <th>狀態</th>
+        <th>資訊</th>
       </tr>
     );
   };
@@ -417,7 +402,7 @@ export default function ManageClientAccount() {
   }) => {
     return (
       <tr>
-        <td className={styles.container_division_table_rowTable_data}>
+        <td>
           <input
             type="checkbox"
             // checked client by client account
@@ -426,16 +411,11 @@ export default function ManageClientAccount() {
               handleSelectAccount(client_unique_id);
             }}
             value={client_unique_id}
-            className={styles.container_division_table_rowTable_data_checkbox}
           />
         </td>
-        <td className={styles.container_division_table_rowTable_data}>
-          {handleIdAccount(client_account)}
-        </td>
-        <td className={styles.container_division_table_rowTable_data}>
-          {handleNameAccount(client_name)}
-        </td>
-        <td className={styles.container_division_table_rowTable_data}>
+        <td>{handleIdAccount(client_account)}</td>
+        <td>{handleNameAccount(client_name)}</td>
+        <td>
           <ShowLockIcon
             placement="bottom"
             islock={client_is_lock}
@@ -447,7 +427,7 @@ export default function ManageClientAccount() {
             tooltipText={client_have_video === 0 ? "無影片" : "有影片"}
           />
         </td>
-        <td className={styles.container_division_table_rowTable_data}>
+        <td>
           <ShowInfoIcon
             placement="bottom"
             btnAriaLabel="帳號資訊"
@@ -474,7 +454,7 @@ export default function ManageClientAccount() {
 
   return (
     <div className="container pb-4">
-      <h1 className={styles.container_firstHeading}>帳號資訊欄位</h1>
+      <h1 className="mt-2 mb-2 fw-bold">帳號資訊欄位</h1>
       <Navbar bg="light" variant="light">
         <Container>
           <div className="me-auto">
@@ -603,6 +583,8 @@ export default function ManageClientAccount() {
               onChange={(event) => {
                 setSearchInfo(event.target.value);
               }}
+              // remove input focus border outline
+              style={{ boxShadow: "none", outline: "none", border: "none" }}
             />
           </div>
         </Container>
@@ -610,10 +592,13 @@ export default function ManageClientAccount() {
       <div className="d-flex flex-row-reverse m-2">
         <Form.Select
           aria-label="請選擇用戶影片狀態"
+          className={styles.container_selectbar}
           onChange={(event) => {
             setUserVideo(event.target.value);
           }}
-          style={{ width: "220px" }}
+          style={{
+            width: "220px",
+          }}
         >
           {CustomVideo.map((item, _) => {
             return (
@@ -625,6 +610,7 @@ export default function ManageClientAccount() {
         </Form.Select>
         <Form.Select
           aria-label="請選擇用戶帳號狀態"
+          className={styles.container_selectbar}
           onChange={(event) => {
             setUserState(event.target.value);
           }}
@@ -639,7 +625,7 @@ export default function ManageClientAccount() {
           })}
         </Form.Select>
       </div>
-      <div className={`mt-3 mb-3 ${styles.container_division}`}>
+      <div className={`mt-3 mb-3`}>
         {errorFilterMessage == "" && (
           <Table>
             <thead>
@@ -653,10 +639,8 @@ export default function ManageClientAccount() {
           </Table>
         )}
         {errorFilterMessage != "" && (
-          <div className={`mt-3 mb-3 ${styles.container_division}`}>
-            <h2 className={styles.container_division_secondHeading}>
-              {errorFilterMessage}
-            </h2>
+          <div className={`mt-3 mb-3`}>
+            <h2 className="text-center p-2">{errorFilterMessage}</h2>
           </div>
         )}
         {/* 用戶資訊Modal */}

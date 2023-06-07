@@ -1,0 +1,5 @@
+.container_selectbar {
+  &:focus {
+    box-shadow: none !important;
+  }
+}

@@ -61,7 +61,7 @@ export default function MultiAddUser() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
     const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+    const end = start + Number(rowsPerPage);
     setShowData(sheetData.slice(start, end));
   };
 
