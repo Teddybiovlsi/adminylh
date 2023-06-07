@@ -44,8 +44,14 @@ export default function EditClientVideoID() {
   const [videoData, setVideoData] = useState([]);
   // 將篩選後的資料存入filteraccountInfo當中
   const [filteraccountInfo, setFilteraccountInfo] = useState([]);
+  // 將篩選後的資料存入filtervideoData當中
+  const [filtervideoData, setFiltervideoData] = useState([]);
+
   //   存放搜尋結果之帳號資料
   const [searchResult, setSearchResult] = useState([]);
+  //  存放搜尋結果之影片資料
+  const [searchVideoResult, setSearchVideoResult] = useState([]);
+
   //   若伺服器發生錯誤，則顯示錯誤訊息
   const [errorMessage, setErrorMessage] = useState("");
   //   顯示帳號列表的Modal
@@ -57,19 +63,38 @@ export default function EditClientVideoID() {
     setCheckedAccount(tempCheckedAccount);
     handleCloseAccountModal();
   };
-  // 存放每頁顯示的資料筆數
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  // 存放目前頁數
-  const [currentPage, setCurrentPage] = useState(1);
-  // 存放目前頁數的資料
-  const [showData, setShowData] = useState(searchResult.slice(0, rowsPerPage));
-  const [lastPage, setLastPage] = useState(1);
-  // 搜尋欄位內容
+  // 搜尋欄位內容(帳號用)
   const [searchText, setSearchText] = useState("");
+  // 存放每頁顯示的資料筆數(帳號用)
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  // 存放目前頁數(帳號用)
+  const [currentPage, setCurrentPage] = useState(1);
+  // 存放目前頁數的資料(帳號用)
+  const [showData, setShowData] = useState(searchResult.slice(0, rowsPerPage));
+  // 存放目前總頁數的資料(帳號用)
+  const [lastPage, setLastPage] = useState(1);
+  // 存放每頁顯示的資料筆數(影片用)
+  const [rowsPerPageVideo, setRowsPerPageVideo] = useState(5);
+  // 存放目前頁數(影片用)
+  const [currentPageVideo, setCurrentPageVideo] = useState(1);
+  // 存放目前頁數的資料(影片用)
+  const [showVideoData, setShowVideoData] = useState(
+    searchVideoResult.slice(0, rowsPerPage)
+  );
+  // 存放目前總頁數的資料(影片用)
+  const [lastPageVideo, setLastPageVideo] = useState(1);
+  // 搜尋欄位內容(影片用)
+  const [searchTextVideo, setSearchTextVideo] = useState("");
+
   //   顯示影片列表的Modal
   const [showVideoModal, setShowVideoModal] = useState(false);
   const handleCloseVideoModal = () => setShowVideoModal(false);
   const handleShowVideoModal = () => setShowVideoModal(true);
+
+  const handleConfirmCheckedVideo = () => {
+    setCheckedVideo(tempCheckedVideo);
+    handleCloseVideoModal();
+  };
 
   const fetchaAccountData = async ({ api }) => {
     try {
@@ -115,6 +140,7 @@ export default function EditClientVideoID() {
       // if checkIsArray is true, set videoData to data
       // otherwise, set videoData to [data]
       setVideoData(checkIsArray ? data : [data]);
+      setSearchVideoResult(checkIsArray ? data : [data]);
       // clear error message
       setErrorMessage("");
     } catch (error) {
@@ -153,6 +179,14 @@ export default function EditClientVideoID() {
   }, [accountInfo, checkedAccount]);
 
   useEffect(() => {
+    setFiltervideoData(
+      videoData.filter((item) => {
+        return checkedVideo.includes(item.id);
+      })
+    );
+  }, [videoData, checkedVideo]);
+
+  useEffect(() => {
     if (searchText !== "") {
       setSearchResult(
         accountInfo.filter((item) => {
@@ -174,13 +208,27 @@ export default function EditClientVideoID() {
     setShowData(searchResult.slice(0, rowsPerPage));
   }, [searchResult, rowsPerPage]);
 
-  //  頁數發生變化時，重新計算要顯示的資料
+  useEffect(() => {
+    const rows = searchVideoResult.length;
+    setLastPageVideo(Math.ceil(rows / rowsPerPageVideo));
+    setShowVideoData(searchVideoResult.slice(0, rowsPerPageVideo));
+  }, [searchVideoResult, rowsPerPageVideo]);
+
+  //  頁數發生變化時，重新計算要顯示的資料(帳號用)
   const handlePageChange = (page) => {
     setCurrentPage(page);
     const start = (page - 1) * Number(rowsPerPage);
     // convert rowsPerPage to number
     const end = start + Number(rowsPerPage);
-    setShowData(searchResult.slice(start, end));
+    setShowData(searchVideoResult.slice(start, end));
+  };
+  //   頁數發生變化時，重新計算要顯示的資料(影片用)
+  const handlePageChangeVideo = (page) => {
+    setCurrentPageVideo(page);
+    const start = (page - 1) * Number(rowsPerPageVideo);
+    // convert rowsPerPage to number
+    const end = start + Number(rowsPerPageVideo);
+    // setShowDataVideo(searchVideoResult.slice(start, end));
   };
 
   const handleCheckedAccount = (ClientID) => {
@@ -188,6 +236,14 @@ export default function EditClientVideoID() {
       tempCheckedAccount.includes(ClientID)
         ? tempCheckedAccount.filter((item) => item !== ClientID)
         : [...tempCheckedAccount, ClientID]
+    );
+  };
+
+  const handleCheckedVideo = (VideoID) => {
+    setTempCheckedVideo(
+      tempCheckedVideo.includes(VideoID)
+        ? tempCheckedVideo.filter((item) => item !== VideoID)
+        : [...tempCheckedVideo, VideoID]
     );
   };
 
@@ -226,7 +282,25 @@ export default function EditClientVideoID() {
             />
           </Col>
           <Col>
-            <h5 className="fw-bold">所選擇之影片：</h5>
+            <ListGroup as="ol" numbered>
+              <h5 className="fw-bold">選擇之影片：</h5>
+              {filtervideoData.map((item, index) => {
+                return (
+                  <ListGroup.Item
+                    key={index}
+                    as="li"
+                    className="d-flex justify-content-between align-items-start"
+                  >
+                    <div className="ms-2 me-auto">
+                      <div className="fw-bold">影片名稱：{item.video_name}</div>
+                      類型：{item.video_class}
+                      <br />
+                      語言：{item.video_language}
+                    </div>
+                  </ListGroup.Item>
+                );
+              })}
+            </ListGroup>
             <BtnBootstrap
               variant="outline-secondary"
               btnPosition="w-100 btn btn-lg"
@@ -238,6 +312,7 @@ export default function EditClientVideoID() {
           </Col>
         </Row>
       </Container>
+
       <Modal show={showAccountModal} onHide={handleCloseAccountModal}>
         <Modal.Header closeButton>
           <Modal.Title>請選擇新增之帳號</Modal.Title>
@@ -252,7 +327,7 @@ export default function EditClientVideoID() {
                   </InputGroup.Text>
                   <Form.Control
                     type="text"
-                    placeholder="搜尋.."
+                    placeholder="帳號搜尋.."
                     style={{ boxShadow: "none" }}
                     onChange={(e) => {
                       setSearchText(e.target.value);
@@ -357,7 +432,93 @@ export default function EditClientVideoID() {
         </Modal.Header>
         <Modal.Body>
           <Container>
-            <Row></Row>
+            <Row>
+              <Form.Group as={Col}>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="bi bi-search"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="影片搜尋.."
+                    style={{ boxShadow: "none" }}
+                    onChange={(e) => {
+                      setSearchTextVideo(e.target.value);
+                    }}
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Select
+                  aria-label="請選擇每頁資料筆數"
+                  onChange={(e) => {
+                    setRowsPerPageVideo(e.target.value);
+                    setCurrentPageVideo(1);
+                  }}
+                  className="w-50 float-end mb-2"
+                >
+                  {FilterPageSize.map((item, _) => {
+                    return (
+                      <option key={item.id} value={item.value}>
+                        {item.label}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </Col>
+            </Row>
+            <Row>
+              <ListGroup as="ol" numbered>
+                {showVideoData.map((item, index) => {
+                  return (
+                    <Form.Check
+                      key={index}
+                      type="checkbox"
+                      label={
+                        <div className="ms-2 me-auto">
+                          <div className="fw-bold">
+                            影片名稱：{item.video_name}
+                          </div>
+                          類型：{item.video_class}
+                          <br />
+                          語言：{item.video_language}
+                        </div>
+                      }
+                      value={item.id}
+                      checked={tempCheckedVideo.includes(item.id)}
+                      onChange={() => {
+                        handleCheckedVideo(item.id);
+                      }}
+                    />
+                  );
+                })}
+              </ListGroup>
+            </Row>
+            <Row>
+              <ReactPaginate
+                breakLabel={"..."}
+                nextLabel={">"}
+                previousLabel={"<"}
+                onPageChange={(page) =>
+                  handlePageChangeVideo(page.selected + 1)
+                }
+                pageCount={lastPageVideo}
+                pageRangeDisplayed={2}
+                marginPagesDisplayed={1}
+                containerClassName="justify-content-center pagination"
+                breakClassName={"page-item"}
+                breakLinkClassName={"page-link"}
+                pageClassName={"page-item"}
+                pageLinkClassName={"page-link"}
+                previousClassName={"page-item"}
+                previousLinkClassName={"page-link"}
+                nextClassName={"page-item"}
+                nextLinkClassName={"page-link"}
+                activeClassName={"active"}
+              />
+            </Row>
           </Container>
         </Modal.Body>
         <Modal.Footer>
@@ -366,7 +527,7 @@ export default function EditClientVideoID() {
             variant="outline-secondary"
             text={"取消"}
             onClickEventName={() => {
-              handleCloseAccountModal();
+              handleCloseVideoModal();
             }}
           />
           <BtnBootstrap
@@ -374,11 +535,35 @@ export default function EditClientVideoID() {
             variant="outline-primary"
             text={"確認"}
             onClickEventName={() => {
-              handleConfirmCheckedAccount();
+              handleConfirmCheckedVideo();
             }}
           />
         </Modal.Footer>
       </Modal>
+
+      <button
+        // className={styles.container_button}
+        style={{
+          borderRadius: "10px",
+          width: "50px",
+          height: "50px",
+          fontSize: "1.2rem",
+          position: "absolute",
+          bottom: "5%",
+          right: "5%",
+          border: "none",
+        }}
+        disabled={
+          checkedAccount.length === 0 || checkedVideo.length === 0
+            ? true
+            : false
+        }
+        onClick={() => {
+          console.log("you click me");
+        }}
+      >
+        <b>完成</b>
+      </button>
     </div>
   );
 }
