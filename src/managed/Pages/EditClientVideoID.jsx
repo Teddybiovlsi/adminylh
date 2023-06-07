@@ -203,6 +203,18 @@ export default function EditClientVideoID() {
   }, [searchText]);
 
   useEffect(() => {
+    if (searchTextVideo !== "") {
+      setSearchVideoResult(
+        videoData.filter((item) => {
+          return item.video_name.includes(searchTextVideo);
+        })
+      );
+    } else {
+      setSearchVideoResult(videoData);
+    }
+  }, [searchTextVideo]);
+
+  useEffect(() => {
     const rows = searchResult.length;
     setLastPage(Math.ceil(rows / rowsPerPage));
     setShowData(searchResult.slice(0, rowsPerPage));
