@@ -522,20 +522,6 @@ export default function ManageClientAccount() {
               btnVariant="light"
               tooltipText="批次新增帳號影片"
             />
-
-            <ToolTipBtn
-              placement="bottom"
-              btnAriaLabel="編輯帳號"
-              // btnOnclickEventName={handleEditVideo}
-              btnText={
-                <i
-                  className="bi bi-pencil-square"
-                  style={{ fontSize: 1.2 + "rem" }}
-                ></i>
-              }
-              btnVariant="light"
-              tooltipText="編輯帳號"
-            />
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="解鎖帳號"
