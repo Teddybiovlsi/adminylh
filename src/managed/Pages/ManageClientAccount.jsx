@@ -285,7 +285,14 @@ export default function ManageClientAccount() {
         isLoading: false,
         autoClose: 2000,
       });
-    } catch (error) {}
+    } catch (error) {
+      toast.update(id, {
+        render: "解鎖失敗",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    }
   };
 
   // 將身分證敏感資訊做處理

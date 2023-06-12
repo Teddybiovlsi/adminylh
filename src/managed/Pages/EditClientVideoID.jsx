@@ -12,11 +12,13 @@ import {
   Table,
   FormLabel,
 } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
-import { get } from "../axios";
+import { useLocation, useNavigate } from "react-router-dom";
+import { get, post } from "../axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
 import ReactPaginate from "react-paginate";
+import ToastAlert from "../../components/ToastAlert";
+import { toast } from "react-toastify";
 
 export default function EditClientVideoID() {
   //   若無任何資訊則返回首頁
@@ -96,6 +98,11 @@ export default function EditClientVideoID() {
     handleCloseVideoModal();
   };
 
+  let navigate = useNavigate();
+  const handleRedirectToManageAccount = () => {
+    navigate("/ManageClientAccount");
+  };
+
   const fetchaAccountData = async ({ api }) => {
     try {
       const response = await get(api);
@@ -148,6 +155,35 @@ export default function EditClientVideoID() {
       if (error.response) {
         setErrorMessage(StatusCode(error.response.status));
       }
+    }
+  };
+
+  const handleSubmmit = async () => {
+    // 顯示loading圖示
+    const id = toast.loading("解鎖中...");
+    // 將checkedVideo與checkedAccount的資料透過API傳送到後端
+    try {
+      const data = {
+        checkedAccount: checkedAccount,
+        checkedVideo: checkedVideo,
+      };
+      const response = await post("video/client", data);
+      toast.update(id, {
+        render: "上傳成功，2秒後將回到管理介面\n請稍後...",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+      setTimeout(() => {
+        handleRedirectToManageAccount();
+      }, 2000);
+    } catch (error) {
+      toast.update(id, {
+        render: "上傳失敗，請重新嘗試",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
 
@@ -570,12 +606,11 @@ export default function EditClientVideoID() {
             ? true
             : false
         }
-        onClick={() => {
-          console.log("you click me");
-        }}
+        onClick={handleSubmmit}
       >
         <b>完成</b>
       </button>
+      <ToastAlert />
     </div>
   );
 }
