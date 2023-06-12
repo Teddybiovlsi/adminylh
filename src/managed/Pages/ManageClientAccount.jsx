@@ -25,7 +25,6 @@ import BtnBootstrap from "../../components/BtnBootstrap";
 import { toast } from "react-toastify";
 import ToastAlert from "../../components/ToastAlert";
 import styles from "../../styles/pages/ManageClientAccount.module.scss";
-import QueryString from "qs";
 
 export default function ManageClientAccount() {
   const [accountInfo, setAccountInfo] = useState([]);
