@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { get, del } from "../axios";
+import { get, del, put } from "../axios";
 import {
   Col,
   Container,
@@ -25,6 +25,7 @@ import BtnBootstrap from "../../components/BtnBootstrap";
 import { toast } from "react-toastify";
 import ToastAlert from "../../components/ToastAlert";
 import styles from "../../styles/pages/ManageClientAccount.module.scss";
+import QueryString from "qs";
 
 export default function ManageClientAccount() {
   const [accountInfo, setAccountInfo] = useState([]);
@@ -104,24 +105,22 @@ export default function ManageClientAccount() {
     if (editEmail == "" || editName == "") {
       if (editEmail == "") {
         const data = {
-          id: Clientid,
-          name: editName,
+          clientName: editName,
         };
         console.log(data);
+        fetchUpdateUserProfile({ api: `client/${Clientid}`, data });
       } else {
         const data = {
-          id: Clientid,
-          email: editEmail,
+          clientEmail: editEmail,
         };
-        console.log(data);
+        fetchUpdateUserProfile({ api: `client/${Clientid}`, data });
       }
     } else if (editEmail != "" && editName != "") {
       const data = {
-        id: Clientid,
-        name: editName,
-        email: editEmail,
+        clientName: editName,
+        clientEmail: editEmail,
       };
-      console.log(data);
+      fetchUpdateUserProfile({ api: `client/${Clientid}`, data });
     }
   };
   // 解鎖帳號
@@ -325,6 +324,27 @@ export default function ManageClientAccount() {
     } catch (error) {
       toast.update(id, {
         render: "解鎖失敗",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    }
+  };
+  // 更新使用者資訊
+  const fetchUpdateUserProfile = async ({ api, data }) => {
+    const id = toast.loading("更新中...");
+    try {
+      await put(api, data);
+
+      toast.update(id, {
+        render: "更新成功",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    } catch (error) {
+      toast.update(id, {
+        render: "更新失敗",
         type: "error",
         isLoading: false,
         autoClose: 2000,
