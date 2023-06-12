@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { get, del } from "../axios";
-import { Container, Form, Modal, Navbar, Table } from "react-bootstrap";
+import {
+  Col,
+  Container,
+  Form,
+  InputGroup,
+  Modal,
+  Navbar,
+  Row,
+  Table,
+} from "react-bootstrap";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import ShowLockIcon from "../../components/ShowLockIcon";
 import ShowInfoIcon from "../../components/ShowInfoIcon";
@@ -19,6 +28,10 @@ import styles from "../../styles/pages/ManageClientAccount.module.scss";
 
 export default function ManageClientAccount() {
   const [accountInfo, setAccountInfo] = useState([]);
+  // 用來儲存修改姓名的資料
+  const [editName, setEditName] = useState("");
+  // 用來儲存修改聯絡信箱的資料
+  const [editEmail, setEditEmail] = useState("");
   // 用來儲存搜尋欄位的資料
   const [searchInfo, setSearchInfo] = useState("");
   // 用來儲存篩選後的資料
@@ -44,6 +57,7 @@ export default function ManageClientAccount() {
   const [isDisableEditBtn, setIsDisableEditBtn] = useState(false);
   const [isDisableUnlockBtn, setIsDisableUnlockBtn] = useState(false);
   const [isDisableDeleteBtn, setIsDisableDeleteBtn] = useState(false);
+  const [isDisableEditProfileBtn, setIsDisableEditProfileBtn] = useState(false);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
@@ -86,7 +100,30 @@ export default function ManageClientAccount() {
   };
 
   // 編輯帳號
-  const handleEditAccount = () => {};
+  const handleEditAccount = (Clientid) => {
+    if (editEmail == "" || editName == "") {
+      if (editEmail == "") {
+        const data = {
+          id: Clientid,
+          name: editName,
+        };
+        console.log(data);
+      } else {
+        const data = {
+          id: Clientid,
+          email: editEmail,
+        };
+        console.log(data);
+      }
+    } else if (editEmail != "" && editName != "") {
+      const data = {
+        id: Clientid,
+        name: editName,
+        email: editEmail,
+      };
+      console.log(data);
+    }
+  };
   // 解鎖帳號
   const handleUnlockAccount = () => {
     fetchUnlockAccount({
@@ -377,7 +414,11 @@ export default function ManageClientAccount() {
     );
   };
 
-  const handleCloseAccountModal = () => setFilterPersonInfo(null);
+  const handleCloseAccountModal = () => {
+    setEditEmail("");
+    setEditName("");
+    setFilterPersonInfo(null);
+  };
 
   // 表格標題
   const AccountTitle = () => {
@@ -644,13 +685,105 @@ export default function ManageClientAccount() {
           <Modal.Body>
             {filterPersonInfo != null && (
               <div>
-                <p>帳號：{filterPersonInfo[0].client_account}</p>
-                <p>姓名：{filterPersonInfo[0].client_name}</p>
-                <p>聯絡信箱：{filterPersonInfo[0].client_email}</p>
-                <p>登入次數：{filterPersonInfo[0].client_login_times}</p>
+                <Form.Group
+                  as={Row}
+                  className="mb-2"
+                  controlId="formPlaintextAccount"
+                >
+                  <Form.Label column sm="3">
+                    帳號：
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      plaintext
+                      readOnly
+                      defaultValue={filterPersonInfo[0].client_account}
+                      onChange={(e) => {
+                        setEditName(e.target.value);
+                      }}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group
+                  as={Row}
+                  className="mb-2"
+                  controlId="AccountModalForm.ControlInput1"
+                >
+                  <Form.Label column>姓名：</Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      type="text"
+                      placeholder={`${filterPersonInfo[0].client_name}`}
+                      disabled={false}
+                      onChange={(e) => {
+                        setEditName(e.target.value);
+                      }}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group
+                  as={Row}
+                  className="mb-2"
+                  controlId="AccountModalForm.ControlInput2"
+                >
+                  <Form.Label column>聯絡信箱：</Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      type="email"
+                      placeholder={`${filterPersonInfo[0].client_email}`}
+                      onChange={(e) => {
+                        setEditEmail(e.target.value);
+                      }}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group
+                  as={Row}
+                  className="mb-2"
+                  controlId="formPlaintextLoginTimes"
+                >
+                  <Form.Label column sm="3">
+                    登入次數：
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      plaintext
+                      readOnly
+                      defaultValue={filterPersonInfo[0].client_login_times}
+                    />
+                  </Col>
+                </Form.Group>
               </div>
             )}
           </Modal.Body>
+          <Modal.Footer>
+            <BtnBootstrap
+              variant="secondary"
+              btnSize="normal"
+              onClickEventName={handleCloseAccountModal}
+              text={"關閉"}
+            />
+            <BtnBootstrap
+              variant="primary"
+              btnSize="normal"
+              text={"修改"}
+              disabled={isDisableEditProfileBtn}
+              onClickEventName={() => {
+                if (editName == "" && editEmail == "") {
+                  setIsDisableEditProfileBtn(true);
+                  toast.error("請輸入修改資料", {
+                    position: "top-center",
+                    autoClose: 2000,
+                  });
+                  setTimeout(() => {
+                    setIsDisableEditProfileBtn(false);
+                  }, 3000);
+                } else {
+                  handleEditAccount(filterPersonInfo[0].client_unique_id);
+                }
+              }}
+            />
+          </Modal.Footer>
         </Modal>
         {/* 確認刪除至回收桶Modal */}
         <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
