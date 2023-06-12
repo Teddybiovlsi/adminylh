@@ -127,7 +127,7 @@ export default function BackendRegistration() {
                     BlurEvent={handleBlur}
                     EmailValue={values.email}
                     ValidCheck={touched.email && !errors.email}
-                    InValidCheck={!!errors.email}
+                    InValidCheck={touched.email && errors.email}
                     ErrorMessage={errors.email}
                   />
                   <FormPwd
@@ -140,8 +140,8 @@ export default function BackendRegistration() {
                       setPwdScore(zxcvbn(e.target.value).score);
                     }}
                     PwdValue={values.password}
-                    ValidCheck={touched.password & !errors.password}
-                    InValidCheck={!!errors.password}
+                    ValidCheck={touched.password && !errors.password}
+                    InValidCheck={touched.password && errors.password}
                     ControlID={"inputPassword"}
                     IconID={"showPass"}
                     SetShowPwdCondition={setShowPwd}
@@ -159,9 +159,9 @@ export default function BackendRegistration() {
                     SetShowPwdCondition={setShowPwd}
                     ShowPwdCondition={showPwd}
                     ValidCheck={
-                      touched.confirmPassword & !errors.confirmPassword
+                      touched.confirmPassword && !errors.confirmPassword
                     }
-                    InValidCheck={!!errors.confirmPassword}
+                    InValidCheck={touched.confirmPassword && errors.confirmPassword}
                     CorrectMessage="確認密碼與輸入密碼相符"
                     ErrorMessage={errors.confirmPassword}
                   />
