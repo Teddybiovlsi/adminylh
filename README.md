@@ -1,4 +1,4 @@
-# [台大衛教系統 React version]
+# 台大衛教系統 React version
 
 ## 台大衛教系統中主要包含兩大主軸：
 
@@ -17,8 +17,6 @@
 
 ## 專案注意事項：
 
-專案底下的兩個檔案請勿直接進行修改!!，該檔案是由下載套件時自動生成
-<br/>
 **第一次使用時，請透過[github 連結](https://github.com/Teddybiovlsi/ntuh_ReactVersion)下載 zip 檔案後，透過使用指令下載對應版本的套件**
 
 ```Terminal
@@ -29,7 +27,8 @@ npm i
 ```Terminal
 npm run dev
 ```
-
+專案底下的兩個檔案請勿直接進行修改!!，該檔案是由下載套件時自動生成
+<br/>
 兩個檔案內的資訊主要包含了當前使用 node 專案，如 vite、以及當前下載套件的版本號
 
 - **[package-lock.json]**
