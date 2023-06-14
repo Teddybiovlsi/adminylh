@@ -5,7 +5,8 @@ import StatusCode from "../../sys/StatusCode";
 import { get } from "../axios";
 import "video.js/dist/video-js.css";
 import Loading from "../../components/Loading";
-import { forEach, update } from "lodash";
+import { forEach, set, update } from "lodash";
+import { Card, Modal } from "react-bootstrap";
 
 export default function VideoPlayer() {
   const location = useLocation();
@@ -17,6 +18,13 @@ export default function VideoPlayer() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isFinish, setIsFinish] = useState(false);
+
+  const [videoQuestion, setVideoQuestion] = useState([]);
+  const [videoAnswer, setVideoAnswer] = useState([]);
+  const [sendstate, setSendstate] = useState(false);
+  // const [showQAModal, setShowQAModal] = useState(false);
+  // const handelCloseQAModal = () => setShowQAModal(false);
+  const [interruptTime, setInterruptTime] = useState(null);
 
   let arrayNum = 0;
 
@@ -60,12 +68,9 @@ export default function VideoPlayer() {
     };
   }, []);
 
-  const playerRef = React.useRef(null);
+  // const playerRef = React.useRef(null);
 
   const handlePlayerReady = (player) => {
-    playerRef.current = player;
-
-    // You can handle player events here, for example:
     player.on("waiting", () => {
       console.log("player is waiting");
     });
@@ -75,26 +80,24 @@ export default function VideoPlayer() {
     });
 
     player.on("pause", () => {
-      console.log("player is paused");
-      // show the certain time
-      console.log(player.currentTime());
+      console.log("player is pause");
+      // setSendstate(true);
     });
-    // pause the video in 23.4s
+
     player.on("timeupdate", () => {
-      // console.log("player is timeupdate");
-      // show the certain time
-      // console.log(player.currentTime());
-      // set a array index to get the video_interrupt_time
-      console.log(info[arrayNum].video_interrupt_time);
-      console.log(arrayNum);
+      // console.log(info[arrayNum].video_interrupt_time);
+      // console.log(info[arrayNum].video_duration);
+      // console.log(arrayNum);
       if (arrayNum < info.length) {
         if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
           player.pause();
+          // setInterruptTime(player.currentTime());
+
+          // setInterruptTime(player.currentTime());
           // set the timer with the duration time after duration time, the video will resume
-          setTimeout(() => {
-            // player.load();
-            playerRef.current.play();
-          }, 2000);
+          // setTimeout(() => {
+          //   player.play();
+          // }, info[arrayNum].video_duration * 1000);
           arrayNum++;
         }
       }
@@ -110,7 +113,15 @@ export default function VideoPlayer() {
 
   return (
     <>
-      <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+      <VideoJS options={videoJsOptions} InteruptTime={handlePlayerReady} />
+      {sendstate && (
+        <Modal onShow={true}>
+          <Modal.Header closeButton>
+            <Modal.Title>問題1</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>123132123123</Modal.Body>
+        </Modal>
+      )}
     </>
   );
 }

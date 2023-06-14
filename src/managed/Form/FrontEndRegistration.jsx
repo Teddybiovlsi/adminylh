@@ -395,8 +395,8 @@ export default function FrontEndRegistration() {
                         ? values.user_password
                         : userInfo.user_password
                     }
-                    ValidCheck={touched.user_password & !errors.user_password}
-                    InValidCheck={touched.user_password & errors.user_password}
+                    ValidCheck={touched.user_password && !errors.user_password}
+                    InValidCheck={touched.user_password && errors.user_password}
                     ControlID={"inputPassword"}
                     IconID={"showPass"}
                     SetShowPwdCondition={setShowPwd}

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { get, del, put } from '../axios';
+import React, { useEffect, useRef, useState } from "react";
+import { get, del, put } from "../axios";
 import {
   Col,
   Container,
@@ -9,31 +9,32 @@ import {
   Navbar,
   Row,
   Table,
-} from 'react-bootstrap';
-import ToolTipBtn from '../../components/ToolTipBtn';
-import ShowLockIcon from '../../components/ShowLockIcon';
-import ShowInfoIcon from '../../components/ShowInfoIcon';
-import ShowVideoIcon from '../../components/ShowVideoIcon';
-import CustomState from '../JsonFile/SelectCustomerState.json';
-import CustomVideo from '../JsonFile/SelectCustomerVideo.json';
-import { set } from 'lodash';
-import Loading from '../../components/Loading';
-import LoadingComponent from '../../components/LoadingComponent';
-import ErrorMessageComponent from '../../components/ErrorMessageComponent';
-import { useNavigate, Navigate } from 'react-router-dom';
-import BtnBootstrap from '../../components/BtnBootstrap';
-import { toast } from 'react-toastify';
-import ToastAlert from '../../components/ToastAlert';
-import styles from '../../styles/pages/ManageClientAccount.module.scss';
+} from "react-bootstrap";
+import ToolTipBtn from "../../components/ToolTipBtn";
+import ShowLockIcon from "../../components/ShowLockIcon";
+import ShowInfoIcon from "../../components/ShowInfoIcon";
+import ShowVideoIcon from "../../components/ShowVideoIcon";
+import CustomState from "../JsonFile/SelectCustomerState.json";
+import CustomVideo from "../JsonFile/SelectCustomerVideo.json";
+import { set } from "lodash";
+import Loading from "../../components/Loading";
+import LoadingComponent from "../../components/LoadingComponent";
+import ErrorMessageComponent from "../../components/ErrorMessageComponent";
+import { useNavigate, Navigate } from "react-router-dom";
+import BtnBootstrap from "../../components/BtnBootstrap";
+import { toast } from "react-toastify";
+import ToastAlert from "../../components/ToastAlert";
+import styles from "../../styles/pages/ManageClientAccount.module.scss";
 
 export default function ManageClientAccount() {
-  const [accountInfo, setAccountInfo] = useState([]);
   // 用來儲存修改姓名的資料
-  const [editName, setEditName] = useState('');
+  const userName = useRef(null);
   // 用來儲存修改聯絡信箱的資料
-  const [editEmail, setEditEmail] = useState('');
+  const userEmail = useRef(null);
+
+  const [accountInfo, setAccountInfo] = useState([]);
   // 用來儲存搜尋欄位的資料
-  const [searchInfo, setSearchInfo] = useState('');
+  const [searchInfo, setSearchInfo] = useState("");
   // 用來儲存篩選後的資料
   const [filteraccountInfo, setFilteraccountInfo] = useState([]);
   // 用來儲存篩選後的資料，用於懸浮視窗Modal
@@ -43,15 +44,15 @@ export default function ManageClientAccount() {
   // 用來儲存選擇的帳號
   const [selectAccount, setSelectAccount] = useState([]);
   // 用來儲存用戶狀態(正常使用中/鎖定中)
-  const [userState, setUserState] = useState('');
+  const [userState, setUserState] = useState("");
   // 用來儲存用戶影片狀態(有影片/無影片)
-  const [userVideo, setUserVideo] = useState('');
+  const [userVideo, setUserVideo] = useState("");
   // 若帳號資訊尚未載入完成，則顯示Loading
   const [loading, setLoading] = useState(false);
   // 若帳號資訊載入失敗，則顯示錯誤訊息
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   // 若篩選後的資料為空，則顯示錯誤訊息
-  const [errorFilterMessage, setErrorFilterMessage] = useState('');
+  const [errorFilterMessage, setErrorFilterMessage] = useState("");
   // 若沒有選擇任何帳號，則禁用編輯、解鎖、刪除按鈕
   const [isDisableMultiAddBtn, setIsDisableMultiAddBtn] = useState(false);
   const [isDisableEditBtn, setIsDisableEditBtn] = useState(false);
@@ -83,7 +84,7 @@ export default function ManageClientAccount() {
     // 設置3秒才重新載入資料，避免資料未在資料庫更新時就重新載入資料
     setTimeout(() => {
       fetchaAccountData({
-        api: 'account',
+        api: "account",
       });
     }, 3000);
   };
@@ -92,32 +93,35 @@ export default function ManageClientAccount() {
   // 批次新增帳號
   let navigate = useNavigate();
   const handleMultiAddAccount = () => {
-    navigate('/MultiAddUser');
+    navigate("/MultiAddUser");
   };
   // 批次新增帳戶影片
   const handleMultiAddVideo = () => {
-    navigate('/MultiAddVideo', { state: { ClientAcc: selectAccount } });
+    navigate("/MultiAddVideo", { state: { ClientAcc: selectAccount } });
   };
 
   // 編輯帳號
   const handleEditAccount = (Clientid) => {
-    if (editEmail == '' || editName == '') {
-      if (editEmail == '') {
+    const name = userName.current.value;
+    const email = userEmail.current.value;
+
+    if (email == "" || name == "") {
+      if (email == "") {
         const data = {
-          clientName: editName,
+          clientName: name,
         };
         console.log(data);
         fetchUpdateUserProfile({ api: `client/${Clientid}`, data });
       } else {
         const data = {
-          clientEmail: editEmail,
+          clientEmail: email,
         };
         fetchUpdateUserProfile({ api: `client/${Clientid}`, data });
       }
-    } else if (editEmail != '' && editName != '') {
+    } else if (email != "" && name != "") {
       const data = {
-        clientName: editName,
-        clientEmail: editEmail,
+        clientName: name,
+        clientEmail: email,
       };
       fetchUpdateUserProfile({ api: `client/${Clientid}`, data });
     }
@@ -140,14 +144,14 @@ export default function ManageClientAccount() {
       // 設置3秒才重新載入資料，避免資料未在資料庫更新時就重新載入資料
       setTimeout(() => {
         fetchaAccountData({
-          api: 'account',
+          api: "account",
         });
       }, 3000);
     }, 2000);
   };
   // 復原帳號
   const handleRestoreAccount = () => {
-    navigate('/RestoreAccount');
+    navigate("/RestoreAccount");
   };
 
   // 以下是帳號資訊欄取得資料的流程
@@ -158,7 +162,7 @@ export default function ManageClientAccount() {
       // set loading to true
       setLoading(true);
       fetchaAccountData({
-        api: 'account',
+        api: "account",
       });
     }
     return () => {
@@ -247,9 +251,9 @@ export default function ManageClientAccount() {
   // 當篩選後的資料長度為0時，顯示錯誤訊息
   useEffect(() => {
     if (filteraccountInfo.length == 0) {
-      setErrorFilterMessage('該區段查無資料，請重新選擇');
+      setErrorFilterMessage("該區段查無資料，請重新選擇");
     } else {
-      setErrorFilterMessage('');
+      setErrorFilterMessage("");
       // 在filteraccountInfo有所變動時，檢查是否長度一致，若一致則全選，反之則取消全選
       if (filteraccountInfo.length === selectAccount.length) {
         setIsCheckAllAccount(true);
@@ -280,7 +284,7 @@ export default function ManageClientAccount() {
       // 將 loading 設為 false
       setLoading(false);
       // clear error message
-      setErrorMessage('');
+      setErrorMessage("");
     } catch (error) {
       // 將 loading 設為 false
       setLoading(false);
@@ -310,20 +314,20 @@ export default function ManageClientAccount() {
   };
   // 執行解鎖帳號API
   const fetchUnlockAccount = async ({ api }) => {
-    const id = toast.loading('解鎖中...');
+    const id = toast.loading("解鎖中...");
     try {
       const response = await get(api);
       const message = response.data.message;
       toast.update(id, {
         render: message,
-        type: 'success',
+        type: "success",
         isLoading: false,
         autoClose: 2000,
       });
     } catch (error) {
       toast.update(id, {
-        render: '解鎖失敗',
-        type: 'error',
+        render: "解鎖失敗",
+        type: "error",
         isLoading: false,
         autoClose: 2000,
       });
@@ -331,13 +335,13 @@ export default function ManageClientAccount() {
   };
   // 更新使用者資訊
   const fetchUpdateUserProfile = async ({ api, data }) => {
-    const id = toast.loading('更新中...');
+    const id = toast.loading("更新中...");
     try {
       await put(api, data);
 
       toast.update(id, {
-        render: '更新成功，3秒後將重新整理頁面',
-        type: 'success',
+        render: "更新成功，3秒後將重新整理頁面",
+        type: "success",
         isLoading: false,
         autoClose: 2000,
       });
@@ -354,14 +358,14 @@ export default function ManageClientAccount() {
         // fetch data again
         setTimeout(() => {
           fetchaAccountData({
-            api: 'account',
+            api: "account",
           });
         }, 3000);
       }, 3000);
     } catch (error) {
       toast.update(id, {
-        render: '更新失敗',
-        type: 'error',
+        render: "更新失敗",
+        type: "error",
         isLoading: false,
         autoClose: 2000,
       });
@@ -371,26 +375,26 @@ export default function ManageClientAccount() {
   // 將身分證敏感資訊做處理
   const handleIdAccount = (account) => {
     if (account.length === 10) {
-      return account.slice(0, 3) + '***' + account.slice(6, 10);
+      return account.slice(0, 3) + "***" + account.slice(6, 10);
     } else if (account.length === 11) {
-      return account.slice(0, 3) + '***' + account.slice(7, 11);
+      return account.slice(0, 3) + "***" + account.slice(7, 11);
     }
   };
   // 將姓名敏感資訊做處理
   const handleNameAccount = (name) => {
     if (name.length === 3) {
-      return name.slice(0, 1) + 'O' + name.slice(2, 3);
+      return name.slice(0, 1) + "O" + name.slice(2, 3);
     } else if (name.length === 4) {
-      return name.slice(0, 1) + 'OO' + name.slice(3, 4);
+      return name.slice(0, 1) + "OO" + name.slice(3, 4);
     } else if (name.length === 2) {
-      return name.slice(0, 1) + 'O';
+      return name.slice(0, 1) + "O";
     } else {
       return name;
     }
   };
   useEffect(() => {
     // 若搜尋欄位不為空，則顯示搜尋結果
-    if (searchInfo !== '') {
+    if (searchInfo !== "") {
       setFilteraccountInfo(
         accountInfo.filter((item) => {
           return (
@@ -451,8 +455,6 @@ export default function ManageClientAccount() {
   };
 
   const handleCloseAccountModal = () => {
-    setEditEmail('');
-    setEditName('');
     setFilterPersonInfo(null);
   };
 
@@ -462,7 +464,7 @@ export default function ManageClientAccount() {
       <tr>
         <th>
           <input
-            type='checkbox'
+            type="checkbox"
             onChange={() => {
               handleSelectAllVideo();
             }}
@@ -488,7 +490,7 @@ export default function ManageClientAccount() {
       <tr>
         <td>
           <input
-            type='checkbox'
+            type="checkbox"
             // checked client by client account
             checked={selectAccount.includes(client_unique_id)}
             onChange={() => {
@@ -501,25 +503,25 @@ export default function ManageClientAccount() {
         <td>{handleNameAccount(client_name)}</td>
         <td>
           <ShowLockIcon
-            placement='bottom'
+            placement="bottom"
             islock={client_is_lock}
-            tooltipText={client_is_lock === 0 ? '開放使用中' : '鎖定中'}
+            tooltipText={client_is_lock === 0 ? "開放使用中" : "鎖定中"}
           />
           <ShowVideoIcon
-            placement='bottom'
+            placement="bottom"
             haveVideo={client_have_video}
-            tooltipText={client_have_video === 0 ? '無影片' : '有影片'}
+            tooltipText={client_have_video === 0 ? "無影片" : "有影片"}
           />
         </td>
         <td>
           <ShowInfoIcon
-            placement='bottom'
-            btnAriaLabel='帳號資訊'
+            placement="bottom"
+            btnAriaLabel="帳號資訊"
             btnOnclickEventName={() => {
               AccountInfoModal(client_account);
             }}
-            btnSize='sm'
-            tooltipText='帳號資訊'
+            btnSize="sm"
+            tooltipText="帳號資訊"
           />
         </td>
       </tr>
@@ -527,42 +529,42 @@ export default function ManageClientAccount() {
   };
 
   if (loading) {
-    return <LoadingComponent title='帳號資訊欄位' text='帳號資訊載入中' />;
+    return <LoadingComponent title="帳號資訊欄位" text="帳號資訊載入中" />;
   }
 
   if (errorMessage) {
     return (
-      <ErrorMessageComponent title='帳號資訊欄位' errorMessage={errorMessage} />
+      <ErrorMessageComponent title="帳號資訊欄位" errorMessage={errorMessage} />
     );
   }
 
   return (
-    <div className='container pb-4'>
-      <h1 className='mt-2 mb-2 fw-bold'>帳號資訊欄位</h1>
-      <Navbar bg='light' variant='light'>
+    <div className="container pb-4">
+      <h1 className="mt-2 mb-2 fw-bold">帳號資訊欄位</h1>
+      <Navbar bg="light" variant="light">
         <Container>
-          <div className='me-auto'>
+          <div className="me-auto">
             <ToolTipBtn
-              placement='bottom'
-              btnAriaLabel='批次新增'
+              placement="bottom"
+              btnAriaLabel="批次新增"
               btnOnclickEventName={handleMultiAddAccount}
               btnText={
                 <i
-                  className='bi bi-person-plus-fill'
-                  style={{ fontSize: 1.2 + 'rem', color: 'green' }}
+                  className="bi bi-person-plus-fill"
+                  style={{ fontSize: 1.2 + "rem", color: "green" }}
                 ></i>
               }
-              btnVariant='light'
-              tooltipText='批次新增帳號'
+              btnVariant="light"
+              tooltipText="批次新增帳號"
             />
             <ToolTipBtn
-              placement='bottom'
-              btnAriaLabel='刪除帳號'
+              placement="bottom"
+              btnAriaLabel="刪除帳號"
               btnDisabled={isDisableDeleteBtn}
               btnOnclickEventName={() => {
                 if (selectAccount.length === 0) {
                   setIsDisableDeleteBtn(true);
-                  toast.error('請選擇要刪除的帳號', {
+                  toast.error("請選擇要刪除的帳號", {
                     autoClose: 1500,
                   });
                   setTimeout(() => {
@@ -574,20 +576,20 @@ export default function ManageClientAccount() {
               }}
               btnText={
                 <i
-                  className='bi bi-person-x-fill'
-                  style={{ fontSize: 1.2 + 'rem', color: 'red' }}
+                  className="bi bi-person-x-fill"
+                  style={{ fontSize: 1.2 + "rem", color: "red" }}
                 ></i>
               }
-              btnVariant='light'
-              tooltipText='刪除帳號'
+              btnVariant="light"
+              tooltipText="刪除帳號"
             />
             <ToolTipBtn
-              placement='bottom'
-              btnAriaLabel='批次新增帳號影片'
+              placement="bottom"
+              btnAriaLabel="批次新增帳號影片"
               btnOnclickEventName={() => {
                 if (selectAccount.length === 0) {
                   setIsDisableMultiAddBtn(true);
-                  toast.error('請選擇要新增影片的帳號', {
+                  toast.error("請選擇要新增影片的帳號", {
                     autoClose: 1500,
                   });
                   setTimeout(() => {
@@ -599,21 +601,21 @@ export default function ManageClientAccount() {
               }}
               btnText={
                 <i
-                  className='bi bi-pencil-fill'
-                  style={{ fontSize: 1.2 + 'rem', color: 'blue' }}
+                  className="bi bi-pencil-fill"
+                  style={{ fontSize: 1.2 + "rem", color: "blue" }}
                 ></i>
               }
-              btnVariant='light'
-              tooltipText='批次新增帳號影片'
+              btnVariant="light"
+              tooltipText="批次新增帳號影片"
             />
             <ToolTipBtn
-              placement='bottom'
-              btnAriaLabel='解鎖帳號'
+              placement="bottom"
+              btnAriaLabel="解鎖帳號"
               btnDisabled={isDisableUnlockBtn}
               btnOnclickEventName={() => {
                 if (selectAccount.length === 0) {
                   setIsDisableUnlockBtn(true);
-                  toast.error('請選擇要解鎖的帳號', {
+                  toast.error("請選擇要解鎖的帳號", {
                     autoClose: 1500,
                   });
                   setTimeout(() => {
@@ -623,51 +625,51 @@ export default function ManageClientAccount() {
               }}
               btnText={
                 <i
-                  className='bi bi-unlock-fill'
-                  style={{ fontSize: 1.2 + 'rem' }}
+                  className="bi bi-unlock-fill"
+                  style={{ fontSize: 1.2 + "rem" }}
                 ></i>
               }
-              btnVariant='light'
-              tooltipText='解鎖帳號'
+              btnVariant="light"
+              tooltipText="解鎖帳號"
             />
 
             <ToolTipBtn
-              placement='bottom'
-              btnAriaLabel='回收桶'
+              placement="bottom"
+              btnAriaLabel="回收桶"
               btnOnclickEventName={handleRestoreAccount}
               btnText={
                 <i
-                  className='bi bi-recycle'
-                  style={{ fontSize: 1.2 + 'rem' }}
+                  className="bi bi-recycle"
+                  style={{ fontSize: 1.2 + "rem" }}
                 ></i>
               }
-              btnVariant='light'
-              tooltipText='回收桶'
+              btnVariant="light"
+              tooltipText="回收桶"
             />
           </div>
 
-          <div className='d-flex'>
+          <div className="d-flex">
             <Form.Control
-              type='text'
-              placeholder='搜尋'
+              type="text"
+              placeholder="搜尋"
               onChange={(event) => {
                 setSearchInfo(event.target.value);
               }}
               // remove input focus border outline
-              style={{ boxShadow: 'none', outline: 'none', border: 'none' }}
+              style={{ boxShadow: "none", outline: "none", border: "none" }}
             />
           </div>
         </Container>
       </Navbar>
-      <div className='d-flex flex-row-reverse m-2'>
+      <div className="d-flex flex-row-reverse m-2">
         <Form.Select
-          aria-label='請選擇用戶影片狀態'
+          aria-label="請選擇用戶影片狀態"
           className={styles.container_selectbar}
           onChange={(event) => {
             setUserVideo(event.target.value);
           }}
           style={{
-            width: '220px',
+            width: "220px",
           }}
         >
           {CustomVideo.map((item, _) => {
@@ -679,12 +681,12 @@ export default function ManageClientAccount() {
           })}
         </Form.Select>
         <Form.Select
-          aria-label='請選擇用戶帳號狀態'
+          aria-label="請選擇用戶帳號狀態"
           className={styles.container_selectbar}
           onChange={(event) => {
             setUserState(event.target.value);
           }}
-          style={{ width: '220px' }}
+          style={{ width: "220px" }}
         >
           {CustomState.map((item, _) => {
             return (
@@ -696,7 +698,7 @@ export default function ManageClientAccount() {
         </Form.Select>
       </div>
       <div className={`mt-3 mb-3`}>
-        {errorFilterMessage == '' && (
+        {errorFilterMessage == "" && (
           <Table>
             <thead>
               <AccountTitle />
@@ -708,9 +710,9 @@ export default function ManageClientAccount() {
             </tbody>
           </Table>
         )}
-        {errorFilterMessage != '' && (
+        {errorFilterMessage != "" && (
           <div className={`mt-3 mb-3`}>
-            <h2 className='text-center p-2'>{errorFilterMessage}</h2>
+            <h2 className="text-center p-2">{errorFilterMessage}</h2>
           </div>
         )}
         {/* 用戶資訊Modal */}
@@ -723,65 +725,58 @@ export default function ManageClientAccount() {
               <div>
                 <Form.Group
                   as={Row}
-                  className='mb-2'
-                  controlId='formPlaintextAccount'
+                  className="mb-2"
+                  controlId="formPlaintextAccount"
                 >
-                  <Form.Label column sm='3'>
+                  <Form.Label column sm="3">
                     帳號：
                   </Form.Label>
-                  <Col sm='9'>
+                  <Col sm="9">
                     <Form.Control
                       plaintext
                       readOnly
                       defaultValue={filterPersonInfo[0].client_account}
-                      onChange={(e) => {
-                        setEditName(e.target.value);
-                      }}
                     />
                   </Col>
                 </Form.Group>
                 <Form.Group
                   as={Row}
-                  className='mb-2'
-                  controlId='AccountModalForm.ControlInput1'
+                  className="mb-2"
+                  controlId="AccountModalForm.ControlInput1"
                 >
                   <Form.Label column>姓名：</Form.Label>
-                  <Col sm='9'>
+                  <Col sm="9">
                     <Form.Control
-                      type='text'
+                      type="text"
                       placeholder={`${filterPersonInfo[0].client_name}`}
                       disabled={false}
-                      onChange={(e) => {
-                        setEditName(e.target.value);
-                      }}
+                      ref={userName}
                     />
                   </Col>
                 </Form.Group>
                 <Form.Group
                   as={Row}
-                  className='mb-2'
-                  controlId='AccountModalForm.ControlInput2'
+                  className="mb-2"
+                  controlId="AccountModalForm.ControlInput2"
                 >
                   <Form.Label column>聯絡信箱：</Form.Label>
-                  <Col sm='9'>
+                  <Col sm="9">
                     <Form.Control
-                      type='email'
+                      type="email"
                       placeholder={`${filterPersonInfo[0].client_email}`}
-                      onChange={(e) => {
-                        setEditEmail(e.target.value);
-                      }}
+                      ref={userEmail}
                     />
                   </Col>
                 </Form.Group>
                 <Form.Group
                   as={Row}
-                  className='mb-2'
-                  controlId='formPlaintextLoginTimes'
+                  className="mb-2"
+                  controlId="formPlaintextLoginTimes"
                 >
-                  <Form.Label column sm='3'>
+                  <Form.Label column sm="3">
                     登入次數：
                   </Form.Label>
-                  <Col sm='9'>
+                  <Col sm="9">
                     <Form.Control
                       plaintext
                       readOnly
@@ -794,21 +789,24 @@ export default function ManageClientAccount() {
           </Modal.Body>
           <Modal.Footer>
             <BtnBootstrap
-              variant='secondary'
-              btnSize='normal'
+              variant="secondary"
+              btnSize="normal"
               onClickEventName={handleCloseAccountModal}
-              text={'關閉'}
+              text={"關閉"}
             />
             <BtnBootstrap
-              variant='primary'
-              btnSize='normal'
-              text={'修改'}
+              variant="primary"
+              btnSize="normal"
+              text={"修改"}
               disabled={isDisableEditProfileBtn}
               onClickEventName={() => {
-                if (editName == '' && editEmail == '') {
+                if (
+                  userName.current.value == "" &&
+                  userEmail.current.value == ""
+                ) {
                   setIsDisableEditProfileBtn(true);
-                  toast.error('請輸入修改資料', {
-                    position: 'top-center',
+                  toast.error("請輸入修改資料", {
+                    position: "top-center",
                     autoClose: 2000,
                   });
                   setTimeout(() => {
@@ -832,14 +830,14 @@ export default function ManageClientAccount() {
           </Modal.Body>
           <Modal.Footer>
             <BtnBootstrap
-              variant='secondary'
+              variant="secondary"
               onClickEventName={handleCloseDeleteModal}
-              text='取消'
+              text="取消"
             />
             <BtnBootstrap
-              variant='primary'
+              variant="primary"
               onClickEventName={handleDeleteVideo}
-              text='確認'
+              text="確認"
             />
           </Modal.Footer>
         </Modal>
