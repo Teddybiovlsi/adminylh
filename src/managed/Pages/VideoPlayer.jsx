@@ -63,46 +63,6 @@ export default function VideoPlayer() {
     };
   }, []);
 
-  // const playerRef = React.useRef(null);
-
-  const handlePlayerReady = (player) => {
-    player.on("waiting", () => {
-      console.log("player is waiting");
-    });
-
-    player.on("dispose", () => {
-      console.log("player will dispose");
-    });
-
-    player.on("pause", () => {
-      console.log("player is pause");
-      // setSendstate(true);
-    });
-
-    player.on("timeupdate", () => {
-      // console.log(info[arrayNum].video_interrupt_time);
-      // console.log(info[arrayNum].video_duration);
-      // console.log(arrayNum);
-      // if (arrayNum < totalArrayLength) {
-      //   if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
-      //     player.pause();
-      //     // setInterruptTime(player.currentTime());
-      //     // setInterruptTime(player.currentTime());
-      //     // set the timer with the duration time after duration time, the video will resume
-      //     // setTimeout(() => {
-      //     //   player.play();
-      //     // }, info[arrayNum].video_duration * 1000);
-      //     arrayNum++;
-      //   }
-      // }
-    });
-    player.on("resume", () => {
-      console.log("player is resume");
-      // show the certain time
-      // console.log(player.currentTime());
-    });
-  };
-
   if (loading) return <Loading />;
 
   return (

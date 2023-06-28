@@ -44,9 +44,9 @@ export const VideoJS = (props) => {
       // // if yes, exit fullscreen mode
       document.exitFullscreen();
       // remove the className from the video container
-      document
-        .getElementById("video-container-textfield")
-        .classList.remove("fullscreen");
+      // document
+      //   .getElementById("video-container-textfield")
+      //   .classList.remove("fullscreen");
 
       setIsFullscreen(false);
     } else {
@@ -69,6 +69,8 @@ export const VideoJS = (props) => {
         videoElement.webkitRequestFullscreen();
       } else if (videoElement.msRequestFullscreen) {
         videoElement.msRequestFullscreen();
+      } else {
+        console.log("fullscreen error");
       }
     }
   };
@@ -79,6 +81,7 @@ export const VideoJS = (props) => {
       // The Video.js player needs to be _inside_ the component el for React 18 Strict Mode.
       const videoElement = document.createElement("video-js");
 
+      // if screen size is smaller than 768px, then add fullscreen button
       videoElement.classList.add("vjs-big-play-centered");
       videoRef.current.appendChild(videoElement);
 
@@ -87,11 +90,14 @@ export const VideoJS = (props) => {
       }));
       // addChild("componentName", {componentProps}, componentIndex)
       // 其中componentIndex為可選參數，若不指定則預設為0，代表在controlBar的第一個位置
-      var fullScreenBtn = player.controlBar.addChild("button", {}, 18);
+
+      var fullScreenBtn = player.controlBar.addChild("button", {}, 1);
       var fullScreenBtnDom = fullScreenBtn.el();
       fullScreenBtnDom.innerHTML = `<span class="vjs-icon-fullscreen-enter" id="fullscreenBtn"></span>`;
       fullScreenBtnDom.title = "fullscreen";
       fullScreenBtn.on("click", () => {
+        // prevent the default behavior of the button
+        e.preventDefault();
         toggleFullScreen();
       });
 
@@ -110,8 +116,8 @@ export const VideoJS = (props) => {
             player.pause();
             setSendstate(true);
             setTimeout(() => {
-              setSendstate(false);
-              player.play();
+              // setSendstate(false);
+              // player.play();
             }, info[arrayNum].video_duration * 1000);
             arrayNum++;
           }
@@ -142,10 +148,20 @@ export const VideoJS = (props) => {
 
   return (
     <div id="video-container">
-      <div className="d-flex">
+      <div className="video-container_Container">
         <div data-vjs-player className="videoPlayer">
           <div ref={videoRef} className="video-js vjs-default-skin" />
         </div>
+        {/* <div>
+          <button
+            id="fullscreenBtn"
+            onClick={() => {
+              toggleFullScreen();
+            }}
+          >
+            全螢幕
+          </button>
+        </div> */}
 
         {sendstate && (
           <div id="video-container-textfield" className="text-overlay">

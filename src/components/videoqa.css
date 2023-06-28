@@ -24,11 +24,17 @@
 .vjs-icon-fullscreen-enter {
   font-size: 1.8em;
   line-height: 1.67;
+  cursor: pointer;
 }
 
 .vjs-icon-fullscreen-exit {
   font-size: 1.8em;
   line-height: 1.67;
+  cursor: pointer;
+}
+
+.vjs-control .vjs-button{
+  cursor: pointer;
 }
 .text-overlay {
   background-color: rgba(154, 111, 170, 0.1);
@@ -39,17 +45,12 @@
   background-color: rgba(151, 70, 141, 0.2);
 }
 
-/* .bottomContainer {
-  position: absolute;
-  bottom: 0;
-} */
 .sendBtn {
   position: absolute;
   bottom: 0;
   right: 0;
   margin: 10px;
 }
-
 
 .reset {
   border: 0.15rem rgba(218, 114, 100, 0.5) solid;
@@ -80,15 +81,24 @@
   border: 0.15rem rgba(179, 110, 171, 0.5) solid;
 }
 
-
+.video-container_Container{
+  display: block;
+}
+.videoPlayer{
+  width: 100%;
+}
 
 
 @media (min-width: 576px) {
   .text-overlay {
     position: absolute;
-    left: 50%;
-    top: 50%;
+    left: 30%;
+    top: 30%;
     z-index: 9999;
+    background-color: #fff;
+  }
+  .videoPlayer {
+    width: 100%;
   }
 }
 /* if screen size is less than 768px hide video-container */
@@ -99,11 +109,11 @@
   .text-overlay {
     width: 30%;
   }
-
   .videoPlayer {
     width: 70%;
   }
-  /* #video-container {
+  .video-container_Container{
     display: flex;
-  } */
+    flex-direction: row;
+  }
 }
