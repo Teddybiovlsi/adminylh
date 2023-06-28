@@ -1,16 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import React from "react";
-import { Modal } from "react-bootstrap";
+import { Col, Container, Form } from "react-bootstrap";
+import BtnBootstrap from "./BtnBootstrap";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
 
 export const VideoJS = (props) => {
-  const videoRef = React.useRef(null);
-  const [currentTime, setCurrentTime] = React.useState(null);
-  const playerRef = React.useRef(null);
-  const { options, InteruptTime } = props;
-  const [sendstate, setSendstate] = React.useState(false);
+  const videoRef = useRef(null);
+  const [currentTime, setCurrentTime] = useState(null);
+  const playerRef = useRef(null);
+  const { options, info } = props;
+  const [sendstate, setSendstate] = useState(false);
+  const [optionChecked, setOptionChecked] = useState("");
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [tempQuestionNum, setTempQuestionNum] = useState(1);
+  // 計算每一個問題
+  let arrayNum = 0;
+  // if info is not empty, then set the totalArrayLength
+  const [totalArrayLength, setTotalArrayLength] = useState(0);
+  useEffect(() => {
+    if (info.length !== 0) {
+      setTotalArrayLength(info.length);
+    }
+  }, [info]);
+
+  const handleCheckedAnswer = (e) => {
+    setOptionChecked(e.target.value);
+  };
+
   const toggleFullScreen = () => {
     const videoElement = document.getElementById("video-container");
     if (document.fullscreenElement) {
@@ -29,6 +47,8 @@ export const VideoJS = (props) => {
       document
         .getElementById("video-container-textfield")
         .classList.remove("fullscreen");
+
+      setIsFullscreen(false);
     } else {
       // 若fullscreen mode不是active，則進入fullscreen mode
       // 第一步驟，將icon轉換成離開全螢幕的icon，透過classList的replace方法
@@ -39,6 +59,7 @@ export const VideoJS = (props) => {
           "vjs-icon-fullscreen-enter",
           "vjs-icon-fullscreen-exit"
         );
+      setIsFullscreen(true);
       // 依據不同的瀏覽器，進入全螢幕的方法不同
       if (videoElement.requestFullscreen) {
         videoElement.requestFullscreen();
@@ -81,13 +102,19 @@ export const VideoJS = (props) => {
         console.log("player is play");
       });
       player.on("pause", () => {
-        setSendstate(true);
-        // console.log("player is pause");
+        setTempQuestionNum(arrayNum);
       });
       player.on("timeupdate", () => {
-        console.log(player.currentTime());
-        if (player.currentTime() >= 3) {
-          player.pause();
+        if (arrayNum <= totalArrayLength) {
+          if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
+            player.pause();
+            setSendstate(true);
+            setTimeout(() => {
+              setSendstate(false);
+              player.play();
+            }, info[arrayNum].video_duration * 1000);
+            arrayNum++;
+          }
         }
       });
 
@@ -102,7 +129,7 @@ export const VideoJS = (props) => {
   }, [options, videoRef]);
 
   // Dispose the Video.js player when the functional component unmounts
-  React.useEffect(() => {
+  useEffect(() => {
     const player = playerRef.current;
 
     return () => {
@@ -114,43 +141,104 @@ export const VideoJS = (props) => {
   }, [playerRef]);
 
   return (
-    <div id="video-container" className="container">
-      <div data-vjs-player>
-        <div ref={videoRef} className="video-js vjs-default-skin" />
-      </div>
-      {sendstate && (
-        <div id="video-container-textfield" className="text-overlay">
-          <h1>Video.js</h1>
-          <p>
-            An open source HTML5 and Flash video player, <br />
-            that makes it easy to <em>customize</em> your embed.
-          </p>
+    <div id="video-container">
+      <div className="d-flex">
+        <div data-vjs-player className="videoPlayer">
+          <div ref={videoRef} className="video-js vjs-default-skin" />
         </div>
-      )}
 
-      {/* <div>
-        <button
-          onClick={() => {
-            // check if the document is in fullscreen mode
-            if (document.fullscreenElement) {
-              // console.log("exit fullscreen");
-              // // if yes, exit fullscreen mode
-              document.exitFullscreen();
-              // // remove the className from the video container
-              // document
-              //   .getElementById("video-container-textfield")
-              //   .classList.remove("fullscreen");
-            } else {
-              document.getElementById("video-container").requestFullscreen();
-              document
-                .getElementById("video-container-textfield")
-                .classList.add("fullscreen");
-            }
-          }}
-        >
-          全螢幕
-        </button>
-      </div> */}
+        {sendstate && (
+          <div id="video-container-textfield" className="text-overlay">
+            <Form>
+              <h1 className="text-overlay_title">第{tempQuestionNum}題</h1>
+              <Col className="fs-5">
+                {info[tempQuestionNum - 1].video_question}
+              </Col>
+              <Col className="fs-5 mt-3">
+                <Form.Check
+                  type="radio"
+                  label={info[tempQuestionNum - 1].option_1[0]}
+                  value={info[tempQuestionNum - 1].option_1[0]}
+                  name="option_1"
+                  id="formHorizontalRadios1"
+                  checked={
+                    optionChecked === info[tempQuestionNum - 1].option_1[0]
+                      ? true
+                      : false
+                  }
+                  onChange={handleCheckedAnswer}
+                />
+                <Form.Check
+                  type="radio"
+                  label={info[tempQuestionNum - 1].option_2[0]}
+                  value={info[tempQuestionNum - 1].option_2[0]}
+                  name="option_2"
+                  id="formHorizontalRadios2"
+                  checked={
+                    optionChecked === info[tempQuestionNum - 1].option_1[0]
+                      ? true
+                      : false
+                  }
+                  onChange={handleCheckedAnswer}
+                />
+                {info[tempQuestionNum - 1].option_3[0] !== "" && (
+                  <Form.Check
+                    type="radio"
+                    label={info[tempQuestionNum - 1].option_3[0]}
+                    value={info[tempQuestionNum - 1].option_3[0]}
+                    name="option_3"
+                    id="formHorizontalRadios3"
+                    checked={
+                      optionChecked === info[tempQuestionNum - 1].option_3[0]
+                        ? true
+                        : false
+                    }
+                    onChange={handleCheckedAnswer}
+                  />
+                )}
+                {info[tempQuestionNum - 1].option_4[0] !== "" && (
+                  <Form.Check
+                    type="radio"
+                    label={info[tempQuestionNum - 1].option_3[0]}
+                    value={info[tempQuestionNum - 1].option_3[0]}
+                    name="option_4"
+                    id="formHorizontalRadios3"
+                    checked={
+                      optionChecked === info[tempQuestionNum - 1].option_3[0]
+                        ? true
+                        : false
+                    }
+                    onChange={(e) => {
+                      setOptionChecked(e.target.value);
+                    }}
+                  />
+                )}
+              </Col>
+              <Col className="sendBtn">
+                <BtnBootstrap
+                  id="resetBtn"
+                  btnName="ResetBtn"
+                  btnPosition="btn-start"
+                  text={"重置"}
+                  variant={"btn reset me-3"}
+                  onClickEventName={() => {
+                    setOptionChecked("");
+                  }}
+                />
+                <BtnBootstrap
+                  id="sendBtn"
+                  btnName="ConfirmBtn"
+                  text={"送出"}
+                  variant={"btn send"}
+                  onClickEventName={() => {
+                    console.log("你送出了答案");
+                  }}
+                />
+              </Col>
+            </Form>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

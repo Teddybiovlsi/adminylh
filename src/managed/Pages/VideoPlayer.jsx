@@ -5,8 +5,6 @@ import StatusCode from "../../sys/StatusCode";
 import { get } from "../axios";
 import "video.js/dist/video-js.css";
 import Loading from "../../components/Loading";
-import { forEach, set, update } from "lodash";
-import { Card, Modal } from "react-bootstrap";
 
 export default function VideoPlayer() {
   const location = useLocation();
@@ -27,7 +25,6 @@ export default function VideoPlayer() {
   const [interruptTime, setInterruptTime] = useState(null);
 
   let arrayNum = 0;
-
   const videoJsOptions = {
     controls: true,
     autoplay: false,
@@ -53,9 +50,7 @@ export default function VideoPlayer() {
           const VideoInfo = await response.data.data;
           setInfo(VideoInfo);
           setLoading(false);
-        } catch (error) {
-          // setError(StatusCode(error.response.status));
-        }
+        } catch (error) {}
       }
 
       fetchVideoData({
@@ -88,24 +83,23 @@ export default function VideoPlayer() {
       // console.log(info[arrayNum].video_interrupt_time);
       // console.log(info[arrayNum].video_duration);
       // console.log(arrayNum);
-      if (arrayNum < info.length) {
-        if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
-          player.pause();
-          // setInterruptTime(player.currentTime());
-
-          // setInterruptTime(player.currentTime());
-          // set the timer with the duration time after duration time, the video will resume
-          // setTimeout(() => {
-          //   player.play();
-          // }, info[arrayNum].video_duration * 1000);
-          arrayNum++;
-        }
-      }
+      // if (arrayNum < totalArrayLength) {
+      //   if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
+      //     player.pause();
+      //     // setInterruptTime(player.currentTime());
+      //     // setInterruptTime(player.currentTime());
+      //     // set the timer with the duration time after duration time, the video will resume
+      //     // setTimeout(() => {
+      //     //   player.play();
+      //     // }, info[arrayNum].video_duration * 1000);
+      //     arrayNum++;
+      //   }
+      // }
     });
     player.on("resume", () => {
       console.log("player is resume");
       // show the certain time
-      console.log(player.currentTime());
+      // console.log(player.currentTime());
     });
   };
 
@@ -113,15 +107,7 @@ export default function VideoPlayer() {
 
   return (
     <>
-      <VideoJS options={videoJsOptions} InteruptTime={handlePlayerReady} />
-      {sendstate && (
-        <Modal onShow={true}>
-          <Modal.Header closeButton>
-            <Modal.Title>問題1</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>123132123123</Modal.Body>
-        </Modal>
-      )}
+      <VideoJS options={videoJsOptions} info={info} />
     </>
   );
 }

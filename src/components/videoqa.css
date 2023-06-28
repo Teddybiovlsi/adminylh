@@ -8,7 +8,7 @@
   color: red;
   /* 其他樣式設定 */
 }
-.video-container {
+#video-container {
   position: relative;
 }
 
@@ -17,23 +17,93 @@
   height: auto;
 }
 
-.text-overlay {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  color: white;
-  z-index: 9999;
-}
 .video-js .vjs-fullscreen-control {
   display: none;
 }
 
-.vjs-icon-fullscreen-enter{
+.vjs-icon-fullscreen-enter {
   font-size: 1.8em;
   line-height: 1.67;
 }
 
-.vjs-icon-fullscreen-exit{
+.vjs-icon-fullscreen-exit {
   font-size: 1.8em;
   line-height: 1.67;
+}
+.text-overlay {
+  background-color: rgba(154, 111, 170, 0.1);
+}
+
+.text-overlay_title {
+  text-align: center;
+  background-color: rgba(151, 70, 141, 0.2);
+}
+
+/* .bottomContainer {
+  position: absolute;
+  bottom: 0;
+} */
+.sendBtn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 10px;
+}
+
+
+.reset {
+  border: 0.15rem rgba(218, 114, 100, 0.5) solid;
+}
+.reset:hover {
+  background-color: rgba(218, 114, 100, 0.5);
+  color: #fff;
+}
+.reset:active,
+.reset:focus,
+.reset:hover,
+.reset:active:focus{
+  border: 0.15rem rgba(218, 114, 100, 0.5) solid;
+}
+
+.send:hover {
+  background-color: rgba(179, 110, 171, 0.5);
+  color: #fff;
+}
+.send {
+  font-size: 1.25rem;
+  border: 0.15rem rgba(179, 110, 171, 0.5) solid;
+}
+.send:active,
+.send:focus,
+.send:hover,
+.send:active:focus{
+  border: 0.15rem rgba(179, 110, 171, 0.5) solid;
+}
+
+
+
+
+@media (min-width: 576px) {
+  .text-overlay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 9999;
+  }
+}
+/* if screen size is less than 768px hide video-container */
+@media (min-width: 768px) {
+  .text-overlay {
+    position: unset;
+  }
+  .text-overlay {
+    width: 30%;
+  }
+
+  .videoPlayer {
+    width: 70%;
+  }
+  /* #video-container {
+    display: flex;
+  } */
 }
