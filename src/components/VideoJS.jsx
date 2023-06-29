@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from "react";
-import React from "react";
-import { Col, Container, Form } from "react-bootstrap";
-import BtnBootstrap from "./BtnBootstrap";
-import videojs from "video.js";
-import "video.js/dist/video-js.css";
-import "./videoqa.css";
+import { useState, useEffect, useRef } from 'react';
+import React from 'react';
+import { Col, Form } from 'react-bootstrap';
+import BtnBootstrap from './BtnBootstrap';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
+import './videoqa.css';
 
 export const VideoJS = (props) => {
   const videoRef = useRef(null);
@@ -12,10 +12,10 @@ export const VideoJS = (props) => {
   const playerRef = useRef(null);
   const { options, info } = props;
   const [sendstate, setSendstate] = useState(false);
-  const [optionChecked, setOptionChecked] = useState("");
+  const [optionChecked, setOptionChecked] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
-  // 計算每一個問題
+  // calculate the total length of the array
   let arrayNum = 0;
   // if info is not empty, then set the totalArrayLength
   const [totalArrayLength, setTotalArrayLength] = useState(0);
@@ -30,16 +30,16 @@ export const VideoJS = (props) => {
   };
 
   const toggleFullScreen = () => {
-    const videoElement = document.getElementById("video-container");
+    const videoElement = document.getElementById('video-container');
     if (document.fullscreenElement) {
       // if fullscreen mode is active, exit by calling fullscreen API
       // 第一步驟，將icon轉換成進入全螢幕的icon，透過classList的replace方法
       // replace("要被替換的className", "替換後的className")
       document
-        .getElementById("fullscreenBtn")
+        .getElementById('fullscreenBtn')
         .classList.replace(
-          "vjs-icon-fullscreen-exit",
-          "vjs-icon-fullscreen-enter"
+          'vjs-icon-fullscreen-exit',
+          'vjs-icon-fullscreen-enter'
         );
       // // if yes, exit fullscreen mode
       document.exitFullscreen();
@@ -54,10 +54,10 @@ export const VideoJS = (props) => {
       // 第一步驟，將icon轉換成離開全螢幕的icon，透過classList的replace方法
       // replace("要被替換的className", "替換後的className")
       document
-        .getElementById("fullscreenBtn")
+        .getElementById('fullscreenBtn')
         .classList.replace(
-          "vjs-icon-fullscreen-enter",
-          "vjs-icon-fullscreen-exit"
+          'vjs-icon-fullscreen-enter',
+          'vjs-icon-fullscreen-exit'
         );
       setIsFullscreen(true);
       // 依據不同的瀏覽器，進入全螢幕的方法不同
@@ -70,7 +70,7 @@ export const VideoJS = (props) => {
       } else if (videoElement.msRequestFullscreen) {
         videoElement.msRequestFullscreen();
       } else {
-        console.log("fullscreen error");
+        console.log('fullscreen error');
       }
     }
   };
@@ -79,51 +79,55 @@ export const VideoJS = (props) => {
     // Make sure Video.js player is only initialized once
     if (!playerRef.current) {
       // The Video.js player needs to be _inside_ the component el for React 18 Strict Mode.
-      const videoElement = document.createElement("video-js");
+      const videoElement = document.createElement('video-js');
 
       // if screen size is smaller than 768px, then add fullscreen button
-      videoElement.classList.add("vjs-big-play-centered");
+      videoElement.classList.add('vjs-big-play-centered');
       videoRef.current.appendChild(videoElement);
 
       const player = (playerRef.current = videojs(videoElement, options, () => {
-        videojs.log("player is ready");
+        videojs.log('player is ready');
       }));
       // addChild("componentName", {componentProps}, componentIndex)
       // 其中componentIndex為可選參數，若不指定則預設為0，代表在controlBar的第一個位置
-
-      var fullScreenBtn = player.controlBar.addChild("button", {}, 1);
+      var fullScreenBtn = player.controlBar.addChild(
+        'button',
+        {
+          clickHandler: function (event) {
+            toggleFullScreen();
+          },
+        },
+        19
+      );
       var fullScreenBtnDom = fullScreenBtn.el();
       fullScreenBtnDom.innerHTML = `<span class="vjs-icon-fullscreen-enter" id="fullscreenBtn"></span>`;
-      fullScreenBtnDom.title = "fullscreen";
-      fullScreenBtn.on("click", () => {
-        // prevent the default behavior of the button
-        e.preventDefault();
-        toggleFullScreen();
-      });
+      fullScreenBtnDom.title = 'fullscreen';
+      // fullScreenBtnDom.addEventListener('click', () => {
+      //   toggleFullScreen();
+      // });
 
-      player.on("waiting", () => {
-        console.log("player is waiting");
+      player.on('waiting', () => {
+        console.log('player is waiting');
       });
-      player.on("play", () => {
-        console.log("player is play");
+      player.on('play', () => {
+        console.log('player is play');
       });
-      player.on("pause", () => {
+      player.on('pause', () => {
         setTempQuestionNum(arrayNum);
       });
-      player.on("timeupdate", () => {
+      player.on('timeupdate', () => {
         if (arrayNum <= totalArrayLength) {
           if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
             player.pause();
             setSendstate(true);
             setTimeout(() => {
-              // setSendstate(false);
-              // player.play();
+              setSendstate(false);
+              player.play();
             }, info[arrayNum].video_duration * 1000);
             arrayNum++;
           }
         }
       });
-
       // You could update an existing player in the `else` block here
       // on prop change, for example:
     } else {
@@ -147,36 +151,25 @@ export const VideoJS = (props) => {
   }, [playerRef]);
 
   return (
-    <div id="video-container">
-      <div className="video-container_Container">
-        <div data-vjs-player className="videoPlayer">
-          <div ref={videoRef} className="video-js vjs-default-skin" />
+    <div id='video-container'>
+      <div className='video-container_Container'>
+        <div data-vjs-player className='videoPlayer'>
+          <div ref={videoRef} className='video-js vjs-default-skin' />
         </div>
-        {/* <div>
-          <button
-            id="fullscreenBtn"
-            onClick={() => {
-              toggleFullScreen();
-            }}
-          >
-            全螢幕
-          </button>
-        </div> */}
-
         {sendstate && (
-          <div id="video-container-textfield" className="text-overlay">
+          <div id='video-container-textfield' className='text-overlay'>
             <Form>
-              <h1 className="text-overlay_title">第{tempQuestionNum}題</h1>
-              <Col className="fs-5">
+              <h1 className='text-overlay_title'>第{tempQuestionNum}題</h1>
+              <Col className='fs-5'>
                 {info[tempQuestionNum - 1].video_question}
               </Col>
-              <Col className="fs-5 mt-3">
+              <Col className='fs-5 mt-3'>
                 <Form.Check
-                  type="radio"
+                  type='radio'
                   label={info[tempQuestionNum - 1].option_1[0]}
                   value={info[tempQuestionNum - 1].option_1[0]}
-                  name="option_1"
-                  id="formHorizontalRadios1"
+                  name='option_1'
+                  id='formHorizontalRadios1'
                   checked={
                     optionChecked === info[tempQuestionNum - 1].option_1[0]
                       ? true
@@ -185,11 +178,11 @@ export const VideoJS = (props) => {
                   onChange={handleCheckedAnswer}
                 />
                 <Form.Check
-                  type="radio"
+                  type='radio'
                   label={info[tempQuestionNum - 1].option_2[0]}
                   value={info[tempQuestionNum - 1].option_2[0]}
-                  name="option_2"
-                  id="formHorizontalRadios2"
+                  name='option_2'
+                  id='formHorizontalRadios2'
                   checked={
                     optionChecked === info[tempQuestionNum - 1].option_1[0]
                       ? true
@@ -197,13 +190,13 @@ export const VideoJS = (props) => {
                   }
                   onChange={handleCheckedAnswer}
                 />
-                {info[tempQuestionNum - 1].option_3[0] !== "" && (
+                {info[tempQuestionNum - 1].option_3[0] !== '' && (
                   <Form.Check
-                    type="radio"
+                    type='radio'
                     label={info[tempQuestionNum - 1].option_3[0]}
                     value={info[tempQuestionNum - 1].option_3[0]}
-                    name="option_3"
-                    id="formHorizontalRadios3"
+                    name='option_3'
+                    id='formHorizontalRadios3'
                     checked={
                       optionChecked === info[tempQuestionNum - 1].option_3[0]
                         ? true
@@ -212,13 +205,13 @@ export const VideoJS = (props) => {
                     onChange={handleCheckedAnswer}
                   />
                 )}
-                {info[tempQuestionNum - 1].option_4[0] !== "" && (
+                {info[tempQuestionNum - 1].option_4[0] !== '' && (
                   <Form.Check
-                    type="radio"
+                    type='radio'
                     label={info[tempQuestionNum - 1].option_3[0]}
                     value={info[tempQuestionNum - 1].option_3[0]}
-                    name="option_4"
-                    id="formHorizontalRadios3"
+                    name='option_4'
+                    id='formHorizontalRadios3'
                     checked={
                       optionChecked === info[tempQuestionNum - 1].option_3[0]
                         ? true
@@ -230,24 +223,24 @@ export const VideoJS = (props) => {
                   />
                 )}
               </Col>
-              <Col className="sendBtn">
+              <Col className='sendBtn'>
                 <BtnBootstrap
-                  id="resetBtn"
-                  btnName="ResetBtn"
-                  btnPosition="btn-start"
-                  text={"重置"}
-                  variant={"btn reset me-3"}
+                  id='resetBtn'
+                  btnName='ResetBtn'
+                  btnPosition='btn-start'
+                  text={'重置'}
+                  variant={'btn reset me-3'}
                   onClickEventName={() => {
-                    setOptionChecked("");
+                    setOptionChecked('');
                   }}
                 />
                 <BtnBootstrap
-                  id="sendBtn"
-                  btnName="ConfirmBtn"
-                  text={"送出"}
-                  variant={"btn send"}
+                  id='sendBtn'
+                  btnName='ConfirmBtn'
+                  text={'送出'}
+                  variant={'btn send'}
                   onClickEventName={() => {
-                    console.log("你送出了答案");
+                    console.log('你送出了答案');
                   }}
                 />
               </Col>
