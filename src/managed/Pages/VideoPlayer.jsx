@@ -34,7 +34,6 @@ export default function VideoPlayer() {
     responsive: true,
     fluid: true,
     muted: true,
-    fullscreenToggle: false,
     sources: [
       {
         src: VideoPath,

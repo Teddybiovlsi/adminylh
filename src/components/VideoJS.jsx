@@ -41,6 +41,10 @@ export const VideoJS = (props) => {
           'vjs-icon-fullscreen-exit',
           'vjs-icon-fullscreen-enter'
         );
+
+      document
+        .getElementById('video-container_Container_player')
+        .classList.remove('fullscreen');
       // // if yes, exit fullscreen mode
       document.exitFullscreen();
       // remove the className from the video container
@@ -59,6 +63,11 @@ export const VideoJS = (props) => {
           'vjs-icon-fullscreen-enter',
           'vjs-icon-fullscreen-exit'
         );
+      // add fullscreen className to the videoPlayer className
+      document
+        .getElementById('video-container_Container_player')
+        .classList.add('fullscreen');
+
       setIsFullscreen(true);
       // 依據不同的瀏覽器，進入全螢幕的方法不同
       if (videoElement.requestFullscreen) {
@@ -147,10 +156,38 @@ export const VideoJS = (props) => {
     };
   }, [playerRef]);
 
+  document.addEventListener('fullscreenchange', exitHandler);
+  document.addEventListener('webkitfullscreenchange', exitHandler);
+  document.addEventListener('mozfullscreenchange', exitHandler);
+  document.addEventListener('MSFullscreenChange', exitHandler);
+
+  function exitHandler() {
+    if (
+      !document.fullscreenElement &&
+      !document.webkitIsFullScreen &&
+      !document.mozFullScreen &&
+      !document.msFullscreenElement
+    ) {
+      document
+        .getElementById('fullscreenBtn')
+        .classList.replace(
+          'vjs-icon-fullscreen-exit',
+          'vjs-icon-fullscreen-enter'
+        );
+      document
+        .getElementById('video-container_Container_player')
+        .classList.remove('fullscreen');
+    }
+  }
+
   return (
     <div id='video-container'>
       <div className='video-container_Container'>
-        <div data-vjs-player className='videoPlayer'>
+        <div
+          data-vjs-player
+          id='video-container_Container_player'
+          className='videoPlayer'
+        >
           <div ref={videoRef} className='video-js vjs-default-skin' />
         </div>
         {sendstate && (
