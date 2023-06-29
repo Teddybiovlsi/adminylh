@@ -102,9 +102,6 @@ export const VideoJS = (props) => {
       var fullScreenBtnDom = fullScreenBtn.el();
       fullScreenBtnDom.innerHTML = `<span class="vjs-icon-fullscreen-enter" id="fullscreenBtn"></span>`;
       fullScreenBtnDom.title = 'fullscreen';
-      // fullScreenBtnDom.addEventListener('click', () => {
-      //   toggleFullScreen();
-      // });
 
       player.on('waiting', () => {
         console.log('player is waiting');
@@ -121,7 +118,7 @@ export const VideoJS = (props) => {
             player.pause();
             setSendstate(true);
             setTimeout(() => {
-              setSendstate(false);
+              // setSendstate(false);
               player.play();
             }, info[arrayNum].video_duration * 1000);
             arrayNum++;
@@ -184,7 +181,7 @@ export const VideoJS = (props) => {
                   name='option_2'
                   id='formHorizontalRadios2'
                   checked={
-                    optionChecked === info[tempQuestionNum - 1].option_1[0]
+                    optionChecked === info[tempQuestionNum - 1].option_2[0]
                       ? true
                       : false
                   }
@@ -208,16 +205,17 @@ export const VideoJS = (props) => {
                 {info[tempQuestionNum - 1].option_4[0] !== '' && (
                   <Form.Check
                     type='radio'
-                    label={info[tempQuestionNum - 1].option_3[0]}
-                    value={info[tempQuestionNum - 1].option_3[0]}
+                    label={info[tempQuestionNum - 1].option_4[0]}
+                    value={info[tempQuestionNum - 1].option_4[0]}
                     name='option_4'
-                    id='formHorizontalRadios3'
+                    id='formHorizontalRadios4'
                     checked={
-                      optionChecked === info[tempQuestionNum - 1].option_3[0]
+                      optionChecked === info[tempQuestionNum - 1].option_4[0]
                         ? true
                         : false
                     }
                     onChange={(e) => {
+                      console.log(e.target.value);
                       setOptionChecked(e.target.value);
                     }}
                   />
