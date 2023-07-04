@@ -1,0 +1,9 @@
+.notFoundContainer{
+    height: 93vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    background-color: rgba($color: #878787, $alpha: 0.2);
+}

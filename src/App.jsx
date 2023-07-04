@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Header from "./managed/Header";
 import Footer from "./managed/Footer";
@@ -21,6 +21,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import MultiAddUser from "./managed/Pages/MultiAddUser";
 import RestoreAccount from "./managed/Pages/RestoreAccount";
 import EditClientVideoID from "./managed/Pages/EditClientVideoID";
+import { Button, Container, Form, Row } from "react-bootstrap";
+import styles from "./styles/pages/NotFoundPage.module.scss";
 
 function App() {
   return (
@@ -33,7 +35,8 @@ function App() {
       <Header />
       <main className="app_main">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route index path="/" element={<LogInPage />} />
+          {/* <Route path="/" element={<Home />} /> */}
           <Route path="/Admin/Register" element={<BackendRegistration />} />
           <Route path="/Client/Register" element={<FrontEndRegistration />} />
           <Route path="/Pratice" element={<Pratice />} />
@@ -47,10 +50,54 @@ function App() {
           <Route path="/MultiAddVideo" element={<EditClientVideoID />} />
           <Route path="/RestoreAccount" element={<RestoreAccount />} />
           <Route path="/aboutus" element={<AboutUs />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
     </div>
     // </GoogleReCaptchaProvider>
+  );
+}
+
+function LogInPage() {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
+
+  return (
+    <Container>
+      <h1>LogIn</h1>
+      <Form>
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Row>
+            <Form.Label>帳號</Form.Label>
+            <Form.Control type="email" placeholder="Enter email" />
+            <Form.Text className="text-muted">
+              We'll never share your email with anyone else.
+            </Form.Text>
+          </Row>
+          <Row>
+            <Button
+              variant="primary"
+              type="submit"
+              onClick={() => {
+                setUser("admin");
+              }}
+            >
+              Submit
+            </Button>
+          </Row>
+        </Form.Group>
+      </Form>
+    </Container>
+  );
+}
+
+function NotFoundPage() {
+  return (
+    <div className={`align-middle ${styles.notFoundContainer}`}>
+      <h1>找不到此網頁</h1>
+    </div>
   );
 }
 

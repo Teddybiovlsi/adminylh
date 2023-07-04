@@ -4,19 +4,23 @@ import {
   Navbar,
   NavDropdown,
   Offcanvas,
+  Button,
 } from "react-bootstrap";
 import { BoxArrowLeft } from "react-bootstrap-icons";
 import { LinkContainer } from "react-router-bootstrap";
 import styles from "../styles/components/NavStyle.module.scss";
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
 
 export default function Header({ expand = "lg" }) {
+  const [user, setUser] = useState(localStorage?.getItem("user"));
   return (
     <Navbar
       collapseOnSelect
       id={styles.navBarContainer}
       expand={expand}
       className="mb-3"
-      variant="dark"
+      variant="light"
       fixed="top"
     >
       <Container fluid>
@@ -61,11 +65,36 @@ export default function Header({ expand = "lg" }) {
                 </LinkContainer>{" "}
               </NavDropdown>
             </Nav>
+
             <Nav>
-              <Nav.Link eventKey={2} href="#memes">
-                <BoxArrowLeft title="登出" size={22} />
-                登出
-              </Nav.Link>
+              {user !== null ? (
+                <Button
+                  variant="outline-primary"
+                  onClick={() => {
+                    localStorage.removeItem("user");
+                    setUser(null);
+                  }}
+                >
+                  登出
+                </Button>
+              ) : (
+                <Button
+                  variant="outline-primary"
+                  onClick={() => {
+                    Navigate("/LogIn");
+                  }}
+                >
+                  登入
+                </Button>
+              )}
+              {/* {user ? (
+                <LinkContainer to="/">
+                  <BoxArrowLeft title="登出" size={22} />
+                  登出
+                </LinkContainer>
+              ) : (
+                <LinkContainer to="/LogIn"></LinkContainer>
+              )} */}
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>
