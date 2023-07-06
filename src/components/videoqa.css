@@ -72,9 +72,9 @@
 }
 
 .sendBtn {
-  position: absolute;
+  /* position: absolute;
   bottom: 0;
-  right: 0;
+  right: 0; */
   margin: 10px;
 }
 
@@ -118,7 +118,6 @@
   min-width: 100%;
   min-height: 100%;
 }
-
 
 @media (min-width: 576px) {
   .text-overlay {
