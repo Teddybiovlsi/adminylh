@@ -21,7 +21,6 @@ function FormPwd({
   ValidCheck = null,
   InValidCheck = null,
   LabelMessage = "請輸入密碼：",
-  ControlID = "",
   IconID = "",
   FormControlPlaceHolder = "請在這裡輸入密碼",
   SetShowPwdCondition,
@@ -42,7 +41,7 @@ function FormPwd({
         <Form.Control
           type={ShowPwdCondition ? "Text" : "Password"}
           name={ControlName}
-          id={ControlID}
+          id={LabelForName}
           maxLength={PwdMaxLength}
           aria-describedby="passwordHelpBlock"
           placeholder={FormControlPlaceHolder}

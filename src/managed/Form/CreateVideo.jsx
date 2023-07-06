@@ -52,8 +52,7 @@ export default function CreateVideo({ VideoMode = false }) {
       setSuccessBoolean(true);
       console.log(response.data);
     } catch (error) {
-      // setErrorMessage(StatusCode(error.response.status));
-      console.log(error);
+      setErrorMessage(StatusCode(error.response.status));
     }
   };
 

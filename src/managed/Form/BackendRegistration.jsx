@@ -20,6 +20,7 @@ import { post } from "../axios";
 import styles from "../../styles/Form/Registration.module.scss";
 import { useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";
+import FormAccount from "./shared/FormAccount.jsx";
 
 export default function BackendRegistration() {
   const checkPwdHint = "請再次輸入您的密碼";
@@ -67,6 +68,7 @@ export default function BackendRegistration() {
   };
 
   const schema = yup.object({
+    account: yup.string().required("帳號欄位不得為空"),
     email: yup.string().email("請輸入合法的信箱").required("信箱欄位不得為空"),
     password: yup
       .string()
@@ -130,6 +132,14 @@ export default function BackendRegistration() {
                     InValidCheck={touched.email && errors.email}
                     ErrorMessage={errors.email}
                   />
+                  <FormAccount
+                    ChangeEvent={handleChange}
+                    BlurEvent={handleBlur}
+                    AccountValue={values.account}
+                    ValidCheck={touched.account && !errors.account}
+                    InValidCheck={touched.account && errors.account}
+                    ErrorMessage={errors.account}
+                  />
                   <FormPwd
                     GroupClassName="mb-1"
                     SetStrengthMeter={true}
@@ -142,7 +152,6 @@ export default function BackendRegistration() {
                     PwdValue={values.password}
                     ValidCheck={touched.password && !errors.password}
                     InValidCheck={touched.password && errors.password}
-                    ControlID={"inputPassword"}
                     IconID={"showPass"}
                     SetShowPwdCondition={setShowPwd}
                     ShowPwdCondition={showPwd}
@@ -161,7 +170,9 @@ export default function BackendRegistration() {
                     ValidCheck={
                       touched.confirmPassword && !errors.confirmPassword
                     }
-                    InValidCheck={touched.confirmPassword && errors.confirmPassword}
+                    InValidCheck={
+                      touched.confirmPassword && errors.confirmPassword
+                    }
                     CorrectMessage="確認密碼與輸入密碼相符"
                     ErrorMessage={errors.confirmPassword}
                   />

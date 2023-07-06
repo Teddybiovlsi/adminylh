@@ -9,11 +9,15 @@ import {
 import { BoxArrowLeft } from "react-bootstrap-icons";
 import { LinkContainer } from "react-router-bootstrap";
 import styles from "../styles/components/NavStyle.module.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 export default function Header({ expand = "lg" }) {
-  const [user, setUser] = useState(localStorage?.getItem("user"));
+  const [user, setUser] = useState(JSON.parse(localStorage?.getItem("user")));
+  // useEffect(() => {
+  //   console.log("user", user);
+  // }, [user]);
+
   return (
     <Navbar
       collapseOnSelect
@@ -24,7 +28,7 @@ export default function Header({ expand = "lg" }) {
       fixed="top"
     >
       <Container fluid>
-        <LinkContainer to="/">
+        <LinkContainer to="/Home">
           <Navbar.Brand>台大分院雲林分院衛教系統</Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
@@ -67,6 +71,11 @@ export default function Header({ expand = "lg" }) {
             </Nav>
 
             <Nav>
+              {user !== null && (
+                <div className="d-flex align-items-center justify-content-center me-2">
+                  <p className="m-0 ">{`${user.name}你好`}</p>
+                </div>
+              )}
               {user !== null ? (
                 <Button
                   variant="outline-primary"
@@ -81,20 +90,12 @@ export default function Header({ expand = "lg" }) {
                 <Button
                   variant="outline-primary"
                   onClick={() => {
-                    Navigate("/LogIn");
+                    window.location.href = "/";
                   }}
                 >
                   登入
                 </Button>
               )}
-              {/* {user ? (
-                <LinkContainer to="/">
-                  <BoxArrowLeft title="登出" size={22} />
-                  登出
-                </LinkContainer>
-              ) : (
-                <LinkContainer to="/LogIn"></LinkContainer>
-              )} */}
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>

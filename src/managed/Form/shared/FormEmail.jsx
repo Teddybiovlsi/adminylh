@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Form, FloatingLabel } from "react-bootstrap";
 
 function FormEmail({
@@ -17,15 +17,12 @@ function FormEmail({
   ErrorMessage = "",
 }) {
   return (
-    <Form.Group
-      className={GroupClassName}
-      controlId="exampleForm.ControlInput1"
-    >
+    <Form.Group className={GroupClassName} controlId="floatingEmail">
       <Form.Label className={LabelClassName} style={{ cursor: "pointer" }}>
         {LabelMessage}
       </Form.Label>
       <FloatingLabel
-        controlId="floatingInput"
+        controlId="floatingEmail"
         label="Email address"
         className="mb-3"
       >
