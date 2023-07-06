@@ -10,7 +10,4 @@ ReactDOM.createRoot(document.getElementById("content")).render(
       <App />
     </HashRouter>
   </React.StrictMode>
-  // <HashRouter>
-  //   <App />
-  // </HashRouter>
 );
