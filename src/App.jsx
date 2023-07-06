@@ -112,7 +112,12 @@ function LogInPage() {
       });
 
       setTimeout(() => {
-        navigate(-1);
+        // if have previous page then go back
+        if(window.history.length > 1){
+          navigate(-1);
+        }else{
+          navigate("/Home");
+        }
       }, 3000);
     } catch (error) {
       console.log(error.response.data);
