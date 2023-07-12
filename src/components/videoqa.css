@@ -105,13 +105,9 @@
 }
 
 .videoPlayer.fullscreen {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  min-width: 100%;
+  min-height: 100%;
+  min-width: 80%;
   margin: 0 auto;
-  /* top: 50%;
-  transform: translateY(-50%); */
 }
 
 @media (min-width: 576px) {
@@ -150,5 +146,12 @@
   .text-overlay {
     position: unset;
     width: 30%;
+  }
+  .videoPlayer.fullscreen {
+    position: fixed;
+    min-height: auto;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
   }
 }
