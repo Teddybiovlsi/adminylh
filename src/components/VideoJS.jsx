@@ -17,13 +17,6 @@ export const VideoJS = (props) => {
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
   // calculate the total length of the array
   let arrayNum = 0;
-  // if info is not empty, then set the totalArrayLength
-  const [totalArrayLength, setTotalArrayLength] = useState(0);
-  useEffect(() => {
-    if (info.length !== 0) {
-      setTotalArrayLength(info.length);
-    }
-  }, [info]);
 
   const handleCheckedAnswer = (e) => {
     setOptionChecked(e.target.value);
@@ -115,11 +108,17 @@ export const VideoJS = (props) => {
         console.log("player is play");
       });
       player.on("pause", () => {
+        // console.log("ArrayNum", arrayNum);
+        // console.log("tempQuestionNum", tempQuestionNum);
         setTempQuestionNum(arrayNum);
       });
       player.on("timeupdate", () => {
-        if (arrayNum <= totalArrayLength) {
+        // console.log("totalArrayLength", info.length);
+        // console.log("currentTime", player.currentTime());
+        // console.log(`arrayNum: ${arrayNum}`);
+        if (arrayNum < info.length) {
           if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
+            console.log("中斷");
             player.pause();
             setSendstate(true);
             setTimeout(() => {

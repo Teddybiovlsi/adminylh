@@ -10,7 +10,7 @@ import { BoxArrowLeft } from "react-bootstrap-icons";
 import { LinkContainer } from "react-router-bootstrap";
 import styles from "../styles/components/NavStyle.module.scss";
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 export default function Header({ expand = "lg" }) {
   const [user, setUser] = useState(JSON.parse(localStorage?.getItem("user")));
@@ -87,14 +87,9 @@ export default function Header({ expand = "lg" }) {
                   登出
                 </Button>
               ) : (
-                <Button
-                  variant="outline-primary"
-                  onClick={() => {
-                    window.location.href = "/";
-                  }}
-                >
-                  登入
-                </Button>
+                <Link to="/">
+                  <Button variant="outline-primary">登入</Button>
+                </Link>
               )}
             </Nav>
           </Offcanvas.Body>

@@ -82,6 +82,12 @@ function LogInPage() {
   const [validated, setValidated] = useState(false);
   const [ErrorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    if (localStorage.getItem("user") !== null) {
+      navigate("/Home");
+    }
+  }, []);
+
   const handleSubmit = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
@@ -113,11 +119,13 @@ function LogInPage() {
 
       setTimeout(() => {
         // if have previous page then go back
-        if(window.history.length > 1){
-          navigate("/Home", { replace: true });
-        }else{
-          navigate("/Home");
-        }
+        // if (window.history.length > 1) {
+        //   navigate("/Home", { replace: true });
+        // } else {
+        //   navigate("/Home");
+        // }
+
+        navigate(0);
       }, 3000);
     } catch (error) {
       console.log(error.response.data);
@@ -202,8 +210,6 @@ function LogInPage() {
         <ToastAlert />
       </Container>
     );
-  } else {
-    redirect("/Home");
   }
 }
 

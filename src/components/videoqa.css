@@ -1,13 +1,6 @@
 #video-container {
   position: relative;
 }
-#myVideo {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  min-width: 100%;
-  min-height: 100%;
-}
 
 /* Add some content at the bottom of the video/page */
 .content {
@@ -59,7 +52,7 @@
   cursor: pointer;
 }
 
-.vjs-control .vjs-button{
+.vjs-control .vjs-button {
   cursor: pointer;
 }
 .text-overlay {
@@ -88,7 +81,7 @@
 .reset:active,
 .reset:focus,
 .reset:hover,
-.reset:active:focus{
+.reset:active:focus {
   border: 0.15rem rgba(218, 114, 100, 0.5) solid;
 }
 
@@ -103,20 +96,22 @@
 .send:active,
 .send:focus,
 .send:hover,
-.send:active:focus{
+.send:active:focus {
   border: 0.15rem rgba(179, 110, 171, 0.5) solid;
 }
 
-.video-container_Container{
+.video-container_Container {
   display: block;
 }
 
-.videoPlayer.fullscreen{
+.videoPlayer.fullscreen {
   position: fixed;
-  right: 0;
-  bottom: 0;
+  top: 50%;
+  transform: translateY(-50%);
   min-width: 100%;
-  min-height: 100%;
+  margin: 0 auto;
+  /* top: 50%;
+  transform: translateY(-50%); */
 }
 
 @media (min-width: 576px) {
@@ -134,16 +129,26 @@
 /* if screen size is less than 768px hide video-container */
 @media (min-width: 768px) {
   .text-overlay {
-    position: unset;
+    position: absolute;
+    left: 25%;
+    top: 0;
+    z-index: 9999;
+    background-color: #fff;
   }
   .text-overlay {
-    width: 30%;
+    width: 50%;
   }
   .videoPlayer {
     width: 70%;
   }
-  .video-container_Container{
+  .video-container_Container {
     display: flex;
     flex-direction: row;
+  }
+}
+@media (min-width: 992px) {
+  .text-overlay {
+    position: unset;
+    width: 30%;
   }
 }
