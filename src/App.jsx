@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
   redirect,
+  useLocation,
   useNavigate,
 } from "react-router-dom";
 import Header from "./managed/Header";
@@ -35,8 +36,20 @@ import { post } from "./managed/axios";
 import ToastAlert from "./components/ToastAlert";
 import { toast } from "react-toastify";
 import { set } from "lodash/fp";
+import AuthProtected from "./AuthProtected";
 
 function App() {
+  const location = useLocation();
+  const user = JSON.parse(localStorage?.getItem("user"));
+
+  useEffect(() => {
+    if (user) {
+      if (new Date(user.expTime) < new Date()) {
+        localStorage.removeItem("user");
+      }
+    }
+  }, [location]);
+
   return (
     // Routes 若有網址則如第一範例/Register前面須加上/#組合起來為/#/Register
     //  <Route exact path="/" element={<UserLoginForm />} />
@@ -48,21 +61,27 @@ function App() {
       <main className="app_main">
         <Routes>
           <Route index path="/" element={<LogInPage />} />
-          <Route path="/Home" element={<Home />} />
-          <Route path="/Admin/Register" element={<BackendRegistration />} />
-          <Route path="/Client/Register" element={<FrontEndRegistration />} />
-          <Route path="/Pratice" element={<Pratice />} />
-          <Route path="/Exam" element={<Exam />} />
-          <Route path="/Video" element={<VideoPlayer />} />
           <Route
-            path="/ManageClientAccount"
-            element={<ManageClientAccount />}
-          />
-          <Route path="/MultiAddUser" element={<MultiAddUser />} />
-          <Route path="/MultiAddVideo" element={<EditClientVideoID />} />
-          <Route path="/RestoreAccount" element={<RestoreAccount />} />
-          <Route path="/aboutus" element={<AboutUs />} />
-          <Route path="*" element={<NotFoundPage />} />
+            element={
+              <AuthProtected user={JSON.parse(localStorage?.getItem("user"))} />
+            }
+          >
+            <Route path="/Home" element={<Home />} />
+            <Route path="/Admin/Register" element={<BackendRegistration />} />
+            <Route path="/Client/Register" element={<FrontEndRegistration />} />
+            <Route path="/Pratice" element={<Pratice />} />
+            <Route path="/Exam" element={<Exam />} />
+            <Route path="/Video" element={<VideoPlayer />} />
+            <Route
+              path="/ManageClientAccount"
+              element={<ManageClientAccount />}
+            />
+            <Route path="/MultiAddUser" element={<MultiAddUser />} />
+            <Route path="/MultiAddVideo" element={<EditClientVideoID />} />
+            <Route path="/RestoreAccount" element={<RestoreAccount />} />
+            <Route path="/aboutus" element={<AboutUs />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
         </Routes>
       </main>
     </div>

@@ -14,6 +14,11 @@ import { Link, Navigate } from "react-router-dom";
 
 export default function Header({ expand = "lg" }) {
   const [user, setUser] = useState(JSON.parse(localStorage?.getItem("user")));
+  // const expTimeFormat = Date.parse(Date(user.expTime));
+  // const nowTimeFormat = Date.now();
+  // console.log("expTimeFormat", expTimeFormat);
+  // console.log("nowTimeFormat", nowTimeFormat);
+  // console.log("compare", new Date(user?.expTime) > new Date());
   // useEffect(() => {
   //   console.log("user", user);
   // }, [user]);
