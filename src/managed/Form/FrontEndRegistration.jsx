@@ -5,13 +5,7 @@
 // 若傳送成功，5秒後自動跳轉回到首頁
 
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Modal,
-  ModalFooter,
-  Table,
-  FloatingLabel,
-} from "react-bootstrap";
+import { Form, Modal, Table } from "react-bootstrap";
 import * as formik from "formik";
 import * as yup from "yup";
 import Card from "react-bootstrap/Card";
@@ -322,7 +316,7 @@ export default function FrontEndRegistration() {
               validationSchema={schema}
               onSubmit={(values) => {
                 if (values == "") {
-                  nextStep();
+                  // nextStep();
                 }
                 setUserInfo(values);
                 nextStep();
