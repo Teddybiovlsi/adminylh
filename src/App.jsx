@@ -37,6 +37,7 @@ import ToastAlert from "./components/ToastAlert";
 import { toast } from "react-toastify";
 import { set } from "lodash/fp";
 import AuthProtected from "./AuthProtected";
+import EditClientVideoQA from "./managed/Pages/EditClientVideoQA";
 
 function App() {
   const location = useLocation();
@@ -68,6 +69,7 @@ function App() {
           >
             <Route path="/Home" element={<Home />} />
             <Route path="/Admin/Register" element={<BackendRegistration />} />
+            <Route path="/Admin/Edit/Video" element={<EditClientVideoQA />} />
             <Route path="/Client/Register" element={<FrontEndRegistration />} />
             <Route path="/Pratice" element={<Pratice />} />
             <Route path="/Exam" element={<Exam />} />

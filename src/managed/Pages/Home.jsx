@@ -15,7 +15,7 @@ import { check } from "prettier";
 import StatusCode from "../../sys/StatusCode";
 import Loading from "../../components/Loading";
 import ReactPaginate from "react-paginate";
-import { Link, redirect } from "react-router-dom";
+import { Link, Navigate, redirect, useNavigate } from "react-router-dom";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -81,6 +81,8 @@ export default function Home() {
   const handleShowAddVideoModal = () => setShowAddVideoModal(true);
   const handleCloseAddVideoModal = () => setShowAddVideoModal(false);
 
+  const navigate = useNavigate();
+
   const handleEditVideo = () => {
     if (selectVideoindex.length == 0) {
       toast.error("請勾選影片，再點選編輯按鍵", {
@@ -98,7 +100,33 @@ export default function Home() {
         setDisabledEditBtn(false);
       }, 3000);
     } else {
-      // redirect("/Pratice");
+      if (selectVideoindex.length > 1) {
+        toast.error("一次僅限勾選一個影片進行編輯", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setDisabledEditBtn(true);
+        setTimeout(() => {
+          setDisabledEditBtn(false);
+        }, 3000);
+      } else {
+        const videoFilterData = videoData.filter((item) =>
+          selectVideoindex.includes(item.id)
+        );
+        navigate("/Admin/Edit/Video", {
+          state: {
+            videoIndex: selectVideoindex[0],
+            videoLink: videoFilterData[0].video_path,
+            videoID: videoFilterData[0].video_id,
+          },
+        });
+      }
     }
   };
 

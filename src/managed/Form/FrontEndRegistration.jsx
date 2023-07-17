@@ -29,10 +29,11 @@ import styles from "../../styles/Form/ClientRegistration.module.scss";
 export default function FrontEndRegistration() {
   // check if useLocation.state is null
   if (!useLocation().state) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   const location = useLocation();
+
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [videoIndex, setVideoIndex] = useState(location.state?.videoIndex);
   const [videoTempIndex, setVideoTempIndex] = useState(videoIndex);

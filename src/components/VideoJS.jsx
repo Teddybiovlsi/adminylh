@@ -15,6 +15,11 @@ export const VideoJS = (props) => {
   const [optionChecked, setOptionChecked] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
+
+  const [screen, setScreen] = useState({
+    width: "",
+    height: "",
+  });
   // calculate the total length of the array
   let arrayNum = 0;
 
@@ -112,6 +117,19 @@ export const VideoJS = (props) => {
         // console.log("tempQuestionNum", tempQuestionNum);
         setTempQuestionNum(arrayNum);
       });
+
+      // Add event listener for loadedmetadata
+      player.on("loadedmetadata", () => {
+        const video = player;
+        setScreen({
+          width: video.videoWidth(),
+          height: video.videoHeight(),
+        });
+        // console.log("loadedmetadata");
+        // console.log("video.videoWidth()", player.videoWidth());
+        // console.log("video.videoHeight()", player.videoHeight());
+      });
+
       player.on("timeupdate", () => {
         // console.log("totalArrayLength", info.length);
         // console.log("currentTime", player.currentTime());
