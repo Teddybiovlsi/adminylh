@@ -37,7 +37,7 @@ import ToastAlert from "./components/ToastAlert";
 import { toast } from "react-toastify";
 import { set } from "lodash/fp";
 import AuthProtected from "./AuthProtected";
-import EditClientVideoQA from "./managed/Pages/EditClientVideoQA";
+import EditClientVideoQA from "./managed/Form/EditClientVideoQA";
 
 function App() {
   const location = useLocation();

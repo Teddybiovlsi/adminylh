@@ -125,9 +125,6 @@ export const VideoJS = (props) => {
           width: video.videoWidth(),
           height: video.videoHeight(),
         });
-        // console.log("loadedmetadata");
-        // console.log("video.videoWidth()", player.videoWidth());
-        // console.log("video.videoHeight()", player.videoHeight());
       });
 
       player.on("timeupdate", () => {

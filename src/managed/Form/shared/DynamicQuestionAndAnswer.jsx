@@ -21,6 +21,7 @@ function DynamicQuestionandAnswer({
   handleIsCorrectOption,
   handleAnswerChange,
 }) {
+  if (!VideoQA) return null;
   return (
     <>
       {VideoQA.map((info, index) => (
