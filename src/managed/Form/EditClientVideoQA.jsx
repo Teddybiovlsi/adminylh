@@ -29,16 +29,79 @@ export default function EditClientVideoQA({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [videoQA, setVideoQA] = useState([
-    {
-      currentTime: 0,
-      durationTime: 0,
-      mustCorrectQuestion: false,
-      questionContent: "",
-      numofOptions: 0,
-      answerContent: [],
-    },
-  ]);
+  const [videoQA, setVideoQA] = useState([]);
+
+  const [tempVideoQA, setTempVideoQA] = useState([]);
+
+  const [tempVideoInfo, setTempVideoInfo] = useState([]);
+
+  const handlePrevData = () => {
+    tempVideoInfo.forEach((info) => {
+      if (info?.option_3[0] !== null && info?.option_4[0] !== null) {
+        const optionNum = 4;
+
+        setTempVideoQA((prevVideoQA) => [
+          ...prevVideoQA,
+          {
+            currentTime: info?.video_interrupt_time,
+            durationTime: info?.video_duration,
+            mustCorrectQuestion: info?.video_must_correct,
+            questionContent: info?.video_question,
+            numofOptions: optionNum,
+            answerContent: [
+              [info?.option_1[1], info?.option_1[0]],
+              [info?.option_2[1], info?.option_2[0]],
+              [info?.option_3[1], info?.option_3[0]],
+              [info?.option_4[1], info?.option_4[0]],
+            ],
+          },
+        ]);
+      } else if (info?.option_3[0] !== null && info?.option_4[0] == null) {
+        const optionNum = 3;
+        setTempVideoQA((prevVideoQA) => [
+          ...prevVideoQA,
+          {
+            currentTime: info?.video_interrupt_time,
+            durationTime: info?.video_duration,
+            mustCorrectQuestion: info?.video_must_correct,
+            questionContent: info?.video_question,
+            numofOptions: optionNum,
+            answerContent: [
+              [info?.option_1[1], info?.option_1[0]],
+              [info?.option_2[1], info?.option_2[0]],
+              [info?.option_3[1], info?.option_3[0]],
+            ],
+          },
+        ]);
+      } else {
+        const optionNum = 2;
+        setTempVideoQA((prevVideoQA) => [
+          ...prevVideoQA,
+          {
+            currentTime: info?.video_interrupt_time,
+            durationTime: info?.video_duration,
+            mustCorrectQuestion: info?.video_must_correct,
+            questionContent: info?.video_question,
+            numofOptions: optionNum,
+            answerContent: [
+              [info?.option_1[1], info?.option_1[0]],
+              [info?.option_2[1], info?.option_2[0]],
+            ],
+          },
+        ]);
+      }
+    });
+  };
+
+  useEffect(() => {
+    let ignore = false;
+    if (!ignore) {
+      handlePrevData();
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [tempVideoInfo]);
 
   useEffect(() => {
     let ignore = false;
@@ -48,10 +111,11 @@ export default function EditClientVideoQA({
           setIsLoading(true);
           const response = await get(api);
           const VideoInfo = await response.data.data;
-          console.log(VideoInfo);
-          setIsLoading(false);
-          // setVideoQA(VideoInfo);
-          // setIsLoading(false);
+          setTempVideoInfo(VideoInfo);
+
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 2000);
         } catch (error) {
           console.log(error);
         }
@@ -67,46 +131,42 @@ export default function EditClientVideoQA({
     };
   }, []);
 
-  // const fetchVideoQA = async () => {
-  //   try {
-  //     const response = await get(`video/${videoID}`);
-  //   }
-  // };
-
   const handleGetVideoTime = (index, e) => {
     if (videoRef.current) {
-      setVideoQA(
+      setTempVideoQA(
         update(
           `${index}.currentTime`,
           () => videoRef.current.currentTime,
-          videoQA
+          tempVideoQA
         )
       );
     }
   };
   // 若該欄位的持續時間有所變動
   const handleGetVideoDuration = (index, e) => {
-    // if user have any change in the video duration then the setVideoQA will be update
-    setVideoQA(update(`${index}.durationTime`, () => e.target.value, videoQA));
+    // if user have any change in the video duration then the setTempVideoQA will be update
+    setTempVideoQA(
+      update(`${index}.durationTime`, () => e.target.value, tempVideoQA)
+    );
   };
 
   // if radio box is checked then the information of the Question mustCorrect will be true
   const handleGetQuestionMustCorrect = (index, e) => {
-    setVideoQA(
-      update(`${index}.mustCorrectQuestion`, (value) => !value, videoQA)
+    setTempVideoQA(
+      update(`${index}.mustCorrectQuestion`, (value) => !value, tempVideoQA)
     );
   };
 
   //取得問題填寫內容變動
   const handleGetQuestionContent = (index, e) => {
-    setVideoQA(
-      update(`${index}.questionContent`, () => e.target.value, videoQA)
+    setTempVideoQA(
+      update(`${index}.questionContent`, () => e.target.value, tempVideoQA)
     );
   };
   // 取得答題選項數目變動
   const handleOptionChange = (index, e) => {
     const numOfChoice = parseInt(e.target.value);
-    setVideoQA(
+    setTempVideoQA(
       update(
         index,
         (question) => ({
@@ -114,13 +174,13 @@ export default function EditClientVideoQA({
           answerContent: Array.from({ length: numOfChoice }, () => [false, ""]),
           numofOptions: numOfChoice,
         }),
-        videoQA
+        tempVideoQA
       )
     );
   };
 
   const handleIsCorrectOption = (questionindex, answerOptionIndex) => {
-    const newVideoQA = [...videoQA];
+    const newVideoQA = [...tempVideoQA];
     const currentOption = newVideoQA[questionindex].answerContent;
 
     const updateAnswerOption = currentOption.map((answer, index) => {
@@ -131,20 +191,20 @@ export default function EditClientVideoQA({
       return [false, answer[1]];
     });
     newVideoQA[questionindex].answerContent = updateAnswerOption;
-    setVideoQA(newVideoQA);
+    setTempVideoQA(newVideoQA);
   };
 
   const handleAnswerChange = (index, answerContentIndex, e) => {
-    const newVideoQA = [...videoQA];
+    const newVideoQA = [...tempVideoQA];
     newVideoQA[index].answerContent[answerContentIndex][1] = e.target.value;
-    setVideoQA(newVideoQA);
+    setTempVideoQA(newVideoQA);
   };
 
   // 增加/刪減 影片問題輸入框...
   // 增加輸入欄位
   const handleAddQuestion = () => {
-    setVideoQA([
-      ...videoQA,
+    setTempVideoQA([
+      ...tempVideoQA,
       {
         currentTime: 0,
         durationTime: 0,
@@ -158,16 +218,16 @@ export default function EditClientVideoQA({
 
   // 刪減輸入欄位
   const handleDelQAMessage = (index) => {
-    setVideoQA((prevVideoQA) => prevVideoQA.filter((_, i) => i !== index));
+    setTempVideoQA((prevVideoQA) => prevVideoQA.filter((_, i) => i !== index));
   };
 
   // 驗證問題/選項/答案是否為空
   const validateQA = () => {
     let ifAnyAnswerContentIsEmpty = false;
 
-    const questionIsEmpty = videoQA.some((info) => !info.questionContent);
+    const questionIsEmpty = tempVideoQA.some((info) => !info.questionContent);
 
-    const ifAnyArrayOptionIndicesIsEmpty = videoQA.reduce(
+    const ifAnyArrayOptionIndicesIsEmpty = tempVideoQA.reduce(
       (acc, curr, index) => {
         if (curr.answerContent.length === 0) {
           acc.push(index);
@@ -229,7 +289,7 @@ export default function EditClientVideoQA({
 
           <DynamicQuestionandAnswer
             FormMode={FormMode}
-            VideoQA={videoQA}
+            VideoQA={tempVideoQA}
             handleDelQAMessage={handleDelQAMessage}
             handleGetVideoTime={handleGetVideoTime}
             handleGetVideoDuration={handleGetVideoDuration}
@@ -242,18 +302,10 @@ export default function EditClientVideoQA({
         </Card.Body>
         <Card.Footer>
           <BtnBootstrap
-            btnPosition="me-2"
-            btnName={"formStep"}
-            text={"上一步"}
-            onClickEventName={GoPrevEvent}
-            variant="danger"
-          />
-
-          <BtnBootstrap
             btnPosition="ms-2  float-end"
             btnName={"formStep"}
             text={"預覽表單"}
-            onClickEventName={GoNextEvent}
+            onClickEventName={GoPrevEvent}
             variant="primary"
             disabled={ifBtnDisable}
           />
@@ -269,29 +321,3 @@ export default function EditClientVideoQA({
     </div>
   );
 }
-
-// import React, { useState, useRef } from "react";
-// import { Card, Stack } from "react-bootstrap";
-// import PageTitle from "../../../components/Title";
-// import { CardTitleFunction } from "./CardTitleFunction";
-// import { update } from "lodash/fp";
-// import BtnBootstrap from "../../../components/BtnBootstrap";
-// import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
-// import styles from "../../../styles/Form/FormStyles.module.scss";
-
-// function InputVideoQAFunction({
-//   FormMode = false,
-//   VideoFile = "",
-//   videoQA,
-//   setVideoQA,
-//   GoPrevEvent = null,
-//   GoNextEvent = null,
-// }) {
-//   const [ifBtnDisable, setIfBtnDisable] = useState(true);
-//   // 影片時間參考欄位
-//   const videoRef = useRef(null);
-//   // 以下是跟影片問題/選項/答案填寫有關的欄位
-
-//   // 若該欄位之index取得影片時間有所變動
-
-// export default InputVideoQAFunction;
