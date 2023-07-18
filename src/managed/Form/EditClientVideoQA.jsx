@@ -35,6 +35,12 @@ export default function EditClientVideoQA({
   const [tempVideoQA, setTempVideoQA] = useState([]);
 
   const [tempVideoInfo, setTempVideoInfo] = useState([]);
+
+  // 回到上一頁
+  const GoPrevPage = () => {
+    setPage(page - 1);
+  };
+
   // 預覽表單頁面
   const GoPriviewPage = () => {
     setPage(page + 1);
@@ -323,7 +329,71 @@ export default function EditClientVideoQA({
         </div>
       );
     case 2:
-      return <div>預覽表單</div>;
+      return (
+        <div className="FormStyle d-flex align-items-center justify-content-center">
+          <PageTitle title={`台大分院雲林分院｜ 編輯表單系統`} />
+          <Card className={`${styles.ExamQusetionCard}`}>
+            <Card.Title className={styles.FormTitle} style={{ margin: 0 }}>
+              <CardTitleFunction TitleName={`台大醫院雲林分院`} />
+              <CardTitleFunction TitleName={`預覽表單`} />
+            </Card.Title>
+
+            <Card.Body className="pt-0 ps-0 pe-0">
+              {tempVideoQA?.map((questionInfo, questionIndex) => (
+                <Card key={questionIndex} className="mb-2">
+                  <Card.Title className="mb-2 ms-1">
+                    問題 {questionIndex + 1}:
+                  </Card.Title>
+
+                  <Card.Title className="ms-2">中斷時間:</Card.Title>
+                  <Card.Text className="ms-4">
+                    {questionInfo.currentTime}秒
+                  </Card.Text>
+
+                  <Card.Title className="ms-2">問題內容:</Card.Title>
+                  <Card.Text className="ms-4">
+                    {questionInfo.questionContent}
+                  </Card.Text>
+
+                  <Card.Title className="ms-2">是否為必定答對問題?</Card.Title>
+                  <Card.Text className="ms-4">
+                    {questionInfo.mustCorrectQuestion ? "是" : "否"}
+                  </Card.Text>
+
+                  {questionInfo.answerContent.map(
+                    (answerContent, answerContentIndex) => (
+                      <div key={`${questionIndex}-${answerContentIndex}`}>
+                        <Card.Title className="ms-2">{`答案${String.fromCharCode(
+                          65 + answerContentIndex
+                        )}:`}</Card.Title>
+                        <Card.Text className="ms-4">{`${
+                          answerContent[1]
+                        }-答案為${
+                          answerContent[0] ? "正確" : "錯誤"
+                        }`}</Card.Text>
+                      </div>
+                    )
+                  )}
+                </Card>
+              ))}
+            </Card.Body>
+            <Card.Footer>
+              <BtnBootstrap
+                btnName={"formStep"}
+                text={"送出表單"}
+                onClickEventName={SubmitEvent}
+                variant={"primary"}
+              />
+              <BtnBootstrap
+                btnName={"formStep"}
+                text={"上一步"}
+                onClickEventName={GoPrevPage}
+                variant={"danger"}
+              />
+            </Card.Footer>
+          </Card>
+        </div>
+      );
     default:
       return <Navigate to="/" replace />;
   }
