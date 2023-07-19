@@ -42,18 +42,19 @@ export default function CreateVideo({ VideoMode = false }) {
   const [shouldRedirect, setShouldRedirect] = React.useState(false);
 
   const sendVideoData = async (data) => {
-    try {
-      const response = await post("video", data);
-      // if errorMessage is not empty, then set it to empty
-      {
-        errorMessage && setErrorMessage("");
-      }
-      setSuccessMessage("成功創建影片");
-      setSuccessBoolean(true);
-      console.log(response.data);
-    } catch (error) {
-      setErrorMessage(StatusCode(error.response.status));
-    }
+    console.log(data);
+    // try {
+    //   const response = await post("video", data);
+    //   // if errorMessage is not empty, then set it to empty
+    //   {
+    //     errorMessage && setErrorMessage("");
+    //   }
+    //   setSuccessMessage("成功創建影片");
+    //   setSuccessBoolean(true);
+    //   console.log(response.data);
+    // } catch (error) {
+    //   setErrorMessage(StatusCode(error.response.status));
+    // }
   };
 
   const hadleVideoFileIsUpload = (e) => {
