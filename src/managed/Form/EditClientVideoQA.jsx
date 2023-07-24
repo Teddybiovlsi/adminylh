@@ -6,12 +6,16 @@ import { update } from "lodash/fp";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import DynamicQuestionandAnswer from "./shared/DynamicQuestionandAnswer";
 import styles from "../../styles/Form/FormStyles.module.scss";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import LoadingComponent from "../../components/LoadingComponent";
 import { get, put } from "../axios";
+import ToastAlert from "../../components/ToastAlert";
+import { toast } from "react-toastify";
 
 export default function EditClientVideoQA({ FormMode = true }) {
   const location = useLocation();
+
+  const navigate = useNavigate();
 
   if (!location) {
     return <Navigate to="/" replace />;
@@ -29,6 +33,8 @@ export default function EditClientVideoQA({ FormMode = true }) {
   const [tempVideoQA, setTempVideoQA] = useState([]);
 
   const [tempVideoInfo, setTempVideoInfo] = useState([]);
+
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   // 回到上一頁
   const GoPrevPage = () => {
@@ -270,16 +276,28 @@ export default function EditClientVideoQA({ FormMode = true }) {
     // /v1/PUT/video/{videoID}
     const videoID = location?.state?.videoID;
     async function fetchEditVideoData(data) {
-      console.log(data);
-
-      // try {
-      //   // console.log(data);
-      //   const response = await put(`video/${videoID}`, data);
-      //   const VideoInfo = await response.data;
-      //   console.log(VideoInfo);
-      // } catch (error) {
-      //   console.log(error);
-      // }
+      let quizSubmit = toast.loading("資料上傳中...");
+      try {
+        // console.log(data);
+        const response = await put(`video/${videoID}`, data);
+        const VideoInfo = await response.data;
+        toast.update(quizSubmit, {
+          render: "資料更新成功",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        setTimeout(() => {
+          setShouldRedirect(true);
+        }, 3000);
+      } catch (error) {
+        toast.update(quizSubmit, {
+          render: "資料更新失敗",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      }
     }
     const data = {
       info: tempVideoQA,
@@ -288,6 +306,12 @@ export default function EditClientVideoQA({ FormMode = true }) {
     fetchEditVideoData(data);
     // console.log(tempVideoQA);
   };
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      navigate("/", { replace: true });
+    }
+  }, [shouldRedirect]);
 
   if (isLoading) {
     return <LoadingComponent title="台大分院雲林分院 編輯表單系統" />;
@@ -420,6 +444,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
               />
             </Card.Footer>
           </Card>
+          <ToastAlert />
         </div>
       );
     default:

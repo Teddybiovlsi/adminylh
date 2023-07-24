@@ -14,23 +14,12 @@ export default function VideoPlayer() {
   const VideoPath = location.state?.videoPath;
 
   const [info, setInfo] = useState({});
-  const [videoQA, setVideoQA] = useState([]);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isFinish, setIsFinish] = useState(false);
 
-  const [videoQuestion, setVideoQuestion] = useState([]);
-  const [videoAnswer, setVideoAnswer] = useState([]);
-  const [sendstate, setSendstate] = useState(false);
-  // const [showQAModal, setShowQAModal] = useState(false);
-  // const handelCloseQAModal = () => setShowQAModal(false);
-  const [interruptTime, setInterruptTime] = useState(null);
-
-  let arrayNum = 0;
   const videoJsOptions = {
     controls: true,
     autoplay: false,
-    playbackRates: [0.5, 1, 1.25, 1.5, 2],
+    playbackRates: [0.5, 1, 1.5, 2],
     responsive: true,
     fluid: true,
     muted: true,
@@ -64,38 +53,6 @@ export default function VideoPlayer() {
       ignore = true;
     };
   }, []);
-
-  // Get the video
-  var video = document.getElementById("myVideo");
-
-  // Get the button
-  var btn = document.getElementById("myBtn");
-
-  // Pause and play the video, and change the button text
-  function myFunction() {
-    if (video.paused) {
-      video.play();
-      btn.innerHTML = "Pause";
-    } else {
-      video.pause();
-      btn.innerHTML = "Play";
-    }
-  }
-
-  function fullscreen() {
-    if (video.requestFullscreen) {
-      video.requestFullscreen();
-    } else if (video.mozRequestFullScreen) {
-      /* Firefox */
-      video.mozRequestFullScreen();
-    } else if (video.webkitRequestFullscreen) {
-      /* Chrome, Safari and Opera */
-      video.webkitRequestFullscreen();
-    } else if (video.msRequestFullscreen) {
-      /* IE/Edge */
-      video.msRequestFullscreen();
-    }
-  }
 
   if (loading) return <Loading />;
 

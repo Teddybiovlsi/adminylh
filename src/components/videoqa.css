@@ -143,6 +143,9 @@
   }
 }
 @media (min-width: 992px) {
+  .videoPlayer.portrait{
+    width: 25%;
+  }
   .text-overlay {
     position: unset;
     width: 30%;

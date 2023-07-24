@@ -16,6 +16,9 @@ export const VideoJS = (props) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
 
+  const [answerState, setAnswerState] = useState([]);
+  const [hasAnswer, setHasAnswer] = useState(false);
+
   const [screen, setScreen] = useState({
     width: "",
     height: "",
@@ -110,7 +113,8 @@ export const VideoJS = (props) => {
         console.log("player is waiting");
       });
       player.on("play", () => {
-        console.log("player is play");
+        console.log("sendState", sendstate);
+        // console.log("player is play");
       });
       player.on("pause", () => {
         // console.log("ArrayNum", arrayNum);
@@ -121,19 +125,16 @@ export const VideoJS = (props) => {
       // Add event listener for loadedmetadata
       player.on("loadedmetadata", () => {
         const video = player;
-        setScreen({
-          width: video.videoWidth(),
-          height: video.videoHeight(),
-        });
+        if (video.videoHeight() > video.videoWidth()) {
+          document
+            .getElementById("video-container_Container_player")
+            .classList.add("portrait");
+        }
       });
 
       player.on("timeupdate", () => {
-        // console.log("totalArrayLength", info.length);
-        // console.log("currentTime", player.currentTime());
-        // console.log(`arrayNum: ${arrayNum}`);
         if (arrayNum < info.length) {
           if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
-            console.log("中斷");
             player.pause();
             setSendstate(true);
             setTimeout(() => {
@@ -170,7 +171,7 @@ export const VideoJS = (props) => {
   document.addEventListener("webkitfullscreenchange", exitHandler);
   document.addEventListener("mozfullscreenchange", exitHandler);
   document.addEventListener("MSFullscreenChange", exitHandler);
-
+  // 離開全螢幕時，將icon轉換成進入全螢幕的icon，透過classList的replace方法
   function exitHandler() {
     if (
       !document.fullscreenElement &&
@@ -187,6 +188,69 @@ export const VideoJS = (props) => {
       document
         .getElementById("video-container_Container_player")
         .classList.remove("fullscreen");
+    }
+  }
+
+  function handleSubmitAnswer() {
+    let answer = "";
+    if (
+      info[tempQuestionNum - 1].option_3 !== undefined &&
+      info[tempQuestionNum - 1].option_4 !== undefined
+    ) {
+      // find the answer which option[1] is 1
+      if (info[tempQuestionNum - 1].option_1[1] === 1) {
+        answer = info[tempQuestionNum - 1].option_1[0];
+      } else if (info[tempQuestionNum - 1].option_2[1] === 1) {
+        answer = info[tempQuestionNum - 1].option_2[0];
+      } else if (info[tempQuestionNum - 1].option_3[1] === 1) {
+        answer = info[tempQuestionNum - 1].option_3[0];
+      } else if (info[tempQuestionNum - 1].option_4[1] === 1) {
+        answer = info[tempQuestionNum - 1].option_4[0];
+      }
+    } else if (
+      info[tempQuestionNum - 1].option_3 !== undefined &&
+      info[tempQuestionNum - 1].option_4 === undefined
+    ) {
+      // find the answer which option[1] is 1
+      if (info[tempQuestionNum - 1].option_1[1] === 1) {
+        answer = info[tempQuestionNum - 1].option_1[0];
+      } else if (info[tempQuestionNum - 1].option_2[1] === 1) {
+        answer = info[tempQuestionNum - 1].option_2[0];
+      } else if (info[tempQuestionNum - 1].option_3[1] === 1) {
+        answer = info[tempQuestionNum - 1].option_3[0];
+      }
+    } else {
+      // find the answer which option[1] is 1
+      if (info[tempQuestionNum - 1].option_1[1] === 1) {
+        answer = info[tempQuestionNum - 1].option_1[0];
+      } else if (info[tempQuestionNum - 1].option_2[1] === 1) {
+        answer = info[tempQuestionNum - 1].option_2[0];
+      }
+    }
+    if (optionChecked === answer) {
+      setAnswerState([
+        ...answerState,
+        {
+          tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
+          correctAnswer: true,
+          wrongAnswer: "",
+          timeOutNoAnswer: false,
+        },
+      ]);
+      setSendstate(false);
+      playerRef.current.play();
+    } else {
+      setAnswerState([
+        ...answerState,
+        {
+          tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
+          correctAnswer: false,
+          wrongAnswer: optionChecked,
+          timeOutNoAnswer: false,
+        },
+      ]);
+      setSendstate(false);
+      playerRef.current.play();
     }
   }
 
@@ -234,7 +298,7 @@ export const VideoJS = (props) => {
                   }
                   onChange={handleCheckedAnswer}
                 />
-                {info[tempQuestionNum - 1].option_3[0] !== "" && (
+                {info[tempQuestionNum - 1].option_3 !== undefined && (
                   <Form.Check
                     type="radio"
                     label={info[tempQuestionNum - 1].option_3[0]}
@@ -249,7 +313,7 @@ export const VideoJS = (props) => {
                     onChange={handleCheckedAnswer}
                   />
                 )}
-                {info[tempQuestionNum - 1].option_4[0] !== "" && (
+                {info[tempQuestionNum - 1].option_4 !== undefined && (
                   <Form.Check
                     type="radio"
                     label={info[tempQuestionNum - 1].option_4[0]}
@@ -285,7 +349,7 @@ export const VideoJS = (props) => {
                   text={"送出"}
                   variant={"btn send"}
                   onClickEventName={() => {
-                    console.log("你送出了答案");
+                    handleSubmitAnswer();
                   }}
                 />
               </Col>
