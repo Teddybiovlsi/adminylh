@@ -1,20 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Card, Stack } from 'react-bootstrap';
-import PageTitle from '../../components/Title';
-import { CardTitleFunction } from './shared/CardTitleFunction';
-import { update } from 'lodash/fp';
-import BtnBootstrap from '../../components/BtnBootstrap';
-import DynamicQuestionandAnswer from './shared/DynamicQuestionandAnswer';
-import styles from '../../styles/Form/FormStyles.module.scss';
-import { Navigate, useLocation } from 'react-router-dom';
-import LoadingComponent from '../../components/LoadingComponent';
-import { get, put } from '../axios';
+import React, { useState, useRef, useEffect } from "react";
+import { Card, Stack } from "react-bootstrap";
+import PageTitle from "../../components/Title";
+import { CardTitleFunction } from "./shared/CardTitleFunction";
+import { update } from "lodash/fp";
+import BtnBootstrap from "../../components/BtnBootstrap";
+import DynamicQuestionandAnswer from "./shared/DynamicQuestionandAnswer";
+import styles from "../../styles/Form/FormStyles.module.scss";
+import { Navigate, useLocation } from "react-router-dom";
+import LoadingComponent from "../../components/LoadingComponent";
+import { get, put } from "../axios";
 
 export default function EditClientVideoQA({ FormMode = true }) {
   const location = useLocation();
 
   if (!location) {
-    return <Navigate to='/' replace />;
+    return <Navigate to="/" replace />;
   }
   const [page, setPage] = useState(1);
 
@@ -25,8 +25,6 @@ export default function EditClientVideoQA({ FormMode = true }) {
   const [ifBtnDisable, setIfBtnDisable] = useState(true);
 
   const [isLoading, setIsLoading] = useState(false);
-
-  const [videoQA, setVideoQA] = useState([]);
 
   const [tempVideoQA, setTempVideoQA] = useState([]);
 
@@ -50,6 +48,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
         setTempVideoQA((prevVideoQA) => [
           ...prevVideoQA,
           {
+            id: info?.quiz_id,
             currentTime: info?.video_interrupt_time,
             durationTime: info?.video_duration,
             mustCorrectQuestion: info?.video_must_correct,
@@ -68,6 +67,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
         setTempVideoQA((prevVideoQA) => [
           ...prevVideoQA,
           {
+            id: info?.quiz_id,
             currentTime: info?.video_interrupt_time,
             durationTime: info?.video_duration,
             mustCorrectQuestion: info?.video_must_correct,
@@ -85,6 +85,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
         setTempVideoQA((prevVideoQA) => [
           ...prevVideoQA,
           {
+            id: info?.quiz_id,
             currentTime: info?.video_interrupt_time,
             durationTime: info?.video_duration,
             mustCorrectQuestion: info?.video_must_correct,
@@ -178,7 +179,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
         index,
         (question) => ({
           ...question,
-          answerContent: Array.from({ length: numOfChoice }, () => [false, '']),
+          answerContent: Array.from({ length: numOfChoice }, () => [false, ""]),
           numofOptions: numOfChoice,
         }),
         tempVideoQA
@@ -210,13 +211,21 @@ export default function EditClientVideoQA({ FormMode = true }) {
   // 增加/刪減 影片問題輸入框...
   // 增加輸入欄位
   const handleAddQuestion = () => {
+    // get the last question index
+    const lastQuestionIndex = tempVideoQA.length - 1;
+    // get the last question duration time
+    const lastQuestionQuizIndex = tempVideoQA[lastQuestionIndex].id;
+    // add the new index
+    let newQuestionIndex = lastQuestionQuizIndex + 1;
+
     setTempVideoQA([
       ...tempVideoQA,
       {
+        id: newQuestionIndex,
         currentTime: 0,
         durationTime: 0,
         mustCorrectQuestion: false,
-        questionContent: '',
+        questionContent: "",
         numofOptions: 0,
         answerContent: [],
       },
@@ -238,7 +247,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
       (acc, curr, index) => {
         if (curr.answerContent.length === 0) {
           acc.push(index);
-        } else if (curr.answerContent.some((value) => value[1] === '')) {
+        } else if (curr.answerContent.some((value) => value[1] === "")) {
           ifAnyAnswerContentIsEmpty = true;
         }
         return acc;
@@ -260,33 +269,33 @@ export default function EditClientVideoQA({ FormMode = true }) {
   const SubmitEvent = () => {
     // /v1/PUT/video/{videoID}
     const videoID = location?.state?.videoID;
-    async function fetchEditVideoData( data ) {
+    async function fetchEditVideoData(data) {
       console.log(data);
 
-      try {
-        // console.log(data);
-        const response = await put(`video/${videoID}`, data);
-        const VideoInfo = await response.data;
-        console.log(VideoInfo);
-      } catch (error) {
-        console.log(error);
-      }
+      // try {
+      //   // console.log(data);
+      //   const response = await put(`video/${videoID}`, data);
+      //   const VideoInfo = await response.data;
+      //   console.log(VideoInfo);
+      // } catch (error) {
+      //   console.log(error);
+      // }
     }
     const data = {
       info: tempVideoQA,
-    }
+    };
 
     fetchEditVideoData(data);
     // console.log(tempVideoQA);
   };
 
   if (isLoading) {
-    return <LoadingComponent title='台大分院雲林分院 編輯表單系統' />;
+    return <LoadingComponent title="台大分院雲林分院 編輯表單系統" />;
   }
   switch (page) {
     case 1:
       return (
-        <div className='FormStyle d-flex align-items-center justify-content-center'>
+        <div className="FormStyle d-flex align-items-center justify-content-center">
           <PageTitle title={`台大分院雲林分院｜ 編輯表單系統`} />
           <Card className={`${styles.ExamQusetionCard}`}>
             <Card.Title className={styles.FormTitle} style={{ margin: 0 }}>
@@ -294,22 +303,22 @@ export default function EditClientVideoQA({ FormMode = true }) {
               <CardTitleFunction TitleName={`編輯表單系統`} />
             </Card.Title>
 
-            <Card.Body className='pt-0 ps-0 pe-0'>
-              <video ref={videoRef} src={videoLink} width='100%' controls />
-              <Stack direction='horizontal' className='ms-2 mt-3 mb-3 me-2'>
+            <Card.Body className="pt-0 ps-0 pe-0">
+              <video ref={videoRef} src={videoLink} width="100%" controls />
+              <Stack direction="horizontal" className="ms-2 mt-3 mb-3 me-2">
                 <div>
                   <h2>
                     <strong>{`請填寫衛教${
-                      FormMode ? '測驗用' : '練習用'
+                      FormMode ? "測驗用" : "練習用"
                     }影片問題`}</strong>
                   </h2>
                 </div>
 
-                <div className='ms-auto'>
+                <div className="ms-auto">
                   <BtnBootstrap
-                    text={'新增問題'}
+                    text={"新增問題"}
                     onClickEventName={handleAddQuestion}
-                    variant='secondary'
+                    variant="secondary"
                   />
                 </div>
               </Stack>
@@ -329,19 +338,19 @@ export default function EditClientVideoQA({ FormMode = true }) {
             </Card.Body>
             <Card.Footer>
               <BtnBootstrap
-                btnPosition='ms-2  float-end'
-                btnName={'formStep'}
-                text={'預覽表單'}
+                btnPosition="ms-2  float-end"
+                btnName={"formStep"}
+                text={"預覽表單"}
                 onClickEventName={GoPriviewPage}
-                variant='primary'
+                variant="primary"
                 disabled={ifBtnDisable}
               />
               <BtnBootstrap
-                btnPosition='ms-2  float-end'
-                btnName={'formStep'}
-                text={'驗證此頁面表單'}
+                btnPosition="ms-2  float-end"
+                btnName={"formStep"}
+                text={"驗證此頁面表單"}
                 onClickEventName={validateQA}
-                variant='success'
+                variant="success"
               />
             </Card.Footer>
           </Card>
@@ -349,7 +358,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
       );
     case 2:
       return (
-        <div className='FormStyle d-flex align-items-center justify-content-center'>
+        <div className="FormStyle d-flex align-items-center justify-content-center">
           <PageTitle title={`台大分院雲林分院｜ 編輯表單系統`} />
           <Card className={`${styles.ExamQusetionCard}`}>
             <Card.Title className={styles.FormTitle} style={{ margin: 0 }}>
@@ -357,38 +366,38 @@ export default function EditClientVideoQA({ FormMode = true }) {
               <CardTitleFunction TitleName={`預覽表單`} />
             </Card.Title>
 
-            <Card.Body className='pt-0 ps-0 pe-0'>
+            <Card.Body className="pt-0 ps-0 pe-0">
               {tempVideoQA?.map((questionInfo, questionIndex) => (
-                <Card key={questionIndex} className='mb-2'>
-                  <Card.Title className='mb-2 ms-1'>
+                <Card key={questionIndex} className="mb-2">
+                  <Card.Title className="mb-2 ms-1">
                     問題 {questionIndex + 1}:
                   </Card.Title>
 
-                  <Card.Title className='ms-2'>中斷時間:</Card.Title>
-                  <Card.Text className='ms-4'>
+                  <Card.Title className="ms-2">中斷時間:</Card.Title>
+                  <Card.Text className="ms-4">
                     {questionInfo.currentTime}秒
                   </Card.Text>
 
-                  <Card.Title className='ms-2'>問題內容:</Card.Title>
-                  <Card.Text className='ms-4'>
+                  <Card.Title className="ms-2">問題內容:</Card.Title>
+                  <Card.Text className="ms-4">
                     {questionInfo.questionContent}
                   </Card.Text>
 
-                  <Card.Title className='ms-2'>是否為必定答對問題?</Card.Title>
-                  <Card.Text className='ms-4'>
-                    {questionInfo.mustCorrectQuestion ? '是' : '否'}
+                  <Card.Title className="ms-2">是否為必定答對問題?</Card.Title>
+                  <Card.Text className="ms-4">
+                    {questionInfo.mustCorrectQuestion ? "是" : "否"}
                   </Card.Text>
 
                   {questionInfo.answerContent.map(
                     (answerContent, answerContentIndex) => (
                       <div key={`${questionIndex}-${answerContentIndex}`}>
-                        <Card.Title className='ms-2'>{`答案${String.fromCharCode(
+                        <Card.Title className="ms-2">{`答案${String.fromCharCode(
                           65 + answerContentIndex
                         )}:`}</Card.Title>
-                        <Card.Text className='ms-4'>{`${
+                        <Card.Text className="ms-4">{`${
                           answerContent[1]
                         }-答案為${
-                          answerContent[0] ? '正確' : '錯誤'
+                          answerContent[0] ? "正確" : "錯誤"
                         }`}</Card.Text>
                       </div>
                     )
@@ -398,22 +407,22 @@ export default function EditClientVideoQA({ FormMode = true }) {
             </Card.Body>
             <Card.Footer>
               <BtnBootstrap
-                btnName={'formStep'}
-                text={'送出表單'}
+                btnName={"formStep"}
+                text={"送出表單"}
                 onClickEventName={SubmitEvent}
-                variant={'primary'}
+                variant={"primary"}
               />
               <BtnBootstrap
-                btnName={'formStep'}
-                text={'上一步'}
+                btnName={"formStep"}
+                text={"上一步"}
                 onClickEventName={GoPrevPage}
-                variant={'danger'}
+                variant={"danger"}
               />
             </Card.Footer>
           </Card>
         </div>
       );
     default:
-      return <Navigate to='/' replace />;
+      return <Navigate to="/" replace />;
   }
 }
