@@ -45,12 +45,18 @@ export default function EditClientVideoQA({ FormMode = true }) {
   const GoPriviewPage = () => {
     setPage(page + 1);
   };
+
+  useEffect(() => {
+    if (tempVideoInfo.length > 0) {
+      handlePrevData();
+    }
+  }, [tempVideoInfo]);
+
   // 取得先前資料
   const handlePrevData = () => {
     tempVideoInfo.forEach((info) => {
-      if (info?.option_3[0] !== null && info?.option_4[0] !== null) {
+      if (info?.option_3 !== undefined && info?.option_4 !== undefined) {
         const optionNum = 4;
-
         setTempVideoQA((prevVideoQA) => [
           ...prevVideoQA,
           {
@@ -68,7 +74,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
             ],
           },
         ]);
-      } else if (info?.option_3[0] !== null && info?.option_4[0] == null) {
+      } else if (info?.option_3 !== undefined && info?.option_4 === undefined) {
         const optionNum = 3;
         setTempVideoQA((prevVideoQA) => [
           ...prevVideoQA,
@@ -110,21 +116,13 @@ export default function EditClientVideoQA({ FormMode = true }) {
   useEffect(() => {
     let ignore = false;
     if (!ignore) {
-      handlePrevData();
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [tempVideoInfo]);
-
-  useEffect(() => {
-    let ignore = false;
-    if (!ignore) {
       async function fetchVideoData({ api }) {
         try {
           setIsLoading(true);
           const response = await get(api);
           const VideoInfo = await response.data.data;
+          // setTempVideoInfo(VideoInfo);
+          console.log(VideoInfo);
           setTempVideoInfo(VideoInfo);
 
           setTimeout(() => {
