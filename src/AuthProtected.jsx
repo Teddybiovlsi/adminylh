@@ -9,11 +9,11 @@ export default function AuthProtected({ user, redirectPath = "/", children }) {
     return <Navigate to="/" />;
   } else {
     if (new Date(user.expTime) < nowTime) {
-      console.log("憑證過期");
+      // console.log("憑證過期");
       localStorage.removeItem("user");
       return <Navigate to={redirectPath} />;
     } else {
-      console.log("憑證未過期", user.expTime, nowTime);
+      // console.log("憑證未過期", user.expTime, nowTime);
       return children ?? <Outlet />;
     }
   }

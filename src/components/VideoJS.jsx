@@ -145,6 +145,11 @@ export const VideoJS = (props) => {
           }
         }
       });
+
+      player.on("ended", () => {
+        console.log("player is ended");
+      });
+
       // You could update an existing player in the `else` block here
       // on prop change, for example:
     } else {
