@@ -1,5 +1,5 @@
 #video-container {
-  position: relative;
+  /* position: relative; */
 }
 
 /* Add some content at the bottom of the video/page */
@@ -104,11 +104,34 @@
   display: block;
 }
 
+.videoPlayer{
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
 .videoPlayer.fullscreen {
   min-height: 100%;
   min-width: 80%;
   margin: 0 auto;
 }
+.videoPlayer.fullscreen video{
+  object-fit: contain;
+}
+
+/* .videoPlayer.fullscreen .vjs-control-bar{
+  object-fit: contain;
+  height: 30% !important;
+  width: 100%;
+  padding-top: 0 !important;
+} */
+/* .videoPlayer.fullscreen video{
+  object-fit: contain;
+  height: 30% !important;
+  width: 100%;
+  padding-top: 0 !important;
+} */
+
 
 @media (min-width: 576px) {
   .text-overlay {
@@ -122,7 +145,6 @@
     width: 100%;
   }
 }
-/* if screen size is less than 768px hide video-container */
 @media (min-width: 768px) {
   .text-overlay {
     position: absolute;
