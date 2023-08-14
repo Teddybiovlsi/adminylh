@@ -107,30 +107,24 @@
 .videoPlayer{
   max-width: 100%;
   height: auto;
-  margin: 0 auto;
 }
 
 .videoPlayer.fullscreen {
   min-height: 100%;
-  min-width: 80%;
+  min-width: 100%;
   margin: 0 auto;
 }
 .videoPlayer.fullscreen video{
   object-fit: contain;
 }
 
-/* .videoPlayer.fullscreen .vjs-control-bar{
+.videoPlayer.fullscreen video{
   object-fit: contain;
-  height: 30% !important;
+  height: 100% !important;
   width: 100%;
   padding-top: 0 !important;
-} */
-/* .videoPlayer.fullscreen video{
-  object-fit: contain;
-  height: 30% !important;
-  width: 100%;
-  padding-top: 0 !important;
-} */
+  margin: 0 auto !important;
+}
 
 
 @media (min-width: 576px) {

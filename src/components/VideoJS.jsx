@@ -131,13 +131,8 @@ export const VideoJS = (props) => {
       player.on("loadedmetadata", () => {
         const video = player;
         if (video.videoHeight() > video.videoWidth()) {
-          document
-            .getElementById("video-container_Container_player")
-            .classList.add("portrait");
-
           player.aspectRatio("16:9");
         } else {
-          // player.aspectRatio("16:9");
           player.fluid(true);
         }
       });
