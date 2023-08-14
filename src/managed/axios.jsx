@@ -5,7 +5,7 @@ const axios = (baseURL, passType = "multipart/form-data") => {
   const instance = _axios.create({
     baseURL: baseURL || "http://140.125.35.8:8079/ntuh_laravel_API/public/", //JSON-Server端口位置
     headers: { "Content-Type": passType, charset: "utf-8" },
-    timeout: 5000,
+    timeout: 3000,
   });
 
   return instance;

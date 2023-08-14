@@ -63,7 +63,11 @@ export default function BackendRegistration() {
         setShouldRedirect(true);
       }, 5000);
     } catch (error) {
-      setErrorMessage(StatusCode(error.response.status));
+      if (error.code === "ECONNABORTED") {
+        setErrorMessage("連線逾時，請稍後再試");
+      } else {
+        setErrorMessage(StatusCode(error.response.status));
+      }
     }
   };
 

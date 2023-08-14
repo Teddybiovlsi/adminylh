@@ -52,7 +52,11 @@ export default function CreateVideo({ VideoMode = false }) {
       setSuccessBoolean(true);
       console.log(response.data);
     } catch (error) {
-      setErrorMessage(StatusCode(error.response.status));
+      if (error.code === "ECONNABORTED") {
+        setErrorMessage("連線逾時，請稍後再試");
+      } else {
+        setErrorMessage(StatusCode(error.response.status));
+      }
     }
   };
 

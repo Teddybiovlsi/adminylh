@@ -178,12 +178,21 @@ export default function EditClientVideoID() {
         handleRedirectToManageAccount();
       }, 2000);
     } catch (error) {
-      toast.update(id, {
-        render: "上傳失敗，請重新嘗試",
-        type: "error",
-        isLoading: false,
-        autoClose: 2000,
-      });
+      if (error.code === "ECONNABORTED") {
+        toast.update(id, {
+          render: "伺服器連線逾時，請重新嘗試",
+          type: "error",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      } else {
+        toast.update(id, {
+          render: "上傳失敗，請重新嘗試",
+          type: "error",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
     }
   };
 

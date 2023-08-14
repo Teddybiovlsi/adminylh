@@ -220,17 +220,31 @@ export default function FrontEndRegistration() {
             }, 3000);
           }
         } catch (error) {
-          const message = error.response.data.message;
-          toast.error(message, {
-            position: "top-center",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
+          if (error.code === "ECONNABORTED") {
+            toast.error("請確認網路連線是否正常", {
+              position: "top-center",
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+          } else {
+            const message = error.response.data.message;
+            toast.error(message, {
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+          }
           setTimeout(() => {
             setDisabledSubmit(false);
           }, 3000);

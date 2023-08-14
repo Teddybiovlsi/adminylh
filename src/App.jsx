@@ -149,13 +149,23 @@ function LogInPage() {
         navigate(0);
       }, 3000);
     } catch (error) {
-      console.log(error.response.data);
-      toast.update(clientSubmit, {
-        render: `${error.response.data.message}`,
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      // console.log(error.response.data);
+      console.log(error.code);
+      if (error.code === "ECONNABORTED") {
+        toast.update(clientSubmit, {
+          render: "連線逾時，請稍後再試",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      } else {
+        toast.update(clientSubmit, {
+          render: `${error.response.data.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      }
     }
   };
 
