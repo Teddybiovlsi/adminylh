@@ -93,11 +93,7 @@ export const VideoJS = (props) => {
 
       const player = (playerRef.current = videojs(videoElement, options, () => {
         videojs.log("player is ready");
-        height: "auto"; // 設置播放器的高度，讓其根據影片自動調整高度
-        fluid: true; // 讓播放器能夠自適應父元素的尺寸變化
-        controls: true; // 是否顯示播放控制按鈕
       }));
-      player.width("100%");
 
       // addChild("componentName", {componentProps}, componentIndex)
       // 其中componentIndex為可選參數，若不指定則預設為0，代表在controlBar的第一個位置
