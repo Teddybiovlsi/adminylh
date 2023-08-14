@@ -124,19 +124,19 @@ function LogInPage() {
   };
 
   const fetchaLoginData = async (data) => {
-    const clientSubmit = toast.loading("登入中...");
+    // const clientSubmit = toast.loading("登入中...");
     try {
       const response = await post("admin/login", data);
 
       const userInfo = await response.data;
 
       setTempUser(userInfo);
-      toast.update(clientSubmit, {
-        render: "登入成功，3秒後將回到當前頁面",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      // toast.update(clientSubmit, {
+      //   render: "登入成功，3秒後將回到當前頁面",
+      //   type: "success",
+      //   isLoading: false,
+      //   autoClose: 3000,
+      // });
 
       setTimeout(() => {
         // if have previous page then go back
