@@ -17,10 +17,10 @@ export default function VideoPlayer() {
   const [loading, setLoading] = useState(false);
 
   const videoJsOptions = {
-    controls: false,
+    controls: true,
     autoplay: false,
     responsive: true,
-    // fluid: true,
+    fluid: true,
     muted: true,
     sources: [
       {
