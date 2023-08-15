@@ -319,7 +319,7 @@ export default function ManageClientAccount() {
       const response = await get(api);
       const message = response.data.message;
       toast.update(id, {
-        render: message,
+        render: "帳號解鎖成功",
         type: "success",
         isLoading: false,
         autoClose: 2000,
@@ -621,6 +621,8 @@ export default function ManageClientAccount() {
                   setTimeout(() => {
                     setIsDisableUnlockBtn(false);
                   }, 2000);
+                } else {
+                  handleUnlockAccount();
                 }
               }}
               btnText={
