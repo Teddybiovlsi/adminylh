@@ -10,9 +10,11 @@ import { BoxArrowLeft } from "react-bootstrap-icons";
 import { LinkContainer } from "react-router-bootstrap";
 import styles from "../styles/components/NavStyle.module.scss";
 import { useEffect, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Header({ expand = "lg" }) {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(JSON.parse(localStorage?.getItem("user")));
   // const expTimeFormat = Date.parse(Date(user.expTime));
   // const nowTimeFormat = Date.now();
@@ -36,6 +38,7 @@ export default function Header({ expand = "lg" }) {
         <LinkContainer to="/Home">
           <Navbar.Brand>台大分院雲林分院衛教系統</Navbar.Brand>
         </LinkContainer>
+
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
         <Navbar.Offcanvas
           id={`offcanvasNavbar-expand-${expand}`}
@@ -87,6 +90,7 @@ export default function Header({ expand = "lg" }) {
                   onClick={() => {
                     localStorage.removeItem("user");
                     setUser(null);
+                    navigate("/");
                   }}
                 >
                   登出

@@ -223,7 +223,6 @@ export default function FrontEndRegistration() {
           if (error.code === "ECONNABORTED") {
             toast.error("請確認網路連線是否正常", {
               position: "top-center",
-              position: "top-center",
               autoClose: 2000,
               hideProgressBar: false,
               closeOnClick: true,
