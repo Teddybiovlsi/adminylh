@@ -21,7 +21,7 @@ export default function CreateVideo({ VideoMode = false }) {
   ]);
 
   const [formType, setFormType] = useState({
-    Type: { VideoMode },
+    VideoMode: VideoMode,
     formStep: 1,
     videoFile: "",
     videoSource: "",
@@ -29,6 +29,7 @@ export default function CreateVideo({ VideoMode = false }) {
     videoTitleName: "",
     videoLanguage: "",
     videoType: "",
+    videoDuration: 0,
     questionNum: 1,
   });
 
@@ -89,6 +90,7 @@ export default function CreateVideo({ VideoMode = false }) {
     formData.append("videoName", formType.videoFileName);
     formData.append("videoLanguage", formType.videoLanguage);
     formData.append("videoType", formType.videoType);
+    formData.append("videoDuration", formType.videoDuration);
     videoInfo.forEach((element) => {
       // console.log(element);
       // store the videoInfo in formData  as a array
@@ -158,6 +160,17 @@ export default function CreateVideo({ VideoMode = false }) {
           FormMode={VideoMode}
           FormStep={formType.formStep}
           VideoFile={formType.videoSource}
+          formType={formType}
+          setDuration={
+            formType.videoDuration === 0
+              ? (duration) => {
+                  setFormType({
+                    ...formType,
+                    videoDuration: duration,
+                  });
+                }
+              : null
+          }
           VideoQA={videoInfo}
           setVideoQA={setVideoInfo}
           GoPrevEvent={prevStep}
