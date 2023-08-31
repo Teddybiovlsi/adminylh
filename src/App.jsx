@@ -19,7 +19,6 @@ import {
   GoogleReCaptchaProvider,
   GoogleReCaptcha,
 } from "react-google-recaptcha-v3";
-import "./styles/app.css";
 import ManageClientAccount from "./managed/Pages/ManageClientAccount";
 import AboutUs from "./managed/Pages/AboutUs";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -28,15 +27,17 @@ import MultiAddUser from "./managed/Pages/MultiAddUser";
 import RestoreAccount from "./managed/Pages/RestoreAccount";
 import EditClientVideoID from "./managed/Pages/EditClientVideoID";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import styles from "./styles/pages/NotFoundPage.module.scss";
 import BtnBootstrap from "./components/BtnBootstrap";
 import StatusCode from "./sys/StatusCode";
 import { post } from "./managed/axios";
 import ToastAlert from "./components/ToastAlert";
 import { toast } from "react-toastify";
-import { set } from "lodash/fp";
 import AuthProtected from "./AuthProtected";
 import EditClientVideoQA from "./managed/Form/EditClientVideoQA";
+import EditHealthEducationEditor from "./managed/Pages/EditHealthEducationEditor";
+import "./styles/app.css";
+import styles from "./styles/pages/NotFoundPage.module.scss";
+import PreviewPaper from "./managed/Pages/PreviewPaper";
 
 function App() {
   const location = useLocation();
@@ -63,7 +64,9 @@ function App() {
           <Route index path="/" element={<LogInPage />} />
           <Route
             element={
-              <AuthProtected user={JSON.parse(localStorage?.getItem("user"))} />
+              <AuthProtected
+                user={JSON.parse(localStorage?.getItem("manage"))}
+              />
             }
           >
             <Route path="/Home" element={<Home />} />
@@ -72,6 +75,11 @@ function App() {
             <Route path="/Client/Register" element={<FrontEndRegistration />} />
             <Route path="/Pratice" element={<Pratice />} />
             <Route path="/Exam" element={<Exam />} />
+            <Route path="/preview" element={<PreviewPaper />} />
+            <Route
+              path="pratice/texts"
+              element={<EditHealthEducationEditor />}
+            />
             <Route path="/Video" element={<VideoPlayer />} />
             <Route
               path="/ManageClientAccount"
@@ -103,7 +111,7 @@ function LogInPage() {
   const [ErrorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (localStorage.getItem("user") !== null) {
+    if (localStorage.getItem("manage") !== null) {
       navigate("/Home");
     }
   }, []);
@@ -170,11 +178,11 @@ function LogInPage() {
 
   useEffect(() => {
     if (tempuser !== null) {
-      localStorage.setItem("user", JSON.stringify(tempuser));
+      localStorage.setItem("manage", JSON.stringify(tempuser));
     }
   }, [tempuser]);
 
-  if (localStorage.getItem("user") == null) {
+  if (localStorage.getItem("manage") == null) {
     return (
       <Container>
         <h1>歡迎光臨台大衛教後台管理系統</h1>
