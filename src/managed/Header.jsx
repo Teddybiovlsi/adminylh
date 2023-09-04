@@ -5,6 +5,7 @@ import {
   NavDropdown,
   Offcanvas,
   Button,
+  NavLink,
 } from "react-bootstrap";
 import { BoxArrowLeft } from "react-bootstrap-icons";
 import { LinkContainer } from "react-router-bootstrap";
@@ -15,7 +16,8 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Header({ expand = "lg" }) {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(JSON.parse(localStorage?.getItem("user")));
+  const [user, setUser] = useState(JSON.parse(localStorage?.getItem("manage")));
+
   // const expTimeFormat = Date.parse(Date(user.expTime));
   // const nowTimeFormat = Date.now();
   // console.log("expTimeFormat", expTimeFormat);
@@ -76,6 +78,9 @@ export default function Header({ expand = "lg" }) {
                   <NavDropdown.Item>測驗用</NavDropdown.Item>
                 </LinkContainer>{" "}
               </NavDropdown>
+              <LinkContainer to="/pratice/texts">
+                <Nav.Link href="#">建立衛教文章</Nav.Link>
+              </LinkContainer>
             </Nav>
 
             <Nav>

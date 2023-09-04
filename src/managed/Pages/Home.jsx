@@ -26,6 +26,16 @@ import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 
 export default function Home() {
+  // const email = JSON.parse(localStorage?.getItem("manage")).email;
+  // const adminMail = encodeURIComponent(email);
+
+  // 請求localStorage中的管理者資料
+  const [localData, setLocalData] = useState({
+    adminToken: JSON.parse(localStorage?.getItem("manage")).token,
+    adminMail: JSON.parse(localStorage?.getItem("manage")).email,
+  });
+  // console.log(localData.adminMail);
+
   // limit video data size in one page
   const [size, setSize] = useState(10);
   // videoData is an array
@@ -168,7 +178,7 @@ export default function Home() {
       // set loading to true
       setLoading(true);
       fetchVideoData({
-        api: "videos",
+        api: `videos/${localData.adminToken}/${localData.adminMail}`,
       });
     }
     return () => {
@@ -198,6 +208,16 @@ export default function Home() {
       // clear error message
       setErrorMessage("");
     } catch (error) {
+      console.log(error.response.data);
+      //若錯誤狀態碼為440，則清除localStorage中的管理者資料，並跳出提示訊息
+      if (
+        error.response.data.message == "登入逾時，請重新登入" &&
+        error.response.status === 440
+      ) {
+        localStorage.removeItem("manage");
+        alert("登入逾時，請重新登入");
+        navigate("/", { replace: true });
+      }
       // if catch error, clear videoData
       setVideoData([]);
       setFilterVideoData([]);

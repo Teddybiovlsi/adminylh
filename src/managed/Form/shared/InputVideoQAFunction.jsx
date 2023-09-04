@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Card, Stack } from "react-bootstrap";
 import PageTitle from "../../../components/Title";
 import { CardTitleFunction } from "./CardTitleFunction";
@@ -12,14 +12,22 @@ function InputVideoQAFunction({
   VideoFile = "",
   VideoQA,
   setVideoQA,
+  formType,
+  setDuration = null,
   GoPrevEvent = null,
   GoNextEvent = null,
 }) {
   const [ifBtnDisable, setIfBtnDisable] = useState(true);
   // 影片時間參考欄位
   const videoRef = useRef(null);
-  // 以下是跟影片問題/選項/答案填寫有關的欄位
 
+  const handleLoadedMetadata = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    setDuration(video.duration);
+  };
+
+  // 以下是跟影片問題/選項/答案填寫有關的欄位
   // 若該欄位之index取得影片時間有所變動
   const handleGetVideoTime = (index, e) => {
     if (videoRef.current) {
@@ -35,13 +43,7 @@ function InputVideoQAFunction({
   // 若該欄位的持續時間有所變動
   const handleGetVideoDuration = (index, e) => {
     // if user have any change in the video duration then the setVideoQA will be update
-    setVideoQA(
-      update(
-        `${index}.durationTime`,
-        () => e.target.value,
-        VideoQA
-      )
-    );
+    setVideoQA(update(`${index}.durationTime`, () => e.target.value, VideoQA));
   };
 
   // if radio box is checked then the information of the Question mustCorrect will be true
@@ -164,6 +166,7 @@ function InputVideoQAFunction({
             className={`${styles.VideoPriview}`}
             width="100%"
             controls
+            onLoadedMetadata={handleLoadedMetadata}
           />
           <Stack direction="horizontal" className="ms-2 mt-3 mb-3 me-2">
             <div>
