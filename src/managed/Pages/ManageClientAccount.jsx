@@ -16,7 +16,6 @@ import ShowInfoIcon from "../../components/ShowInfoIcon";
 import ShowVideoIcon from "../../components/ShowVideoIcon";
 import CustomState from "../JsonFile/SelectCustomerState.json";
 import CustomVideo from "../JsonFile/SelectCustomerVideo.json";
-import { set } from "lodash";
 import Loading from "../../components/Loading";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
