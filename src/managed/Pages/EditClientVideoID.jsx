@@ -102,7 +102,7 @@ export default function EditClientVideoID() {
 
   let navigate = useNavigate();
   const handleRedirectToManageAccount = () => {
-    navigate('/ManageClientAccount');
+    navigate('/ManageClientAccount', { replace: true });
   };
 
   const handleSubmit = async () => {
