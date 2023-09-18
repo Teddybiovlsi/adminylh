@@ -213,11 +213,9 @@ export default function Home() {
       //若錯誤狀態碼為440，則清除localStorage中的管理者資料，並跳出提示訊息
       if (
         error.response.data.message == "登入逾時，請重新登入" &&
-        error.response.status === 440
+        error.response.status === 404
       ) {
-        localStorage.removeItem("manage");
-        alert("登入逾時，請重新登入");
-        navigate("/", { replace: true });
+        handleSessionTimeout();
       }
       // if catch error, clear videoData
       setVideoData([]);
@@ -230,6 +228,15 @@ export default function Home() {
       }
     }
   };
+  
+  const handleSessionTimeout = () => {
+    alert("登入逾時，請重新登入");
+    if (sessionStorage.getItem("user")) sessionStorage.clear();
+    if (localStorage.getItem("user")) localStorage.clear();
+    navigate("/");
+  };
+
+
 
   useEffect(() => {
     if (filterVideoData.length == 0) {
