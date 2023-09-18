@@ -103,7 +103,6 @@ export default function Header({ expand = "lg" }) {
                 id="collasible-nav-dropdown"
                 align={{ lg: "end" }}
               >
-                s{" "}
                 {user !== null ? (
                   <NavDropdown.Item
                     as={"button"}
