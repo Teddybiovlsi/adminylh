@@ -295,7 +295,7 @@ export default function EditClientVideoID() {
       <h1 className='fw-bold mt-2 mb-2'>批次勾選影片</h1>
       <Container>
         <Row>
-          <Col>
+          <Col md={6}>
             <ListGroup as='ol' numbered>
               <h5 className='fw-bold'>選擇之帳號：</h5>
               {filteraccountInfo.map((item, index) => {
@@ -324,7 +324,7 @@ export default function EditClientVideoID() {
               }}
             />
           </Col>
-          <Col>
+          <Col md={6}>
             <ListGroup as='ol' numbered>
               <h5 className='fw-bold'>選擇之影片：</h5>
               {filtervideoData.map((item, index) => {
