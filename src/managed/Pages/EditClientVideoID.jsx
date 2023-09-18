@@ -142,7 +142,6 @@ export default function EditClientVideoID() {
     }
   };
 
-
   const fetchData = async ({ api, setData, setSearchResult }) => {
     try {
       const response = await get(api);
@@ -199,6 +198,37 @@ export default function EditClientVideoID() {
   }, [accountInfo, checkedAccount]);
 
   useEffect(() => {
+    if (searchText !== '') {
+      // 過濾帳號資料
+      const filteredAccountInfo = accountInfo.filter((item) => {
+        return (
+          item.client_name.includes(searchText) ||
+          item.client_email.includes(searchText) ||
+          item.client_account.includes(searchText)
+        );
+      });
+
+      // 更新搜尋結果
+      setSearchResult(filteredAccountInfo);
+
+      // 計算分頁相關狀態
+      const rows = filteredAccountInfo.length;
+      setCurrentPage(0);
+      setLastPage(Math.ceil(rows / rowsPerPage));
+      setShowData(filteredAccountInfo.slice(0, rowsPerPage));
+    } else {
+      // 無搜尋條件時，使用所有帳號資料
+      setSearchResult(accountInfo);
+
+      // 計算分頁相關狀態
+      const rows = accountInfo.length;
+      setCurrentPage(0);
+      setLastPage(Math.ceil(rows / rowsPerPage));
+      setShowData(accountInfo.slice(0, rowsPerPage));
+    }
+  }, [searchText, accountInfo, rowsPerPage]);
+
+  useEffect(() => {
     setFiltervideoData(
       videoData.filter((item) => {
         return checkedVideo.includes(item.id);
@@ -207,76 +237,59 @@ export default function EditClientVideoID() {
   }, [videoData, checkedVideo]);
 
   useEffect(() => {
-    if (searchText !== '') {
-      setSearchResult(
-        accountInfo.filter((item) => {
-          return (
-            item.client_name.includes(searchText) ||
-            item.client_email.includes(searchText) ||
-            item.client_account.includes(searchText)
-          );
-        })
-      );
-    } else {
-      setSearchResult(accountInfo);
-    }
-  }, [searchText]);
-
-  useEffect(() => {
     if (searchTextVideo !== '') {
-      setSearchVideoResult(
-        videoData.filter((item) => {
-          return item.video_name.includes(searchTextVideo);
-        })
-      );
+      // 過濾影片資料
+      const filteredVideoData = videoData.filter((item) => {
+        return item.video_name.includes(searchTextVideo);
+      });
+
+      // 更新搜尋結果
+      setSearchVideoResult(filteredVideoData);
+
+      // 計算分頁相關狀態
+      const rows = filteredVideoData.length;
+      setLastPageVideo(Math.ceil(rows / rowsPerPageVideo));
+      setShowVideoData(filteredVideoData.slice(0, rowsPerPageVideo));
     } else {
+      // 無搜尋條件時，使用所有影片資料
       setSearchVideoResult(videoData);
+
+      // 計算分頁相關狀態
+      const rows = videoData.length;
+      setLastPageVideo(Math.ceil(rows / rowsPerPageVideo));
+      setShowVideoData(videoData.slice(0, rowsPerPageVideo));
     }
-  }, [searchTextVideo]);
+  }, [searchTextVideo, videoData, rowsPerPageVideo]);
 
-  useEffect(() => {
-    const rows = searchResult.length;
-    setCurrentPage(0);
-    setLastPage(Math.ceil(rows / rowsPerPage));
-    setShowData(searchResult.slice(0, rowsPerPage));
-  }, [searchResult, rowsPerPage]);
-
-  useEffect(() => {
-    const rows = searchVideoResult.length;
-    setLastPageVideo(Math.ceil(rows / rowsPerPageVideo));
-    setShowVideoData(searchVideoResult.slice(0, rowsPerPageVideo));
-  }, [searchVideoResult, rowsPerPageVideo]);
-
-  //  頁數發生變化時，重新計算要顯示的資料(帳號用)
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  // 頁數發生變化時，重新計算要顯示的資料（帳號或影片用）
+  const handlePageChange = (page, isAccountPage) => {
     const start = page * Number(rowsPerPage);
     const end = start + Number(rowsPerPage);
-    setShowData(accountInfo.slice(start, end));
+    if (isAccountPage) {
+      setCurrentPage(page);
+      setShowData(accountInfo.slice(start, end));
+    } else {
+      setCurrentPageVideo(page);
+      setShowVideoData(searchVideoResult.slice(start, end));
+    }
   };
-  //   頁數發生變化時，重新計算要顯示的資料(影片用)
-  const handlePageChangeVideo = (page) => {
-    setCurrentPageVideo(page);
-    const start = (page - 1) * Number(rowsPerPageVideo);
-    // convert rowsPerPage to number
-    const end = start + Number(rowsPerPageVideo);
-    // setShowDataVideo(searchVideoResult.slice(start, end));
+  // 使用於勾選帳號或影片
+  const handleToggleItem = (itemID, setFunction) => {
+    setFunction((prevItems) =>
+      prevItems.includes(itemID)
+        ? prevItems.filter((item) => item !== itemID)
+        : [...prevItems, itemID]
+    );
   };
-
+  
+  // Usage for handling checked accounts
   const handleCheckedAccount = (ClientID) => {
-    setTempCheckedAccount(
-      tempCheckedAccount.includes(ClientID)
-        ? tempCheckedAccount.filter((item) => item !== ClientID)
-        : [...tempCheckedAccount, ClientID]
-    );
+    handleToggleItem(ClientID, setTempCheckedAccount);
   };
 
+  // Usage for handling checked videos
   const handleCheckedVideo = (VideoID) => {
-    setTempCheckedVideo(
-      tempCheckedVideo.includes(VideoID)
-        ? tempCheckedVideo.filter((item) => item !== VideoID)
-        : [...tempCheckedVideo, VideoID]
-    );
+    handleToggleItem(VideoID, setTempCheckedVideo);
   };
 
   return (
@@ -420,7 +433,7 @@ export default function EditClientVideoID() {
                 breakLabel={'...'}
                 nextLabel={'>'}
                 previousLabel={'<'}
-                onPageChange={(page) => handlePageChange(page.selected)}
+                onPageChange={(page) => handlePageChange(page.selected, true)}
                 pageCount={lastPage}
                 pageRangeDisplayed={2}
                 marginPagesDisplayed={1}
@@ -535,7 +548,7 @@ export default function EditClientVideoID() {
                 breakLabel={'...'}
                 nextLabel={'>'}
                 previousLabel={'<'}
-                onPageChange={(page) => handlePageChangeVideo(page.selected)}
+                onPageChange={(page) => handlePageChange(page.selected, false)}
                 pageCount={lastPageVideo}
                 pageRangeDisplayed={2}
                 marginPagesDisplayed={1}
