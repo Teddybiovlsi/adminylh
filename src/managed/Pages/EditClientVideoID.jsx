@@ -290,7 +290,11 @@ export default function EditClientVideoID() {
         ...paginationSettings,
         currentPage: page,
       });
-      setShowAccountData(accountInfo.slice(start, end));
+      if (searchText !== '') {
+        setShowAccountData(searchResult.slice(start, end));
+      } else {
+        setShowAccountData(accountInfo.slice(start, end));
+      }
     } else {
       const start = page * Number(paginationSettings.rowsPerPageVideo);
       const end = start + Number(paginationSettings.rowsPerPageVideo);
@@ -298,7 +302,11 @@ export default function EditClientVideoID() {
         ...paginationSettings,
         currentPageVideo: page,
       });
-      setShowVideoData(searchVideoResult.slice(start, end));
+      if (searchTextVideo !== '') {
+        setShowVideoData(searchVideoResult.slice(start, end));
+      } else {
+        setShowVideoData(videoData.slice(start, end));
+      }
     }
   };
   // 使用於勾選帳號或影片
@@ -408,6 +416,7 @@ export default function EditClientVideoID() {
                     type='text'
                     placeholder='帳號搜尋..'
                     style={{ boxShadow: 'none' }}
+                    defaultValue={searchText}
                     onChange={(e) => {
                       setSearchText(e.target.value);
                     }}
@@ -528,6 +537,7 @@ export default function EditClientVideoID() {
                   </InputGroup.Text>
                   <Form.Control
                     type='text'
+                    defaultValue={searchTextVideo}
                     placeholder='影片搜尋..'
                     style={{ boxShadow: 'none' }}
                     onChange={(e) => {
