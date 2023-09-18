@@ -18,8 +18,8 @@ import { toast } from 'react-toastify';
 import StatusCode from '../../sys/StatusCode';
 
 export default function EditClientVideoID() {
-  //   若無任何資訊則返回首頁
-  if (!useLocation().state) window.location.href = '/';
+  const { state } = useLocation();
+  if (!state) window.location.href = '/';
 
   const user = JSON.parse(
     localStorage?.getItem('manage') || sessionStorage?.getItem('manage')
@@ -104,61 +104,6 @@ export default function EditClientVideoID() {
     navigate('/ManageClientAccount');
   };
 
-  const fetchaAccountData = async ({ api }) => {
-    try {
-      const response = await get(api);
-      // get data from res.data.data
-      // because res.data.data is a promise
-      // so we need to use await to get the value of res.data.data
-      // and then we can use data to get the value of res.data.data
-      const data = await response.data.data;
-      // check if data is an array
-      // if data is an array, checkIsArray is true
-      // otherwise, checkIsArray is false
-      const checkIsArray = Array.isArray(data);
-      // set videoData
-      // if checkIsArray is true, set videoData to data
-      // otherwise, set videoData to [data]
-      setAccountInfo(checkIsArray ? data : [data]);
-      setSearchResult(checkIsArray ? data : [data]);
-
-      // clear error message
-      setErrorMessage('');
-    } catch (error) {
-      // if error.response is true, get error message
-      if (error.response) {
-        setErrorMessage(StatusCode(error.response.status));
-      }
-    }
-  };
-
-  const fetchVideoData = async ({ api }) => {
-    try {
-      const response = await get(api);
-      // get data from res.data.data
-      // because res.data.data is a promise
-      // so we need to use await to get the value of res.data.data
-      // and then we can use data to get the value of res.data.data
-      const data = await response.data.data;
-      // check if data is an array
-      // if data is an array, checkIsArray is true
-      // otherwise, checkIsArray is false
-      const checkIsArray = Array.isArray(data);
-      // set videoData
-      // if checkIsArray is true, set videoData to data
-      // otherwise, set videoData to [data]
-      setVideoData(checkIsArray ? data : [data]);
-      setSearchVideoResult(checkIsArray ? data : [data]);
-      // clear error message
-      setErrorMessage('');
-    } catch (error) {
-      // if error.response is true, get error message
-      if (error.response) {
-        setErrorMessage(StatusCode(error.response.status));
-      }
-    }
-  };
-
   const handleSubmit = async () => {
     // 顯示loading圖示
     const id = toast.loading('解鎖中...');
@@ -197,18 +142,47 @@ export default function EditClientVideoID() {
     }
   };
 
-  //   在進入此頁時，先將所有帳號資料進行撈取
+
+  const fetchData = async ({ api, setData, setSearchResult }) => {
+    try {
+      const response = await get(api);
+      const data = await response.data.data;
+      const checkIsArray = Array.isArray(data);
+      setData(checkIsArray ? data : [data]);
+      setSearchResult(checkIsArray ? data : [data]);
+      setErrorMessage('');
+    } catch (error) {
+      handleApiError(error);
+    }
+  };
+
+  const handleApiError = (error) => {
+    if (error.code === 'ECONNABORTED') {
+      setErrorMessage('伺服器連線逾時，請重新嘗試');
+    } else {
+      setErrorMessage('上傳失敗，請重新嘗試');
+    }
+  };
+
+  // Fetch data on page load
   useEffect(() => {
     let ignore = false;
-    if (!ignore) {
-      //  透過API將所有帳號資料撈出來
-      fetchaAccountData({
-        api: `account`,
+
+    const fetchDataAsync = async () => {
+      await fetchData({
+        api: 'account',
+        setData: setAccountInfo,
+        setSearchResult,
       });
-      //  透過API將所有影片資料撈出來
-      fetchVideoData({
+      await fetchData({
         api: `videos/${user.token}/${user.email}`,
+        setData: setVideoData,
+        setSearchResult: setSearchVideoResult,
       });
+    };
+
+    if (!ignore) {
+      fetchDataAsync();
     }
     return () => {
       ignore = true;
@@ -276,11 +250,9 @@ export default function EditClientVideoID() {
   //  頁數發生變化時，重新計算要顯示的資料(帳號用)
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    const start = (page - 1) * Number(rowsPerPage);
-    // convert rowsPerPage to number
+    const start = page * Number(rowsPerPage);
     const end = start + Number(rowsPerPage);
-
-    setShowData(searchVideoResult.slice(start, end));
+    setShowData(accountInfo.slice(start, end));
   };
   //   頁數發生變化時，重新計算要顯示的資料(影片用)
   const handlePageChangeVideo = (page) => {
@@ -448,7 +420,7 @@ export default function EditClientVideoID() {
                 breakLabel={'...'}
                 nextLabel={'>'}
                 previousLabel={'<'}
-                onPageChange={(page) => handlePageChange(page.selected + 1)}
+                onPageChange={(page) => handlePageChange(page.selected)}
                 pageCount={lastPage}
                 pageRangeDisplayed={2}
                 marginPagesDisplayed={1}
@@ -486,6 +458,7 @@ export default function EditClientVideoID() {
         </Modal.Footer>
       </Modal>
 
+      {/* 影片類 */}
       <Modal show={showVideoModal} onHide={handleCloseVideoModal}>
         <Modal.Header closeButton>
           <Modal.Title>請選擇新增之影片</Modal.Title>
@@ -562,9 +535,7 @@ export default function EditClientVideoID() {
                 breakLabel={'...'}
                 nextLabel={'>'}
                 previousLabel={'<'}
-                onPageChange={(page) =>
-                  handlePageChangeVideo(page.selected + 1)
-                }
+                onPageChange={(page) => handlePageChangeVideo(page.selected)}
                 pageCount={lastPageVideo}
                 pageRangeDisplayed={2}
                 marginPagesDisplayed={1}
