@@ -15,7 +15,6 @@ import FilterPageSize from '../JsonFile/FilterPageContentSize.json';
 import ReactPaginate from 'react-paginate';
 import ToastAlert from '../../components/ToastAlert';
 import { toast } from 'react-toastify';
-import StatusCode from '../../sys/StatusCode';
 
 export default function EditClientVideoID() {
   const { state } = useLocation();
