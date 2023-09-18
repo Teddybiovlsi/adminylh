@@ -67,24 +67,28 @@ export default function EditClientVideoID() {
   };
   // 搜尋欄位內容(帳號用)
   const [searchText, setSearchText] = useState('');
-  // 存放每頁顯示的資料筆數(帳號用)
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  // 存放目前頁數(帳號用)
-  const [currentPage, setCurrentPage] = useState(1);
+  // 存放每頁顯示的資料筆數(帳號用):rowsPerPage
+  // 存放每頁顯示的資料筆數(影片用):rowsPerPageVideo
+  // 存放目前頁數的資料(帳號用):currentPage
+  // 存放目前頁數的資料(影片用):currentPageVideo
+  // 存放目前總頁數的資料(帳號用):lastPage
+  // 存放目前總頁數的資料(影片用):lastPageVideo
+  const [paginationSettings, setPaginationSettings] = useState({
+    rowsPerPage: 5,
+    rowsPerPageVideo: 5,
+    currentPage: 0,
+    currentPageVideo: 0,
+    lastPage: 1,
+    lastPageVideo: 1,
+  });
   // 存放目前頁數的資料(帳號用)
-  const [showData, setShowData] = useState(searchResult.slice(0, rowsPerPage));
-  // 存放目前總頁數的資料(帳號用)
-  const [lastPage, setLastPage] = useState(1);
-  // 存放每頁顯示的資料筆數(影片用)
-  const [rowsPerPageVideo, setRowsPerPageVideo] = useState(5);
-  // 存放目前頁數(影片用)
-  const [currentPageVideo, setCurrentPageVideo] = useState(1);
+  const [showAccountData, setShowAccountData] = useState(
+    searchResult.slice(0, paginationSettings.rowsPerPage)
+  );
   // 存放目前頁數的資料(影片用)
   const [showVideoData, setShowVideoData] = useState(
-    searchVideoResult.slice(0, rowsPerPage)
+    searchVideoResult.slice(0, paginationSettings.rowsPerPageVideo)
   );
-  // 存放目前總頁數的資料(影片用)
-  const [lastPageVideo, setLastPageVideo] = useState(1);
   // 搜尋欄位內容(影片用)
   const [searchTextVideo, setSearchTextVideo] = useState('');
 
@@ -211,20 +215,28 @@ export default function EditClientVideoID() {
 
       // 計算分頁相關狀態
       const rows = filteredAccountInfo.length;
-      setCurrentPage(0);
-      setLastPage(Math.ceil(rows / rowsPerPage));
-      setShowData(filteredAccountInfo.slice(0, rowsPerPage));
+      setPaginationSettings({
+        ...paginationSettings,
+        currentPage: 0,
+        lastPage: Math.ceil(rows / paginationSettings.rowsPerPage),
+      });
+      setShowAccountData(
+        filteredAccountInfo.slice(0, paginationSettings.rowsPerPage)
+      );
     } else {
       // 無搜尋條件時，使用所有帳號資料
       setSearchResult(accountInfo);
 
       // 計算分頁相關狀態
       const rows = accountInfo.length;
-      setCurrentPage(0);
-      setLastPage(Math.ceil(rows / rowsPerPage));
-      setShowData(accountInfo.slice(0, rowsPerPage));
+      setPaginationSettings({
+        ...paginationSettings,
+        currentPage: 0,
+        lastPage: Math.ceil(rows / paginationSettings.rowsPerPage),
+      });
+      setShowAccountData(accountInfo.slice(0, paginationSettings.rowsPerPage));
     }
-  }, [searchText, accountInfo, rowsPerPage]);
+  }, [searchText, accountInfo, paginationSettings.rowsPerPage]);
 
   useEffect(() => {
     setFiltervideoData(
@@ -246,28 +258,46 @@ export default function EditClientVideoID() {
 
       // 計算分頁相關狀態
       const rows = filteredVideoData.length;
-      setLastPageVideo(Math.ceil(rows / rowsPerPageVideo));
-      setShowVideoData(filteredVideoData.slice(0, rowsPerPageVideo));
+      setPaginationSettings({
+        ...paginationSettings,
+        currentPageVideo: 0,
+        lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
+      });
+      setShowVideoData(
+        filteredVideoData.slice(0, paginationSettings.rowsPerPageVideo)
+      );
     } else {
       // 無搜尋條件時，使用所有影片資料
       setSearchVideoResult(videoData);
 
       // 計算分頁相關狀態
       const rows = videoData.length;
-      setLastPageVideo(Math.ceil(rows / rowsPerPageVideo));
-      setShowVideoData(videoData.slice(0, rowsPerPageVideo));
+      setPaginationSettings({
+        ...paginationSettings,
+        currentPageVideo: 0,
+        lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
+      });
+      setShowVideoData(videoData.slice(0, paginationSettings.rowsPerPageVideo));
     }
-  }, [searchTextVideo, videoData, rowsPerPageVideo]);
+  }, [searchTextVideo, videoData, paginationSettings.rowsPerPageVideo]);
 
   // 頁數發生變化時，重新計算要顯示的資料（帳號或影片用）
   const handlePageChange = (page, isAccountPage) => {
-    const start = page * Number(rowsPerPage);
-    const end = start + Number(rowsPerPage);
     if (isAccountPage) {
-      setCurrentPage(page);
-      setShowData(accountInfo.slice(start, end));
+      const start = page * Number(paginationSettings.rowsPerPage);
+      const end = start + Number(paginationSettings.rowsPerPage);
+      setPaginationSettings({
+        ...paginationSettings,
+        currentPage: page,
+      });
+      setShowAccountData(accountInfo.slice(start, end));
     } else {
-      setCurrentPageVideo(page);
+      const start = page * Number(paginationSettings.rowsPerPageVideo);
+      const end = start + Number(paginationSettings.rowsPerPageVideo);
+      setPaginationSettings({
+        ...paginationSettings,
+        currentPageVideo: page,
+      });
       setShowVideoData(searchVideoResult.slice(start, end));
     }
   };
@@ -356,6 +386,7 @@ export default function EditClientVideoID() {
         </Row>
       </Container>
 
+      {/* 帳號類 */}
       <Modal
         show={showAccountModal}
         onHide={() => {
@@ -389,7 +420,10 @@ export default function EditClientVideoID() {
                 <Form.Select
                   aria-label='請選擇每頁資料筆數'
                   onChange={(e) => {
-                    setRowsPerPage(e.target.value);
+                    setPaginationSettings({
+                      ...paginationSettings,
+                      rowsPerPage: e.target.value,
+                    });
                   }}
                   className='w-50 float-end mb-2'
                 >
@@ -405,7 +439,7 @@ export default function EditClientVideoID() {
             </Row>
             <Row>
               <ListGroup as='ol' numbered>
-                {showData.map((item, index) => {
+                {showAccountData.map((item, index) => {
                   return (
                     <Form.Check
                       key={index}
@@ -432,12 +466,12 @@ export default function EditClientVideoID() {
             </Row>
             <Row>
               <ReactPaginate
-                forcePage={currentPage}
+                forcePage={paginationSettings.currentPage}
                 breakLabel={'...'}
                 nextLabel={'>'}
                 previousLabel={'<'}
                 onPageChange={(page) => handlePageChange(page.selected, true)}
-                pageCount={lastPage}
+                pageCount={paginationSettings.lastPage}
                 pageRangeDisplayed={2}
                 marginPagesDisplayed={1}
                 containerClassName='justify-content-center pagination'
@@ -508,8 +542,10 @@ export default function EditClientVideoID() {
                 <Form.Select
                   aria-label='請選擇每頁資料筆數'
                   onChange={(e) => {
-                    setRowsPerPageVideo(e.target.value);
-                    setCurrentPageVideo(1);
+                    setPaginationSettings({
+                      ...paginationSettings,
+                      rowsPerPageVideo: e.target.value,
+                    });
                   }}
                   className='w-50 float-end mb-2'
                 >
@@ -552,12 +588,12 @@ export default function EditClientVideoID() {
             </Row>
             <Row>
               <ReactPaginate
-                forcePage={currentPage}
+                forcePage={paginationSettings.currentPageVideo}
                 breakLabel={'...'}
                 nextLabel={'>'}
                 previousLabel={'<'}
                 onPageChange={(page) => handlePageChange(page.selected, false)}
-                pageCount={lastPageVideo}
+                pageCount={paginationSettings.lastPageVideo}
                 pageRangeDisplayed={2}
                 marginPagesDisplayed={1}
                 containerClassName='justify-content-center pagination'
