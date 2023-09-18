@@ -19,10 +19,15 @@ import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
 import ReactPaginate from "react-paginate";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
+import StatusCode from "../../sys/StatusCode";
 
 export default function EditClientVideoID() {
   //   若無任何資訊則返回首頁
   if (!useLocation().state) window.location.href = "/";
+
+  const user = JSON.parse(
+    localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
+  );
 
   const location = useLocation();
   // 將已勾選的帳號存入checkedAccount當中
@@ -158,7 +163,7 @@ export default function EditClientVideoID() {
     }
   };
 
-  const handleSubmmit = async () => {
+  const handleSubmit = async () => {
     // 顯示loading圖示
     const id = toast.loading("解鎖中...");
     // 將checkedVideo與checkedAccount的資料透過API傳送到後端
@@ -202,11 +207,11 @@ export default function EditClientVideoID() {
     if (!ignore) {
       //  透過API將所有帳號資料撈出來
       fetchaAccountData({
-        api: "account",
+        api: `account`,
       });
       //  透過API將所有影片資料撈出來
       fetchVideoData({
-        api: "videos",
+        api: `videos/${user.token}/${user.email}`,
       });
     }
     return () => {
@@ -261,6 +266,7 @@ export default function EditClientVideoID() {
 
   useEffect(() => {
     const rows = searchResult.length;
+    setLastPage(1);
     setLastPage(Math.ceil(rows / rowsPerPage));
     setShowData(searchResult.slice(0, rowsPerPage));
   }, [searchResult, rowsPerPage]);
@@ -277,6 +283,7 @@ export default function EditClientVideoID() {
     const start = (page - 1) * Number(rowsPerPage);
     // convert rowsPerPage to number
     const end = start + Number(rowsPerPage);
+
     setShowData(searchVideoResult.slice(start, end));
   };
   //   頁數發生變化時，重新計算要顯示的資料(影片用)
@@ -615,7 +622,7 @@ export default function EditClientVideoID() {
             ? true
             : false
         }
-        onClick={handleSubmmit}
+        onClick={handleSubmit}
       >
         <b>完成</b>
       </button>

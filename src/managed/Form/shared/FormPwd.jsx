@@ -9,9 +9,7 @@ function FormPwd({
   StrengthMeterPwdScore = 0,
   PwdMaxLength = 20,
   GroupClassName = "mb-2",
-  LabelClassName = "fs-3",
   InputGroupClassName = "mb-1",
-  FeedBackClassName = "fs-5",
   LabelForName = "inputPassword",
   ControlName = "password",
   ChangeEvent = null,
@@ -30,11 +28,7 @@ function FormPwd({
 }) {
   return (
     <Form.Group className={GroupClassName}>
-      <Form.Label
-        htmlFor={LabelForName}
-        className={LabelClassName}
-        style={{ cursor: "pointer" }}
-      >
+      <Form.Label htmlFor={LabelForName} style={{ cursor: "pointer" }}>
         {LabelMessage}
       </Form.Label>
       <InputGroup className={InputGroupClassName}>
@@ -60,10 +54,8 @@ function FormPwd({
             icon={ShowPwdCondition ? faEyeSlash : faEye}
           />
         </span>
-        <Form.Control.Feedback className={FeedBackClassName}>
-          {CorrectMessage}
-        </Form.Control.Feedback>
-        <Form.Control.Feedback type="invalid" className={FeedBackClassName}>
+        <Form.Control.Feedback>{CorrectMessage}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">
           {ErrorMessage}
         </Form.Control.Feedback>
       </InputGroup>

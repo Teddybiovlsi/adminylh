@@ -5,7 +5,7 @@
 // 若傳送成功，5秒後自動跳轉回到首頁
 
 import React, { useEffect, useState } from "react";
-import { Form } from "react-bootstrap";
+import { Col, Form } from "react-bootstrap";
 import { Formik } from "formik";
 import * as yup from "yup";
 import Card from "react-bootstrap/Card";
@@ -128,22 +128,36 @@ export default function BackendRegistration() {
                 touched,
               }) => (
                 <Form noValidate onSubmit={handleSubmit}>
-                  <FormEmail
-                    ChangeEvent={handleChange}
-                    BlurEvent={handleBlur}
-                    EmailValue={values.email}
-                    ValidCheck={touched.email && !errors.email}
-                    InValidCheck={touched.email && errors.email}
-                    ErrorMessage={errors.email}
-                  />
-                  <FormAccount
-                    ChangeEvent={handleChange}
-                    BlurEvent={handleBlur}
-                    AccountValue={values.account}
-                    ValidCheck={touched.account && !errors.account}
-                    InValidCheck={touched.account && errors.account}
-                    ErrorMessage={errors.account}
-                  />
+                  <Form.Group className="mb-3" controlId="formNewManageMail">
+                    <Form.Label>請輸入電子郵件(email)：</Form.Label>
+                    <Form.Control
+                      type="email"
+                      name="email"
+                      placeholder="請於此輸入電子郵件(email)"
+                      onChange={handleChange}
+                      value={values.email}
+                      isInvalid={!!errors.email}
+                      required
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.email}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group className="mb-2" controlId="formNewManageAccount">
+                    <Form.Label>請輸入帳號：</Form.Label>
+                    <Form.Control
+                      name="account"
+                      type="text"
+                      aria-describedby="accountHelpBlock"
+                      placeholder="請在此處輸入帳號"
+                      onChange={handleChange}
+                      value={values.account}
+                      isInvalid={!!errors.account}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.account}
+                    </Form.Control.Feedback>
+                  </Form.Group>
                   <FormPwd
                     GroupClassName="mb-1"
                     SetStrengthMeter={true}
@@ -180,12 +194,16 @@ export default function BackendRegistration() {
                     CorrectMessage="確認密碼與輸入密碼相符"
                     ErrorMessage={errors.confirmPassword}
                   />
-                  <div className={`${styles.btnPosition} d-grid gap-2 p-2`}>
-                    <BtnBootstrap
-                      text={"送出"}
-                      btnType={"submit"}
-                      variant={"primary"}
-                    />
+                  <div className="d-grid gap-2">
+                    <Col className="d-grid gap-2">
+                      <BtnBootstrap
+                        btnPosition=""
+                        variant="outline-primary"
+                        btnSize="md"
+                        btnType={"submit"}
+                        text={"送出"}
+                      />
+                    </Col>
                   </div>
                 </Form>
               )}
