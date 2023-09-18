@@ -59,12 +59,11 @@ export default function EditClientVideoID() {
   const [errorMessage, setErrorMessage] = useState('');
   //   顯示帳號列表的Modal
   const [showAccountModal, setShowAccountModal] = useState(false);
-  const handleCloseAccountModal = () => setShowAccountModal(false);
-  const handleShowAccountModal = () => setShowAccountModal(true);
+  const handleAccountModal = (show) => setShowAccountModal(show);
 
   const handleConfirmCheckedAccount = () => {
     setCheckedAccount(tempCheckedAccount);
-    handleCloseAccountModal();
+    handleAccountModal(false);
   };
   // 搜尋欄位內容(帳號用)
   const [searchText, setSearchText] = useState('');
@@ -281,7 +280,7 @@ export default function EditClientVideoID() {
         : [...prevItems, itemID]
     );
   };
-  
+
   // Usage for handling checked accounts
   const handleCheckedAccount = (ClientID) => {
     handleToggleItem(ClientID, setTempCheckedAccount);
@@ -322,7 +321,7 @@ export default function EditClientVideoID() {
               btnPosition='w-100 btn btn-lg'
               text={'增減帳號'}
               onClickEventName={() => {
-                handleShowAccountModal();
+                handleAccountModal(true);
               }}
             />
           </Col>
@@ -358,7 +357,12 @@ export default function EditClientVideoID() {
         </Row>
       </Container>
 
-      <Modal show={showAccountModal} onHide={handleCloseAccountModal}>
+      <Modal
+        show={showAccountModal}
+        onHide={() => {
+          handleAccountModal(false);
+        }}
+      >
         <Modal.Header closeButton>
           <Modal.Title>請選擇新增之帳號</Modal.Title>
         </Modal.Header>
@@ -457,7 +461,7 @@ export default function EditClientVideoID() {
             variant='outline-secondary'
             text={'取消'}
             onClickEventName={() => {
-              handleCloseAccountModal();
+              handleAccountModal(false);
             }}
           />
           <BtnBootstrap
