@@ -90,12 +90,11 @@ export default function EditClientVideoID() {
 
   //   顯示影片列表的Modal
   const [showVideoModal, setShowVideoModal] = useState(false);
-  const handleCloseVideoModal = () => setShowVideoModal(false);
-  const handleShowVideoModal = () => setShowVideoModal(true);
+  const handleVideoModal = (show) => setShowVideoModal(show);
 
   const handleConfirmCheckedVideo = () => {
     setCheckedVideo(tempCheckedVideo);
-    handleCloseVideoModal();
+    handleVideoModal(false);
   };
 
   let navigate = useNavigate();
@@ -105,7 +104,7 @@ export default function EditClientVideoID() {
 
   const handleSubmit = async () => {
     // 顯示loading圖示
-    const id = toast.loading('解鎖中...');
+    let id = toast.loading('解鎖中...');
     // 將checkedVideo與checkedAccount的資料透過API傳送到後端
     try {
       const data = {
@@ -350,7 +349,7 @@ export default function EditClientVideoID() {
               btnPosition='w-100 btn btn-lg'
               text={'增減影片'}
               onClickEventName={() => {
-                handleShowVideoModal();
+                handleVideoModal(true);
               }}
             />
           </Col>
@@ -476,7 +475,12 @@ export default function EditClientVideoID() {
       </Modal>
 
       {/* 影片類 */}
-      <Modal show={showVideoModal} onHide={handleCloseVideoModal}>
+      <Modal
+        show={showVideoModal}
+        onHide={() => {
+          handleVideoModal(false);
+        }}
+      >
         <Modal.Header closeButton>
           <Modal.Title>請選擇新增之影片</Modal.Title>
         </Modal.Header>
@@ -576,7 +580,7 @@ export default function EditClientVideoID() {
             variant='outline-secondary'
             text={'取消'}
             onClickEventName={() => {
-              handleCloseVideoModal();
+              handleVideoModal(false);
             }}
           />
           <BtnBootstrap
