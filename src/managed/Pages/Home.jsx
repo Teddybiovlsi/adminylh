@@ -26,13 +26,16 @@ import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 
 export default function Home() {
-  // const email = JSON.parse(localStorage?.getItem("manage")).email;
-  // const adminMail = encodeURIComponent(email);
+  const navigate = useNavigate();
+
+  const manage = JSON.parse(
+    localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
+  );
 
   // 請求localStorage中的管理者資料
   const [localData, setLocalData] = useState({
-    adminToken: JSON.parse(localStorage?.getItem("manage")).token,
-    adminMail: JSON.parse(localStorage?.getItem("manage")).email,
+    adminToken: manage.token,
+    adminMail: manage.email,
   });
   // console.log(localData.adminMail);
 
@@ -90,8 +93,6 @@ export default function Home() {
 
   const handleShowAddVideoModal = () => setShowAddVideoModal(true);
   const handleCloseAddVideoModal = () => setShowAddVideoModal(false);
-
-  const navigate = useNavigate();
 
   const handleEditVideo = () => {
     if (selectVideoindex.length == 0) {

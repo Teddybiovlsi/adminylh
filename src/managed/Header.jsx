@@ -12,11 +12,14 @@ import { LinkContainer } from "react-router-bootstrap";
 import styles from "../styles/components/NavStyle.module.scss";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { AiFillSetting } from "react-icons/ai";
 
 export default function Header({ expand = "lg" }) {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(JSON.parse(localStorage?.getItem("manage")));
+  const user = JSON.parse(
+    localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
+  );
 
   // const expTimeFormat = Date.parse(Date(user.expTime));
   // const nowTimeFormat = Date.now();
@@ -54,57 +57,71 @@ export default function Header({ expand = "lg" }) {
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="me-auto">
-              <NavDropdown title="使用者管理" id="collasible-nav-dropdown">
-                <LinkContainer to="/ManageClientAccount">
-                  <NavDropdown.Item>帳號管理</NavDropdown.Item>
-                </LinkContainer>{" "}
-                <LinkContainer to="/ManagePraticeRecord">
-                  <NavDropdown.Item>紀錄管理</NavDropdown.Item>
-                </LinkContainer>{" "}
-              </NavDropdown>
-              <NavDropdown title="後台使用者管理" id="collasible-nav-dropdown">
-                <LinkContainer to="/Admin/Register">
-                  <NavDropdown.Item>註冊帳號</NavDropdown.Item>
-                </LinkContainer>{" "}
-                <LinkContainer to="/">
-                  <NavDropdown.Item>管理帳號</NavDropdown.Item>
-                </LinkContainer>{" "}
-              </NavDropdown>
-              <NavDropdown title="建立影片表單" id="collasible-nav-dropdown">
-                <LinkContainer to="/Pratice">
-                  <NavDropdown.Item>練習用</NavDropdown.Item>
-                </LinkContainer>{" "}
-                <LinkContainer to="/Exam">
-                  <NavDropdown.Item>測驗用</NavDropdown.Item>
-                </LinkContainer>{" "}
-              </NavDropdown>
-              <LinkContainer to="/pratice/texts">
-                <Nav.Link href="#">建立衛教文章</Nav.Link>
-              </LinkContainer>
+              {user !== null ? (
+                <NavDropdown title="使用者管理" id="collasible-nav-dropdown">
+                  <LinkContainer to="/ManageClientAccount">
+                    <NavDropdown.Item>帳號管理</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                  <LinkContainer to="/ManagePraticeRecord">
+                    <NavDropdown.Item>紀錄管理</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                </NavDropdown>
+              ) : null}
+              {user !== null ? (
+                <NavDropdown
+                  title="後台使用者管理"
+                  id="collasible-nav-dropdown"
+                >
+                  <LinkContainer to="/Admin/Register">
+                    <NavDropdown.Item>註冊帳號</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                  <LinkContainer to="/">
+                    <NavDropdown.Item>管理帳號</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                </NavDropdown>
+              ) : null}
+              {user !== null ? (
+                <NavDropdown title="建立影片表單" id="collasible-nav-dropdown">
+                  <LinkContainer to="/Pratice">
+                    <NavDropdown.Item>練習用</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                  <LinkContainer to="/Exam">
+                    <NavDropdown.Item>測驗用</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                </NavDropdown>
+              ) : null}
             </Nav>
 
             <Nav>
-              {user !== null && (
-                <div className="d-flex align-items-center justify-content-center me-2">
-                  <p className="m-0 ">{`${user.name}你好`}</p>
-                </div>
-              )}
-              {user !== null ? (
-                <Button
-                  variant="outline-primary"
-                  onClick={() => {
-                    localStorage.removeItem("user");
-                    setUser(null);
-                    navigate("/");
-                  }}
-                >
-                  登出
-                </Button>
-              ) : (
-                <Link to="/">
-                  <Button variant="outline-primary">登入</Button>
-                </Link>
-              )}
+              <NavDropdown
+                title={
+                  <>
+                    設定
+                    <AiFillSetting />
+                  </>
+                }
+                id="collasible-nav-dropdown"
+                align={{ lg: "end" }}
+              >
+                s{" "}
+                {user !== null ? (
+                  <NavDropdown.Item
+                    as={"button"}
+                    onClick={() => {
+                      localStorage.getItem("manage") && localStorage.clear();
+                      sessionStorage.getItem("manage") &&
+                        sessionStorage.clear();
+                      navigate("/");
+                    }}
+                  >
+                    登出
+                  </NavDropdown.Item>
+                ) : (
+                  <LinkContainer to="/">
+                    <NavDropdown.Item>登入</NavDropdown.Item>
+                  </LinkContainer>
+                )}
+              </NavDropdown>
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>
