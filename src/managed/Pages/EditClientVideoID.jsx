@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Col,
   Container,
@@ -7,21 +7,33 @@ import {
   Modal,
   Row,
   InputGroup,
-} from 'react-bootstrap';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { get, post } from '../axios';
-import BtnBootstrap from '../../components/BtnBootstrap';
-import FilterPageSize from '../JsonFile/FilterPageContentSize.json';
-import ReactPaginate from 'react-paginate';
-import ToastAlert from '../../components/ToastAlert';
-import { toast } from 'react-toastify';
+} from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
+import { get, post } from "../axios";
+import BtnBootstrap from "../../components/BtnBootstrap";
+import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
+import FilterType from "../JsonFile/FilterVideoType.json";
+import ReactPaginate from "react-paginate";
+import ToastAlert from "../../components/ToastAlert";
+import { toast } from "react-toastify";
 
 export default function EditClientVideoID() {
   const { state } = useLocation();
-  if (!state) window.location.href = '/';
+  if (!state) window.location.href = "/";
+
+  const convertType = (type) => {
+    switch (type) {
+      case 0:
+        return "練習用";
+      case 1:
+        return "測驗用";
+      default:
+        return "練習用";
+    }
+  };
 
   const user = JSON.parse(
-    localStorage?.getItem('manage') || sessionStorage?.getItem('manage')
+    localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
   );
 
   const location = useLocation();
@@ -55,17 +67,19 @@ export default function EditClientVideoID() {
   const [searchVideoResult, setSearchVideoResult] = useState([]);
 
   //   若伺服器發生錯誤，則顯示錯誤訊息
-  const [errorMessage, setErrorMessage] = useState('');
-  //   顯示帳號列表的Modal
-  const [showAccountModal, setShowAccountModal] = useState(false);
-  const handleAccountModal = (show) => setShowAccountModal(show);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleConfirmCheckedAccount = () => {
     setCheckedAccount(tempCheckedAccount);
     handleAccountModal(false);
   };
   // 搜尋欄位內容(帳號用)
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
+  // 搜尋欄位內容(影片用)
+  const [searchTextVideo, setSearchTextVideo] = useState("");
+  // 篩選影片類型(影片用)
+  const [searchType, setSearchType] = useState("empty");
+
   // 存放每頁顯示的資料筆數(帳號用):rowsPerPage
   // 存放每頁顯示的資料筆數(影片用):rowsPerPageVideo
   // 存放目前頁數的資料(帳號用):currentPage
@@ -88,9 +102,9 @@ export default function EditClientVideoID() {
   const [showVideoData, setShowVideoData] = useState(
     searchVideoResult.slice(0, paginationSettings.rowsPerPageVideo)
   );
-  // 搜尋欄位內容(影片用)
-  const [searchTextVideo, setSearchTextVideo] = useState('');
-
+  //   顯示帳號列表的Modal
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const handleAccountModal = (show) => setShowAccountModal(show);
   //   顯示影片列表的Modal
   const [showVideoModal, setShowVideoModal] = useState(false);
   const handleVideoModal = (show) => setShowVideoModal(show);
@@ -102,22 +116,22 @@ export default function EditClientVideoID() {
 
   let navigate = useNavigate();
   const handleRedirectToManageAccount = () => {
-    navigate('/ManageClientAccount', { replace: true });
+    navigate("/ManageClientAccount", { replace: true });
   };
 
   const handleSubmit = async () => {
     // 顯示loading圖示
-    let id = toast.loading('解鎖中...');
+    let id = toast.loading("解鎖中...");
     // 將checkedVideo與checkedAccount的資料透過API傳送到後端
     try {
       const data = {
         checkedAccount: checkedAccount,
         checkedVideo: checkedVideo,
       };
-      const response = await post('video/client', data);
+      const response = await post("video/client", data);
       toast.update(id, {
-        render: '上傳成功，2秒後將回到管理介面\n請稍後...',
-        type: 'success',
+        render: "上傳成功，2秒後將回到管理介面\n請稍後...",
+        type: "success",
         isLoading: false,
         autoClose: 2000,
       });
@@ -125,14 +139,14 @@ export default function EditClientVideoID() {
         handleRedirectToManageAccount();
       }, 2000);
     } catch (error) {
-      let errorMessage = '上傳失敗，請重新嘗試';
-      if (error.code === 'ECONNABORTED') {
-        errorMessage = '伺服器連線逾時，請重新嘗試';
+      let errorMessage = "上傳失敗，請重新嘗試";
+      if (error.code === "ECONNABORTED") {
+        errorMessage = "伺服器連線逾時，請重新嘗試";
       }
 
       toast.update(id, {
         render: errorMessage,
-        type: 'error',
+        type: "error",
         isLoading: false,
         autoClose: 2000,
       });
@@ -146,17 +160,17 @@ export default function EditClientVideoID() {
       const checkIsArray = Array.isArray(data);
       setData(checkIsArray ? data : [data]);
       setSearchResult(checkIsArray ? data : [data]);
-      setErrorMessage('');
+      setErrorMessage("");
     } catch (error) {
       handleApiError(error);
     }
   };
 
   const handleApiError = (error) => {
-    if (error.code === 'ECONNABORTED') {
-      setErrorMessage('伺服器連線逾時，請重新嘗試');
+    if (error.code === "ECONNABORTED") {
+      setErrorMessage("伺服器連線逾時，請重新嘗試");
     } else {
-      setErrorMessage('上傳失敗，請重新嘗試');
+      setErrorMessage("上傳失敗，請重新嘗試");
     }
   };
 
@@ -166,7 +180,7 @@ export default function EditClientVideoID() {
 
     const fetchDataAsync = async () => {
       await fetchData({
-        api: 'account',
+        api: "account",
         setData: setAccountInfo,
         setSearchResult,
       });
@@ -195,7 +209,7 @@ export default function EditClientVideoID() {
   }, [accountInfo, checkedAccount]);
 
   useEffect(() => {
-    if (searchText !== '') {
+    if (searchText !== "") {
       // 過濾帳號資料
       const filteredAccountInfo = accountInfo.filter((item) => {
         return (
@@ -242,12 +256,16 @@ export default function EditClientVideoID() {
   }, [videoData, checkedVideo]);
 
   useEffect(() => {
-    if (searchTextVideo !== '') {
-      // 過濾影片資料
-      const filteredVideoData = videoData.filter((item) => {
-        return item.video_name.includes(searchTextVideo);
-      });
+    if (searchTextVideo !== "") {
+      let filteredVideoData = videoData.filter((item) =>
+        item.video_name.includes(searchTextVideo)
+      );
 
+      if (searchType !== "empty") {
+        filteredVideoData = filteredVideoData.filter(
+          (item) => item.video_type === searchType
+        );
+      }
       // 更新搜尋結果
       setSearchVideoResult(filteredVideoData);
 
@@ -258,23 +276,49 @@ export default function EditClientVideoID() {
         currentPageVideo: 0,
         lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
       });
+
       setShowVideoData(
         filteredVideoData.slice(0, paginationSettings.rowsPerPageVideo)
       );
     } else {
-      // 無搜尋條件時，使用所有影片資料
-      setSearchVideoResult(videoData);
-
-      // 計算分頁相關狀態
-      const rows = videoData.length;
-      setPaginationSettings({
-        ...paginationSettings,
-        currentPageVideo: 0,
-        lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
-      });
-      setShowVideoData(videoData.slice(0, paginationSettings.rowsPerPageVideo));
+      console.log("searchType", searchType);
+      if (searchType !== "empty") {
+        let filteredVideoData = videoData.filter(
+          (item) => item.video_type === searchType
+        );
+        console.log("filteredVideoData", filteredVideoData);
+        setSearchVideoResult(filteredVideoData);
+        // 計算分頁相關狀態
+        const rows = filteredVideoData.length;
+        setPaginationSettings({
+          ...paginationSettings,
+          currentPageVideo: 0,
+          lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
+        });
+        setShowVideoData(
+          filteredVideoData.slice(0, paginationSettings.rowsPerPageVideo)
+        );
+      } else {
+        // 無搜尋／篩選條件時，使用所有影片資料
+        setSearchVideoResult(videoData);
+        // 計算分頁相關狀態
+        const rows = videoData.length;
+        setPaginationSettings({
+          ...paginationSettings,
+          currentPageVideo: 0,
+          lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
+        });
+        setShowVideoData(
+          videoData.slice(0, paginationSettings.rowsPerPageVideo)
+        );
+      }
     }
-  }, [searchTextVideo, videoData, paginationSettings.rowsPerPageVideo]);
+  }, [
+    searchType,
+    searchTextVideo,
+    videoData,
+    paginationSettings.rowsPerPageVideo,
+  ]);
 
   // 頁數發生變化時，重新計算要顯示的資料（帳號或影片用）
   const handlePageChange = (page, isAccountPage) => {
@@ -285,7 +329,7 @@ export default function EditClientVideoID() {
         ...paginationSettings,
         currentPage: page,
       });
-      if (searchText !== '') {
+      if (searchText !== "") {
         setShowAccountData(searchResult.slice(start, end));
       } else {
         setShowAccountData(accountInfo.slice(start, end));
@@ -297,7 +341,7 @@ export default function EditClientVideoID() {
         ...paginationSettings,
         currentPageVideo: page,
       });
-      if (searchTextVideo !== '') {
+      if (searchTextVideo !== "") {
         setShowVideoData(searchVideoResult.slice(start, end));
       } else {
         setShowVideoData(videoData.slice(start, end));
@@ -324,22 +368,22 @@ export default function EditClientVideoID() {
   };
 
   return (
-    <div className='container pb-4'>
-      <h1 className='fw-bold mt-2 mb-2'>批次勾選影片</h1>
+    <div className="container pb-4">
+      <h1 className="fw-bold mt-2 mb-2">批次勾選影片</h1>
       <Container>
         <Row>
           <Col md={6}>
-            <ListGroup as='ol' numbered>
-              <h5 className='fw-bold'>選擇之帳號：</h5>
+            <ListGroup as="ol" numbered>
+              <h5 className="fw-bold">選擇之帳號：</h5>
               {filteraccountInfo.map((item, index) => {
                 return (
                   <ListGroup.Item
                     key={index}
-                    as='li'
-                    className='d-flex justify-content-between align-items-start'
+                    as="li"
+                    className="d-flex justify-content-between align-items-start"
                   >
-                    <div className='ms-2 me-auto'>
-                      <div className='fw-bold'>{item.client_name}</div>
+                    <div className="ms-2 me-auto">
+                      <div className="fw-bold">{item.client_name}</div>
                       帳號：{item.client_account}
                       <br />
                       信箱：{item.client_email}
@@ -349,26 +393,26 @@ export default function EditClientVideoID() {
               })}
             </ListGroup>
             <BtnBootstrap
-              variant='outline-secondary'
-              btnPosition='w-100 btn btn-lg'
-              text={'增減帳號'}
+              variant="outline-secondary"
+              btnPosition="w-100 btn btn-lg"
+              text={"增減帳號"}
               onClickEventName={() => {
                 handleAccountModal(true);
               }}
             />
           </Col>
           <Col md={6}>
-            <ListGroup as='ol' numbered>
-              <h5 className='fw-bold'>選擇之影片：</h5>
+            <ListGroup as="ol" numbered>
+              <h5 className="fw-bold">選擇之影片：</h5>
               {filtervideoData.map((item, index) => {
                 return (
                   <ListGroup.Item
                     key={index}
-                    as='li'
-                    className='d-flex justify-content-between align-items-start'
+                    as="li"
+                    className="d-flex justify-content-between align-items-start"
                   >
-                    <div className='ms-2 me-auto'>
-                      <div className='fw-bold'>影片名稱：{item.video_name}</div>
+                    <div className="ms-2 me-auto">
+                      <div className="fw-bold">影片名稱：{item.video_name}</div>
                       類型：{item.video_class}
                       <br />
                       語言：{item.video_language}
@@ -378,9 +422,9 @@ export default function EditClientVideoID() {
               })}
             </ListGroup>
             <BtnBootstrap
-              variant='outline-secondary'
-              btnPosition='w-100 btn btn-lg'
-              text={'增減影片'}
+              variant="outline-secondary"
+              btnPosition="w-100 btn btn-lg"
+              text={"增減影片"}
               onClickEventName={() => {
                 handleVideoModal(true);
               }}
@@ -405,12 +449,12 @@ export default function EditClientVideoID() {
               <Form.Group as={Col}>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='bi bi-search'></i>
+                    <i className="bi bi-search"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text'
-                    placeholder='帳號搜尋..'
-                    style={{ boxShadow: 'none' }}
+                    type="text"
+                    placeholder="帳號搜尋.."
+                    style={{ boxShadow: "none" }}
                     defaultValue={searchText}
                     onChange={(e) => {
                       setSearchText(e.target.value);
@@ -422,14 +466,14 @@ export default function EditClientVideoID() {
             <Row>
               <Col>
                 <Form.Select
-                  aria-label='請選擇每頁資料筆數'
+                  aria-label="請選擇每頁資料筆數"
                   onChange={(e) => {
                     setPaginationSettings({
                       ...paginationSettings,
                       rowsPerPage: e.target.value,
                     });
                   }}
-                  className='w-50 float-end mb-2'
+                  className="w-50 float-end mb-2"
                 >
                   {FilterPageSize.map((item, _) => {
                     return (
@@ -442,15 +486,15 @@ export default function EditClientVideoID() {
               </Col>
             </Row>
             <Row>
-              <ListGroup as='ol' numbered>
+              <ListGroup as="ol" numbered>
                 {showAccountData.map((item, index) => {
                   return (
                     <Form.Check
                       key={index}
-                      type='checkbox'
+                      type="checkbox"
                       label={
-                        <div className='ms-2 me-auto'>
-                          <div className='fw-bold'>{item.client_name}</div>
+                        <div className="ms-2 me-auto">
+                          <div className="fw-bold">{item.client_name}</div>
                           帳號：{item.client_account}
                           <br />
                           信箱：{item.client_email}
@@ -471,40 +515,40 @@ export default function EditClientVideoID() {
             <Row>
               <ReactPaginate
                 forcePage={paginationSettings.currentPage}
-                breakLabel={'...'}
-                nextLabel={'>'}
-                previousLabel={'<'}
+                breakLabel={"..."}
+                nextLabel={">"}
+                previousLabel={"<"}
                 onPageChange={(page) => handlePageChange(page.selected, true)}
                 pageCount={paginationSettings.lastPage}
                 pageRangeDisplayed={2}
                 marginPagesDisplayed={1}
-                containerClassName='justify-content-center pagination'
-                breakClassName={'page-item'}
-                breakLinkClassName={'page-link'}
-                pageClassName={'page-item'}
-                pageLinkClassName={'page-link'}
-                previousClassName={'page-item'}
-                previousLinkClassName={'page-link'}
-                nextClassName={'page-item'}
-                nextLinkClassName={'page-link'}
-                activeClassName={'active'}
+                containerClassName="justify-content-center pagination"
+                breakClassName={"page-item"}
+                breakLinkClassName={"page-link"}
+                pageClassName={"page-item"}
+                pageLinkClassName={"page-link"}
+                previousClassName={"page-item"}
+                previousLinkClassName={"page-link"}
+                nextClassName={"page-item"}
+                nextLinkClassName={"page-link"}
+                activeClassName={"active"}
               />
             </Row>
           </Container>
         </Modal.Body>
         <Modal.Footer>
           <BtnBootstrap
-            btnSize='md'
-            variant='outline-secondary'
-            text={'取消'}
+            btnSize="md"
+            variant="outline-secondary"
+            text={"取消"}
             onClickEventName={() => {
               handleAccountModal(false);
             }}
           />
           <BtnBootstrap
-            btnSize='md'
-            variant='outline-primary'
-            text={'確認'}
+            btnSize="md"
+            variant="outline-primary"
+            text={"確認"}
             onClickEventName={() => {
               handleConfirmCheckedAccount();
             }}
@@ -528,13 +572,13 @@ export default function EditClientVideoID() {
               <Form.Group as={Col}>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='bi bi-search'></i>
+                    <i className="bi bi-search"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text'
+                    type="text"
                     defaultValue={searchTextVideo}
-                    placeholder='影片搜尋..'
-                    style={{ boxShadow: 'none' }}
+                    placeholder="影片搜尋.."
+                    style={{ boxShadow: "none" }}
                     onChange={(e) => {
                       setSearchTextVideo(e.target.value);
                     }}
@@ -542,17 +586,36 @@ export default function EditClientVideoID() {
                 </InputGroup>
               </Form.Group>
             </Row>
-            <Row>
-              <Col>
+            <Row className="mt-2 mb-2">
+              <Col md={6}>
                 <Form.Select
-                  aria-label='請選擇每頁資料筆數'
+                  aria-label="請選擇影片練習/測驗"
+                  onChange={(e) => {
+                    e.target.value === "empty"
+                      ? setSearchType("empty")
+                      : setSearchType(Number(e.target.value));
+                  }}
+                >
+                  <option value="empty">選擇影片練習/測驗</option>
+                  {FilterType.map((item, _) => {
+                    return (
+                      <option key={item.id} value={item.value}>
+                        {item.label}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </Col>
+
+              <Col md={6}>
+                <Form.Select
+                  aria-label="請選擇每頁資料筆數"
                   onChange={(e) => {
                     setPaginationSettings({
                       ...paginationSettings,
                       rowsPerPageVideo: e.target.value,
                     });
                   }}
-                  className='w-50 float-end mb-2'
                 >
                   {FilterPageSize.map((item, _) => {
                     return (
@@ -565,21 +628,33 @@ export default function EditClientVideoID() {
               </Col>
             </Row>
             <Row>
-              <ListGroup as='ol' numbered>
+              <ListGroup as="ol" numbered>
                 {showVideoData.map((item, index) => {
                   return (
                     <Form.Check
                       key={index}
-                      type='checkbox'
+                      type="checkbox"
                       label={
-                        <div className='ms-2 me-auto'>
-                          <div className='fw-bold'>
-                            影片名稱：{item.video_name}
-                          </div>
-                          類型：{item.video_class}
-                          <br />
-                          語言：{item.video_language}
-                        </div>
+                        <Container className="ms-2">
+                          <Col>
+                            <Row className="fw-bold">
+                              <p className="m-0 p-0">
+                                影片名稱：{item.video_name}
+                                <b
+                                  className={
+                                    item.video_type == 0
+                                      ? "text-primary"
+                                      : "text-danger"
+                                  }
+                                >
+                                  ({convertType(item.video_type)})
+                                </b>
+                              </p>
+                            </Row>
+                            <Row>類型：{item.video_class}</Row>
+                            <Row>語言：{item.video_language}</Row>
+                          </Col>
+                        </Container>
                       }
                       value={item.id}
                       checked={tempCheckedVideo.includes(item.id)}
@@ -594,40 +669,40 @@ export default function EditClientVideoID() {
             <Row>
               <ReactPaginate
                 forcePage={paginationSettings.currentPageVideo}
-                breakLabel={'...'}
-                nextLabel={'>'}
-                previousLabel={'<'}
+                breakLabel={"..."}
+                nextLabel={">"}
+                previousLabel={"<"}
                 onPageChange={(page) => handlePageChange(page.selected, false)}
                 pageCount={paginationSettings.lastPageVideo}
                 pageRangeDisplayed={2}
                 marginPagesDisplayed={1}
-                containerClassName='justify-content-center pagination'
-                breakClassName={'page-item'}
-                breakLinkClassName={'page-link'}
-                pageClassName={'page-item'}
-                pageLinkClassName={'page-link'}
-                previousClassName={'page-item'}
-                previousLinkClassName={'page-link'}
-                nextClassName={'page-item'}
-                nextLinkClassName={'page-link'}
-                activeClassName={'active'}
+                containerClassName="justify-content-center pagination"
+                breakClassName={"page-item"}
+                breakLinkClassName={"page-link"}
+                pageClassName={"page-item"}
+                pageLinkClassName={"page-link"}
+                previousClassName={"page-item"}
+                previousLinkClassName={"page-link"}
+                nextClassName={"page-item"}
+                nextLinkClassName={"page-link"}
+                activeClassName={"active"}
               />
             </Row>
           </Container>
         </Modal.Body>
         <Modal.Footer>
           <BtnBootstrap
-            btnSize='md'
-            variant='outline-secondary'
-            text={'取消'}
+            btnSize="md"
+            variant="outline-secondary"
+            text={"取消"}
             onClickEventName={() => {
               handleVideoModal(false);
             }}
           />
           <BtnBootstrap
-            btnSize='md'
-            variant='outline-primary'
-            text={'確認'}
+            btnSize="md"
+            variant="outline-primary"
+            text={"確認"}
             onClickEventName={() => {
               handleConfirmCheckedVideo();
             }}
@@ -638,14 +713,14 @@ export default function EditClientVideoID() {
       <button
         // className={styles.container_button}
         style={{
-          borderRadius: '10px',
-          width: '50px',
-          height: '50px',
-          fontSize: '1.2rem',
-          position: 'absolute',
-          bottom: '5%',
-          right: '5%',
-          border: 'none',
+          borderRadius: "10px",
+          width: "50px",
+          height: "50px",
+          fontSize: "1.2rem",
+          position: "absolute",
+          bottom: "5%",
+          right: "5%",
+          border: "none",
         }}
         disabled={
           checkedAccount.length === 0 || checkedVideo.length === 0
