@@ -408,7 +408,7 @@ export default function Home() {
         <td className={styles.container_division_table_rowTable_data}>
           {video_class}
         </td>
-        <td className={styles.container_division_table_rowTable_data}>
+        <td className={video_type === 0 ? "text-primary" : "text-danger"}>
           {convertType(video_type)}
         </td>
         <td className={styles.container_division_table_rowTable_data}>
@@ -418,6 +418,7 @@ export default function Home() {
           <Link
             to={`/Video/`}
             state={{ videoUUID: video_id, videoPath: video_path }}
+            className="text-decoration-none"
           >
             {video_name}
           </Link>
