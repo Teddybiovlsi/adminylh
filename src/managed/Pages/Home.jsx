@@ -23,10 +23,10 @@ import BtnBootstrap from "../../components/BtnBootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
-import styles from "../../styles/pages/HomePage.module.scss";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import FilterType from "../JsonFile/FilterVideoType.json";
+import styles from "../../styles/pages/HomePage.module.scss";
 
 export default function Home() {
   const convertType = (type) => {
@@ -405,14 +405,20 @@ export default function Home() {
             }
           /> */}
         </th>
-        <th className={styles.container_division_table_rowTable_headingType}>
+        <th
+          className={
+            styles.container_division_table_rowTable_headingType_autoHiding
+          }
+        >
           類別
         </th>
         <th className={styles.container_division_table_rowTable_headingType}>
           練習/測驗
         </th>
         <th
-          className={styles.container_division_table_rowTable_headingLanguage}
+          className={
+            styles.container_division_table_rowTable_headingType_autoHiding
+          }
         >
           語言
         </th>
@@ -446,13 +452,13 @@ export default function Home() {
             className={styles.container_division_table_rowTable_data_checkbox}
           />
         </td>
-        <td className={styles.container_division_table_rowTable_data}>
+        <td className={styles.container_division_table_rowTable_data_autoHide}>
           {video_class}
         </td>
         <td className={video_type === 0 ? "text-primary" : "text-danger"}>
           {convertType(video_type)}
         </td>
-        <td className={styles.container_division_table_rowTable_data}>
+        <td className={styles.container_division_table_rowTable_data_autoHide}>
           {video_language}
         </td>
         <td className={styles.container_division_table_rowTable_data}>

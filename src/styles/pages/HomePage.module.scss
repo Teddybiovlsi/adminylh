@@ -69,3 +69,14 @@
   }
 }
 
+.container_division_table_rowTable_headingType_autoHiding,
+.container_division_table_rowTable_data_autoHide{
+  display: block;
+}
+
+@media screen and (max-width: 768px) {
+  .container_division_table_rowTable_headingType_autoHiding,
+  .container_division_table_rowTable_data_autoHide{
+    display: none;
+  }
+}
