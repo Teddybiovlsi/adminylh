@@ -11,6 +11,7 @@ import {
   Container,
   Row,
   Col,
+  InputGroup,
 } from "react-bootstrap";
 import { get, post } from "../axios";
 import { check } from "prettier";
@@ -27,6 +28,7 @@ import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import FilterType from "../JsonFile/FilterVideoType.json";
 import styles from "../../styles/pages/HomePage.module.scss";
+import { last } from "lodash";
 
 export default function Home() {
   const convertType = (type) => {
@@ -103,6 +105,8 @@ export default function Home() {
   const [disabledEditBtn, setDisabledEditBtn] = useState(false);
   const [disabledDelBtn, setDisabledDelBtn] = useState(false);
   // 主頁上方Navbar選單(新增/刪除影片)
+  const [searchTextVideo, setSearchTextVideo] = useState("");
+
   const [showAddVideoModal, setShowAddVideoModal] = useState(false);
   const [showDeleteVideoModal, setShowDeleteVideoModal] = useState(false);
 
@@ -287,6 +291,12 @@ export default function Home() {
       );
     }
 
+    if (searchTextVideo !== "") {
+      filterVideoData = filterVideoData.filter((item) =>
+        item.video_name.includes(searchTextVideo)
+      );
+    }
+
     setFilterVideoData(filterVideoData);
 
     const totalPages = Math.ceil(
@@ -300,6 +310,7 @@ export default function Home() {
     });
     setShowData(filterVideoData.slice(0, paginationSettings.rowsPerPage));
   }, [
+    searchTextVideo,
     selectVideoPratice,
     selectVideoType,
     selectVideoLanguage,
@@ -496,7 +507,8 @@ export default function Home() {
       <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
       <Navbar bg="light" variant="light">
         <Container>
-          <div className="me-auto">
+          <Col xs>
+            {" "}
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="新增影片"
@@ -548,7 +560,21 @@ export default function Home() {
               btnVariant="light"
               tooltipText="刪除影片"
             />
-          </div>
+            <InputGroup>
+              <InputGroup.Text>
+                <i className="bi bi-search"></i>
+              </InputGroup.Text>
+              <Form.Control
+                type="text"
+                defaultValue={searchTextVideo}
+                placeholder="影片名稱搜尋.."
+                style={{ boxShadow: "none" }}
+                onChange={(e) => {
+                  setSearchTextVideo(e.target.value);
+                }}
+              />
+            </InputGroup>
+          </Col>
         </Container>
       </Navbar>
       <Container>
