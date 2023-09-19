@@ -70,6 +70,8 @@ export default function Home() {
   ]);
   // 利用選單過濾影片資料
   const [filterVideoData, setFilterVideoData] = useState(videoData);
+  // 顯示在畫面上的資料
+  const [showData, setShowData] = useState(videoData);
 
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [selectVideoindex, setSelectVideoindex] = useState([]);
@@ -285,6 +287,8 @@ export default function Home() {
       );
     }
 
+    setFilterVideoData(filterVideoData);
+
     const totalPages = Math.ceil(
       filterVideoData.length / paginationSettings.rowsPerPage
     );
@@ -294,10 +298,7 @@ export default function Home() {
       lastPage: totalPages,
       currentPage: 0,
     });
-
-    setFilterVideoData(
-      filterVideoData.slice(0, paginationSettings.rowsPerPage)
-    );
+    setShowData(filterVideoData.slice(0, paginationSettings.rowsPerPage));
   }, [
     selectVideoPratice,
     selectVideoType,
@@ -330,11 +331,16 @@ export default function Home() {
   }, [selectVideoindex]);
 
   const handlePageChange = (page) => {
+    const start = page * paginationSettings.rowsPerPage;
+    const end = start + paginationSettings.rowsPerPage;
+
+    console.log(start, end);
+
     setPaginationSettings({
       ...paginationSettings,
       currentPage: page,
     });
-    setFilterVideoData(videoData.slice(start, end));
+    setShowData(filterVideoData.slice(start, end));
   };
 
   useEffect(() => {
@@ -346,7 +352,7 @@ export default function Home() {
       currentPage: 0,
     });
 
-    setFilterVideoData(videoData.slice(0, paginationSettings.rowsPerPage));
+    setShowData(videoData.slice(0, paginationSettings.rowsPerPage));
   }, [videoData]);
 
   // 全選方塊功能(暫時不使用)
@@ -430,6 +436,7 @@ export default function Home() {
   };
 
   const VideoInfo = ({
+    index,
     id,
     video_id,
     video_name,
@@ -439,7 +446,7 @@ export default function Home() {
     video_language,
   }) => {
     return (
-      <tr key={id}>
+      <tr key={index}>
         <td className={styles.container_division_table_rowTable_data}>
           <input
             type="checkbox"
@@ -636,8 +643,8 @@ export default function Home() {
               <VideoTitle />
             </thead>
             <tbody>
-              {filterVideoData.map((info, _) => {
-                return <VideoInfo {...info} key={info.id} />;
+              {showData.map((info, index) => {
+                return <VideoInfo {...info} key={index} />;
               })}
             </tbody>
           </Table>
