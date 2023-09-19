@@ -26,6 +26,17 @@ import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 
 export default function Home() {
+  const convertType = (type) => {
+    switch (type) {
+      case 0:
+        return "練習";
+      case 1:
+        return "測驗";
+      default:
+        return "練習";
+    }
+  };
+
   const navigate = useNavigate();
 
   const manage = JSON.parse(
@@ -228,15 +239,13 @@ export default function Home() {
       }
     }
   };
-  
+
   const handleSessionTimeout = () => {
     alert("登入逾時，請重新登入");
     if (sessionStorage.getItem("user")) sessionStorage.clear();
     if (localStorage.getItem("user")) localStorage.clear();
     navigate("/");
   };
-
-
 
   useEffect(() => {
     if (filterVideoData.length == 0) {
@@ -356,7 +365,10 @@ export default function Home() {
           />
         </th>
         <th className={styles.container_division_table_rowTable_headingType}>
-          類型
+          類別
+        </th>
+        <th className={styles.container_division_table_rowTable_headingType}>
+          練習/測驗
         </th>
         <th
           className={styles.container_division_table_rowTable_headingLanguage}
@@ -376,6 +388,7 @@ export default function Home() {
     video_name,
     video_path,
     video_class,
+    video_type,
     video_language,
   }) => {
     return (
@@ -394,6 +407,9 @@ export default function Home() {
         </td>
         <td className={styles.container_division_table_rowTable_data}>
           {video_class}
+        </td>
+        <td className={styles.container_division_table_rowTable_data}>
+          {convertType(video_type)}
         </td>
         <td className={styles.container_division_table_rowTable_data}>
           {video_language}
