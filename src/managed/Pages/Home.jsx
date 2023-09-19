@@ -577,7 +577,7 @@ export default function Home() {
           </Col>
         </Container>
       </Navbar>
-      <Container>
+      <Container className="mt-2">
         <Row>
           <Row>
             <Col md={4} className="p-0">
