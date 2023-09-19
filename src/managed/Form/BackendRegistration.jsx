@@ -5,7 +5,7 @@
 // 若傳送成功，5秒後自動跳轉回到首頁
 
 import React, { useEffect, useState } from "react";
-import { Col, Form } from "react-bootstrap";
+import { Col, Container, Form } from "react-bootstrap";
 import { Formik } from "formik";
 import * as yup from "yup";
 import Card from "react-bootstrap/Card";
@@ -21,6 +21,7 @@ import styles from "../../styles/Form/Registration.module.scss";
 import { useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";
 import FormAccount from "./shared/FormAccount.jsx";
+import PageTitleHeading from "../../components/PageTitleHeading";
 
 export default function BackendRegistration() {
   const checkPwdHint = "請再次輸入您的密碼";
@@ -99,118 +100,106 @@ export default function BackendRegistration() {
       ) : (
         ""
       )}
-      <div className="FormStyle d-flex align-items-center justify-content-center">
-        <Card className={`${styles.RegisterCard}`}>
-          <Card.Title className={`${styles.FormTitle}`}>
-            <h1 className="fs-2">
-              <strong>創建後台使用者</strong>
-            </h1>
-          </Card.Title>
-          <Card.Body>
-            <Formik
-              validationSchema={schema}
-              onSubmit={(data, { resetForm }) => {
-                //call sendBackendRegistrationData function and check if it is successful
-                sendBackendRegistrationData(data, resetForm);
-              }}
-              initialValues={{
-                email: "",
-                password: "",
-                confirmPassword: "",
-              }}
-            >
-              {({
-                handleSubmit,
-                handleChange,
-                handleBlur,
-                values,
-                errors,
-                touched,
-              }) => (
-                <Form noValidate onSubmit={handleSubmit}>
-                  <Form.Group className="mb-3" controlId="formNewManageMail">
-                    <Form.Label>請輸入電子郵件(email)：</Form.Label>
-                    <Form.Control
-                      type="email"
-                      name="email"
-                      placeholder="請於此輸入電子郵件(email)"
-                      onChange={handleChange}
-                      value={values.email}
-                      isInvalid={!!errors.email}
-                      required
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.email}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group className="mb-2" controlId="formNewManageAccount">
-                    <Form.Label>請輸入帳號：</Form.Label>
-                    <Form.Control
-                      name="account"
-                      type="text"
-                      aria-describedby="accountHelpBlock"
-                      placeholder="請在此處輸入帳號"
-                      onChange={handleChange}
-                      value={values.account}
-                      isInvalid={!!errors.account}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.account}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                  <FormPwd
-                    GroupClassName="mb-1"
-                    SetStrengthMeter={true}
-                    StrengthMeterPwdScore={pwdScore}
-                    ChangeEvent={handleChange}
-                    BlurEvent={handleBlur}
-                    InputEvent={(e) => {
-                      setPwdScore(zxcvbn(e.target.value).score);
-                    }}
-                    PwdValue={values.password}
-                    ValidCheck={touched.password && !errors.password}
-                    InValidCheck={touched.password && errors.password}
-                    IconID={"showPass"}
-                    SetShowPwdCondition={setShowPwd}
-                    ShowPwdCondition={showPwd}
-                    ErrorMessage={errors.password}
+      <PageTitleHeading text="創建後台使用者" styleOptions={4} />
+      <Container>
+        <Formik
+          validationSchema={schema}
+          onSubmit={(data, { resetForm }) => {
+            //call sendBackendRegistrationData function and check if it is successful
+            sendBackendRegistrationData(data, resetForm);
+          }}
+          initialValues={{
+            email: "",
+            password: "",
+            confirmPassword: "",
+          }}
+        >
+          {({
+            handleSubmit,
+            handleChange,
+            handleBlur,
+            values,
+            errors,
+            touched,
+          }) => (
+            <Form noValidate onSubmit={handleSubmit}>
+              <Form.Group className="mb-3" controlId="formNewManageMail">
+                <Form.Label>請輸入電子郵件(email)：</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  placeholder="請於此輸入電子郵件(email)"
+                  onChange={handleChange}
+                  value={values.email}
+                  isInvalid={!!errors.email}
+                  required
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.email}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group className="mb-2" controlId="formNewManageAccount">
+                <Form.Label>請輸入帳號：</Form.Label>
+                <Form.Control
+                  name="account"
+                  type="text"
+                  aria-describedby="accountHelpBlock"
+                  placeholder="請在此處輸入帳號"
+                  onChange={handleChange}
+                  value={values.account}
+                  isInvalid={!!errors.account}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.account}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <FormPwd
+                GroupClassName="mb-1"
+                SetStrengthMeter={true}
+                StrengthMeterPwdScore={pwdScore}
+                ChangeEvent={handleChange}
+                BlurEvent={handleBlur}
+                InputEvent={(e) => {
+                  setPwdScore(zxcvbn(e.target.value).score);
+                }}
+                PwdValue={values.password}
+                ValidCheck={touched.password && !errors.password}
+                InValidCheck={touched.password && errors.password}
+                IconID={"showPass"}
+                SetShowPwdCondition={setShowPwd}
+                ShowPwdCondition={showPwd}
+                ErrorMessage={errors.password}
+              />
+              <FormPwd
+                LabelForName="checkInputPassword"
+                ControlName="confirmPassword"
+                LabelMessage="請再次確認輸入密碼"
+                FormControlPlaceHolder={checkPwdHint}
+                BlurEvent={handleBlur}
+                ChangeEvent={handleChange}
+                PwdValue={values.confirmPassword}
+                SetShowPwdCondition={setShowPwd}
+                ShowPwdCondition={showPwd}
+                ValidCheck={touched.confirmPassword && !errors.confirmPassword}
+                InValidCheck={touched.confirmPassword && errors.confirmPassword}
+                CorrectMessage="確認密碼與輸入密碼相符"
+                ErrorMessage={errors.confirmPassword}
+              />
+              <div className="d-grid gap-2">
+                <Col className="d-grid gap-2">
+                  <BtnBootstrap
+                    btnPosition=""
+                    variant="outline-primary"
+                    btnSize="md"
+                    btnType={"submit"}
+                    text={"送出"}
                   />
-                  <FormPwd
-                    LabelForName="checkInputPassword"
-                    ControlName="confirmPassword"
-                    LabelMessage="請再次確認輸入密碼"
-                    FormControlPlaceHolder={checkPwdHint}
-                    BlurEvent={handleBlur}
-                    ChangeEvent={handleChange}
-                    PwdValue={values.confirmPassword}
-                    SetShowPwdCondition={setShowPwd}
-                    ShowPwdCondition={showPwd}
-                    ValidCheck={
-                      touched.confirmPassword && !errors.confirmPassword
-                    }
-                    InValidCheck={
-                      touched.confirmPassword && errors.confirmPassword
-                    }
-                    CorrectMessage="確認密碼與輸入密碼相符"
-                    ErrorMessage={errors.confirmPassword}
-                  />
-                  <div className="d-grid gap-2">
-                    <Col className="d-grid gap-2">
-                      <BtnBootstrap
-                        btnPosition=""
-                        variant="outline-primary"
-                        btnSize="md"
-                        btnType={"submit"}
-                        text={"送出"}
-                      />
-                    </Col>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          </Card.Body>
-        </Card>
-      </div>
+                </Col>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </Container>
     </>
   );
 }
