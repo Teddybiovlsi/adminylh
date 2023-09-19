@@ -9,6 +9,8 @@ import {
   Modal,
   Navbar,
   Container,
+  Row,
+  Col,
 } from "react-bootstrap";
 import { get, post } from "../axios";
 import { check } from "prettier";
@@ -24,6 +26,7 @@ import { toast } from "react-toastify";
 import styles from "../../styles/pages/HomePage.module.scss";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
+import FilterType from "../JsonFile/FilterVideoType.json";
 
 export default function Home() {
   const convertType = (type) => {
@@ -67,6 +70,7 @@ export default function Home() {
   ]);
   // 利用選單過濾影片資料
   const [filterVideoData, setFilterVideoData] = useState(videoData);
+
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [selectVideoindex, setSelectVideoindex] = useState([]);
   const [selectVideoName, setSelectVideoName] = useState([]);
@@ -75,6 +79,9 @@ export default function Home() {
   // 取得影片類別
   // selectVideoType is 0, get all video data
   const [selectVideoType, setSelectVideoType] = useState(0);
+  // 取得影片練習/測驗
+  const [selectVideoPratice, setSelectVideoPratice] = useState(2);
+
   // 取得影片語系
   // selectVideoLanguage is 0, get all video data
   const [selectVideoLanguage, setSelectVideoLanguage] = useState(0);
@@ -84,16 +91,11 @@ export default function Home() {
   // 創建用戶帳號button
   const [createUserButton, setCreateUserButton] = useState(true);
 
-  // track current page number
-  const [currentPage, setCurrentPage] = useState(1);
-  // track total page number
-  const [totalPage, setTotalPage] = useState(0);
-  // track total video data size
-  const [itemOffset, setItemOffset] = useState(0);
-  // track current page video data size
-  const endOffset = itemOffset + size;
-  // get current page video data
-  const currentItem = videoData.slice(itemOffset, endOffset);
+  const [paginationSettings, setPaginationSettings] = useState({
+    rowsPerPage: 5,
+    currentPage: 0,
+    lastPage: 1,
+  });
 
   // track current page video data size
   const [disabledEditBtn, setDisabledEditBtn] = useState(false);
@@ -186,12 +188,17 @@ export default function Home() {
   // first render, get video data
   useEffect(() => {
     let ignore = false;
+
+    const fetchVideoDataAsync = async () => {
+      await fetchVideoData({
+        api: `videos/${localData.adminToken}/${localData.adminMail}`,
+      });
+    };
+
     if (!ignore) {
       // set loading to true
       setLoading(true);
-      fetchVideoData({
-        api: `videos/${localData.adminToken}/${localData.adminMail}`,
-      });
+      fetchVideoDataAsync();
     }
     return () => {
       ignore = true;
@@ -216,7 +223,9 @@ export default function Home() {
       setVideoData(checkIsArray ? data : [data]);
       setFilterVideoData(checkIsArray ? data : [data]);
       // 將 loading 設為 false
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
       // clear error message
       setErrorMessage("");
     } catch (error) {
@@ -256,44 +265,45 @@ export default function Home() {
   }, [filterVideoData]);
 
   useEffect(() => {
-    if (selectVideoLanguage == 0 && selectVideoType == 0) {
-      setFilterVideoData(videoData);
-    } else if (selectVideoType == 0 && selectVideoLanguage != 0) {
-      setFilterVideoData(
-        videoData.filter(
-          (item) => item.video_language_index == selectVideoLanguage
-        )
-      );
-    } else if (selectVideoType != 0 && selectVideoLanguage == 0) {
-      setFilterVideoData(
-        videoData.filter((item) => item.video_class_index == selectVideoType)
-      );
-    } else {
-      setFilterVideoData(
-        videoData.filter(
-          (item) =>
-            item.video_class_index == selectVideoType &&
-            item.video_language_index == selectVideoLanguage
-        )
-      );
-    }
-  }, [selectVideoType, selectVideoLanguage]);
+    let filterVideoData = videoData;
 
-  // if videoData have any change and it's not empty, set totalPage to Math.ceil(videoData.length / size)
-  useEffect(() => {
-    if (videoData.length > 0) {
-      setTotalPage(Math.ceil(videoData.length / size));
+    if (Number(selectVideoLanguage) !== 0) {
+      filterVideoData = filterVideoData.filter(
+        (item) => item.video_language_index === Number(selectVideoLanguage)
+      );
     }
-  }, [videoData, size]);
 
-  // if selectVideoindex have check all videoData ID, set isCheckAllVideo to true
-  useEffect(() => {
-    if (selectVideoindex.length == videoData.length) {
-      setIsCheckAllVideo(true);
-    } else {
-      setIsCheckAllVideo(false);
+    if (Number(selectVideoType) !== 0) {
+      filterVideoData = filterVideoData.filter(
+        (item) => item.video_class_index === Number(selectVideoType)
+      );
     }
-  }, [selectVideoindex, videoData]);
+
+    if (selectVideoPratice !== 2) {
+      filterVideoData = filterVideoData.filter(
+        (item) => item.video_type === selectVideoPratice
+      );
+    }
+
+    const totalPages = Math.ceil(
+      filterVideoData.length / paginationSettings.rowsPerPage
+    );
+
+    setPaginationSettings({
+      ...paginationSettings,
+      lastPage: totalPages,
+      currentPage: 0,
+    });
+
+    setFilterVideoData(
+      filterVideoData.slice(0, paginationSettings.rowsPerPage)
+    );
+  }, [
+    selectVideoPratice,
+    selectVideoType,
+    selectVideoLanguage,
+    paginationSettings.rowsPerPage,
+  ]);
 
   useEffect(() => {
     if (selectVideoindex.length == 0) {
@@ -319,22 +329,53 @@ export default function Home() {
     setCreateUserButton(selectVideoindex.length != 0 ? false : true);
   }, [selectVideoindex]);
 
-  const handlePageClick = (event) => {
-    const newOffset = (event.selected * size) % videoData.length;
-    setItemOffset(newOffset);
+  const handlePageChange = (page) => {
+    setPaginationSettings({
+      ...paginationSettings,
+      currentPage: page,
+    });
+    setFilterVideoData(videoData.slice(start, end));
   };
 
+  useEffect(() => {
+    setPaginationSettings({
+      ...paginationSettings,
+      lastPage: Math.ceil(
+        filterVideoData.length / paginationSettings.rowsPerPage
+      ),
+      currentPage: 0,
+    });
+
+    setFilterVideoData(videoData.slice(0, paginationSettings.rowsPerPage));
+  }, [videoData]);
+
+  // 全選方塊功能(暫時不使用)
   // if select all video, set isCheckAllVideo to true and set selectVideoindex to all video ID
-  const handleSelectAllVideo = () => {
-    // set isCheckAllVideo to !isCheckAllVideo
-    setIsCheckAllVideo(!isCheckAllVideo);
-    // if isCheckAllVideo is true, set selectVideoindex to []
-    // otherwise, set selectVideoindex to all video ID
+  // const handleSelectAllVideo = () => {
+  //   // set isCheckAllVideo to !isCheckAllVideo
+  //   setIsCheckAllVideo(!isCheckAllVideo);
 
-    isCheckAllVideo
-      ? setSelectVideoindex([])
-      : setSelectVideoindex(videoData.map((item) => item.id));
-  };
+  //   // 依照當下頁面所篩選之資料筆數，決定全選會選到的資料範圍
+
+  //   const start = paginationSettings.currentPage * size;
+  //   const end = start + size;
+
+  //   isCheckAllVideo
+  //     ? setSelectVideoindex([])
+  //     : setSelectVideoindex(
+  //         filterVideoData.slice(start, end).map((item) => item.id)
+  //       );
+  // };
+  // useEffect(() => {
+  //   const start =
+  //     paginationSettings.currentPage * paginationSettings.rowsPerPage;
+  //   const end = start + paginationSettings.rowsPerPage;
+  //   // if selectVideoindex length equal to videoData slice length, set isCheckAllVideo to true
+  //   setIsCheckAllVideo(
+  //     selectVideoindex.length == videoData.slice(start, end).length
+  //   );
+  // }, [selectVideoindex, videoData]);
+  // ........................................................
 
   const handleSelectVideoindex = (ID) => {
     // if selectVideoindex includes ID, set selectVideoindex to selectVideoindex filter ID
@@ -353,7 +394,7 @@ export default function Home() {
         <th
           className={styles.container_division_table_rowTable_headingCheckBox}
         >
-          <input
+          {/* <input
             type="checkbox"
             onChange={() => {
               handleSelectAllVideo();
@@ -362,7 +403,7 @@ export default function Home() {
             className={
               styles.container_division_table_rowTable_heading_checkbox
             }
-          />
+          /> */}
         </th>
         <th className={styles.container_division_table_rowTable_headingType}>
           類別
@@ -497,61 +538,90 @@ export default function Home() {
           </div>
         </Container>
       </Navbar>
-      <div className={styles.container_division_select}>
-        <Form.Select
-          aria-label="請選擇影片類型"
-          onChange={(event) => {
-            setSelectVideoType(event.target.value);
-          }}
-          style={{ width: "200px" }}
-        >
-          {ClassList.map((item, _) => {
-            return (
-              <option key={item.id} value={item.value}>
-                {item.label}
-              </option>
-            );
-          })}
-        </Form.Select>
-        <Form.Select
-          className="me-auto"
-          aria-label="請選擇影片語言"
-          onChange={(event) => {
-            setSelectVideoLanguage(event.target.value);
-          }}
-          style={{ width: "200px" }}
-          selected={selectVideoLanguage}
-        >
-          {LanguageList.map((item, _) => {
-            return (
-              <option key={item.id} value={item.value}>
-                {item.label}
-              </option>
-            );
-          })}
-        </Form.Select>
-
-        {/* use Form.Select to show 每頁顯示筆數 */}
-        <Form.Select
-          aria-label="請選擇每頁顯示筆數"
-          onChange={(event) => {
-            setSize(event.target.value);
-          }}
-          style={{ width: "200px" }}
-          selected={size}
-        >
-          {
-            // use map to show 每頁顯示筆數
-            limitPage.map((limit, _) => {
-              return (
-                <option key={limit.id} value={limit.value}>
-                  每頁顯示{limit.value}筆
-                </option>
-              );
-            })
-          }
-        </Form.Select>
-      </div>
+      <Container>
+        <Row>
+          <Row>
+            <Col md={4} className="p-0">
+              <Form.Select
+                aria-label="請選擇影片類型"
+                onChange={(event) => {
+                  setSelectVideoType(event.target.value);
+                }}
+              >
+                {ClassList.map((item, _) => {
+                  return (
+                    <option key={item.id} value={item.value}>
+                      {item.label}
+                    </option>
+                  );
+                })}
+              </Form.Select>
+            </Col>
+            <Col md={4} className="p-0">
+              <Form.Select
+                aria-label="請選擇影片語言"
+                onChange={(event) => {
+                  setSelectVideoLanguage(event.target.value);
+                }}
+                selected={selectVideoLanguage}
+              >
+                {LanguageList.map((item, _) => {
+                  return (
+                    <option key={item.id} value={item.value}>
+                      {item.label}
+                    </option>
+                  );
+                })}
+              </Form.Select>
+            </Col>
+            <Col md={4} className="p-0">
+              <Form.Select
+                aria-label="請選擇影片練習/測驗"
+                onChange={(event) => {
+                  console.log(event.target.value);
+                  setSelectVideoPratice(Number(event.target.value));
+                }}
+                selected={selectVideoPratice}
+              >
+                <option value="2">全部</option>
+                {FilterType.map((item, _) => {
+                  return (
+                    <option key={item.id} value={item.value}>
+                      {item.label}
+                    </option>
+                  );
+                })}
+              </Form.Select>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={{ span: 4, offset: 8 }} className="p-0">
+              <Form.Select
+                className="mt-1"
+                aria-label="請選擇每頁顯示筆數"
+                onChange={(event) => {
+                  setPaginationSettings({
+                    ...paginationSettings,
+                    rowsPerPage: Number(event.target.value),
+                  });
+                }}
+                selected={paginationSettings.rowsPerPage}
+              >
+                {
+                  // use map to show 每頁顯示筆數
+                  limitPage.map((limit, _) => {
+                    return (
+                      <option key={limit.id} value={limit.value}>
+                        每頁顯示{limit.value}筆
+                      </option>
+                    );
+                  })
+                }
+              </Form.Select>
+            </Col>
+          </Row>
+        </Row>
+      </Container>
 
       {errorFilterMessage == "" && (
         <div className={`mt-3 mb-3 ${styles.container_division}`}>
@@ -566,13 +636,16 @@ export default function Home() {
             </tbody>
           </Table>
           <ReactPaginate
+            forcePage={paginationSettings.currentPage}
             breakLabel={"..."}
             previousLabel={"<"}
             nextLabel={">"}
-            onPageChange={handlePageClick}
+            onPageChange={(page) => {
+              handlePageChange(page.selected);
+            }}
             pageRangeDisplayed={2}
             marginPagesDisplayed={1}
-            pageCount={totalPage}
+            pageCount={paginationSettings.lastPage}
             renderOnZeroPageCount={null}
             containerClassName="justify-content-center pagination"
             previousClassName="page-item"
@@ -584,7 +657,6 @@ export default function Home() {
             breakClassName="page-item"
             breakLinkClassName="page-link"
             activeClassName="active"
-            disabledClassName="disabled"
           />
         </div>
       )}
