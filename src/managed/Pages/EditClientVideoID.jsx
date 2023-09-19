@@ -256,63 +256,36 @@ export default function EditClientVideoID() {
   }, [videoData, checkedVideo]);
 
   useEffect(() => {
+    let filteredVideoData = videoData;
+
     if (searchTextVideo !== "") {
-      let filteredVideoData = videoData.filter((item) =>
+      filteredVideoData = filteredVideoData.filter((item) =>
         item.video_name.includes(searchTextVideo)
       );
-
-      if (searchType !== "empty") {
-        filteredVideoData = filteredVideoData.filter(
-          (item) => item.video_type === searchType
-        );
-      }
-      // 更新搜尋結果
-      setSearchVideoResult(filteredVideoData);
-
-      // 計算分頁相關狀態
-      const rows = filteredVideoData.length;
-      setPaginationSettings({
-        ...paginationSettings,
-        currentPageVideo: 0,
-        lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
-      });
-
-      setShowVideoData(
-        filteredVideoData.slice(0, paginationSettings.rowsPerPageVideo)
-      );
-    } else {
-      console.log("searchType", searchType);
-      if (searchType !== "empty") {
-        let filteredVideoData = videoData.filter(
-          (item) => item.video_type === searchType
-        );
-        console.log("filteredVideoData", filteredVideoData);
-        setSearchVideoResult(filteredVideoData);
-        // 計算分頁相關狀態
-        const rows = filteredVideoData.length;
-        setPaginationSettings({
-          ...paginationSettings,
-          currentPageVideo: 0,
-          lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
-        });
-        setShowVideoData(
-          filteredVideoData.slice(0, paginationSettings.rowsPerPageVideo)
-        );
-      } else {
-        // 無搜尋／篩選條件時，使用所有影片資料
-        setSearchVideoResult(videoData);
-        // 計算分頁相關狀態
-        const rows = videoData.length;
-        setPaginationSettings({
-          ...paginationSettings,
-          currentPageVideo: 0,
-          lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
-        });
-        setShowVideoData(
-          videoData.slice(0, paginationSettings.rowsPerPageVideo)
-        );
-      }
     }
+
+    if (searchType !== "empty") {
+      filteredVideoData = filteredVideoData.filter(
+        (item) => item.video_type === searchType
+      );
+    }
+
+    // 更新搜尋結果
+    setSearchVideoResult(filteredVideoData);
+
+    // 計算分頁相關狀態
+    const rows = filteredVideoData.length;
+    const newPaginationSettings = {
+      ...paginationSettings,
+      currentPageVideo: 0,
+      lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
+    };
+    setPaginationSettings(newPaginationSettings);
+
+    // 更新顯示的影片資料
+    setShowVideoData(
+      filteredVideoData.slice(0, newPaginationSettings.rowsPerPageVideo)
+    );
   }, [
     searchType,
     searchTextVideo,
