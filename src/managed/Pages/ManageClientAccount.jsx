@@ -30,6 +30,8 @@ export default function ManageClientAccount() {
   const userName = useRef(null);
   // 用來儲存修改聯絡信箱的資料
   const userEmail = useRef(null);
+  // 用來儲存修改密碼的資料
+  const userPwd = useRef(null);
 
   const [accountInfo, setAccountInfo] = useState([]);
   // 用來儲存搜尋欄位的資料
@@ -743,6 +745,21 @@ export default function ManageClientAccount() {
                 <Form.Group
                   as={Row}
                   className="mb-2"
+                  controlId="AccountModalForm.usrPWD"
+                >
+                  <Form.Label column>密碼：</Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      type="password"
+                      placeholder="請在此處輸入修改用戶密碼"
+                      disabled={false}
+                      ref={userPwd}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group
+                  as={Row}
+                  className="mb-2"
                   controlId="AccountModalForm.ControlInput1"
                 >
                   <Form.Label column>姓名：</Form.Label>
@@ -803,7 +820,8 @@ export default function ManageClientAccount() {
               onClickEventName={() => {
                 if (
                   userName.current.value == "" &&
-                  userEmail.current.value == ""
+                  userEmail.current.value == "" &&
+                  userPwd.current.value == ""
                 ) {
                   setIsDisableEditProfileBtn(true);
                   toast.error("請輸入修改資料", {
