@@ -12,6 +12,7 @@ import PageTitle from "../../components/Title";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import { get } from "../axios";
 import ReactPaginate from "react-paginate";
+import LoadingComponent from "../../components/LoadingComponent";
 
 export default function ManageClientRecord() {
   const convertType = (type) => {
@@ -30,8 +31,13 @@ export default function ManageClientRecord() {
   const [eachUserRecord, setEachUserRecord] = useState([]);
   //   slice後的使用者紀錄資料
   const [eachUserRecordSlice, setEachUserRecordSlice] = useState([]);
+  // 暫存搜尋使用者
+  const [eachUserRecordTempSearch, setEachUserRecordTempSearch] = useState([]);
 
   const [searchTextUserName, setSearchTextUserName] = useState("");
+
+  const [searchTextUserResultIsNone, setSearchTextUserResultIsNone] =
+    useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -42,6 +48,11 @@ export default function ManageClientRecord() {
   });
 
   const handlePageChange = (page) => {
+    const start = page * paginationSettings.rowsPerPage;
+    const end = start + paginationSettings.rowsPerPage;
+
+    setEachUserRecordSlice(eachUserRecordTempSearch.slice(start, end));
+
     setPaginationSettings({
       ...paginationSettings,
       currentPage: page,
@@ -57,7 +68,9 @@ export default function ManageClientRecord() {
       setEachUserRecord(checkIsArray ? data : [data]);
       setEachUserRecordSlice(checkIsArray ? data : [data]);
       // 將 loading 設為 false
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1500);
       // clear error message
       setErrorMessage("");
     } catch (error) {
@@ -76,8 +89,6 @@ export default function ManageClientRecord() {
       fetchaAccountData({ api: "Admin/Record" });
     };
     if (!ignore) {
-      // set loading to true
-      setLoading(true);
       fetchClientRecord();
     }
     return () => {
@@ -98,25 +109,32 @@ export default function ManageClientRecord() {
       paginationSettings.currentPage * paginationSettings.rowsPerPage;
     const end = start + paginationSettings.rowsPerPage;
 
+    filterUserName.length !== 0
+      ? setSearchTextUserResultIsNone(false)
+      : setSearchTextUserResultIsNone(true);
+
+    setEachUserRecordTempSearch(filterUserName);
     setEachUserRecordSlice(filterUserName.slice(start, end));
 
     setPaginationSettings({
       ...paginationSettings,
+      currentPage: 0,
       lastPage: Math.ceil(
-        eachUserRecord.length / paginationSettings.rowsPerPage
+        filterUserName.length / paginationSettings.rowsPerPage
       ),
     });
-  }, [
-    searchTextUserName,
-    eachUserRecord,
-    paginationSettings.currentPage,
-    paginationSettings.rowsPerPage,
-  ]);
+  }, [searchTextUserName, eachUserRecord, paginationSettings.rowsPerPage]);
+
+  if (loading)
+    return (
+      <LoadingComponent title="紀錄資訊欄位" text="紀錄資訊載入中，請稍後" />
+    );
 
   return (
     <>
       <PageTitle title="臺大醫院雲林分院-衛教系統 使用者紀錄管理" />
       <PageTitleHeading text={"紀錄資訊欄位"} styleOptions={3} />
+
       <Container>
         <Row>
           <Col md={12} className="p-2">
@@ -163,116 +181,133 @@ export default function ManageClientRecord() {
             </Form.Select>
           </Col>
         </Row>
-        <Accordion className="mb-3">
-          {eachUserRecordSlice.map((user, index) => {
-            return (
-              <Accordion.Item eventKey={user.name} key={user.name}>
-                <Accordion.Header>{user.name}</Accordion.Header>
-                <Accordion.Body>
-                  {user.have_video === "使用者目前尚未有勾選之影片" ? (
-                    <div>使用者目前尚未有勾選之影片</div>
-                  ) : (
-                    <Accordion>
-                      {user.record.map((record, index) => {
-                        return (
-                          <Accordion.Item
-                            eventKey={record.videoName}
-                            key={record.videoName}
-                          >
-                            <Accordion.Header>
-                              <p>
-                                <b
-                                  className={
-                                    record.videoType === 1
-                                      ? "text-danger"
-                                      : "text-primary"
-                                  }
-                                >
-                                  ({convertType(record.videoType)})
-                                </b>
-                                {record.videoName}
-                              </p>
-                            </Accordion.Header>
-                            <Accordion.Body>
-                              {record.record_result ===
-                              "使用者目前尚未有任何紀錄" ? (
-                                <p className="text-center fs-4 m-0">
-                                  {record.videoName}尚未有任何紀錄
-                                </p>
-                              ) : (
-                                <Container>
-                                  <Row>
-                                    <Col md={6} xs={10}>
-                                      總{convertType(record.videoType)}次數：
-                                      <b>{record.totalPraticeTimes}</b>
-                                    </Col>
-                                    <Col md={6} xs={10}>
-                                      總{convertType(record.videoType)}準確率：
-                                      <b>{record.record_result}%</b>
-                                    </Col>
-                                  </Row>
-                                  {record.totalQuiz.map((quiz, index) => {
-                                    return (
-                                      <Row key={index} className="mt-2">
-                                        <p className="fs-5">
-                                          第{index + 1}章節
-                                        </p>
-                                        <Col md={4} xs={8}>
-                                          是否為必答題：
-                                          <b className="text-danger">
-                                            {quiz.video_must_correct === 1
-                                              ? "是"
-                                              : "否"}
-                                          </b>
+        {searchTextUserResultIsNone == true ? (
+          <Row>
+            <Col md={12} className="p-2">
+              <p className="text-center fs-4 m-0">查無使用者</p>
+            </Col>
+          </Row>
+        ) : (
+          <>
+            <Accordion className="mb-3">
+              {eachUserRecordSlice.map((user, index) => {
+                return (
+                  <Accordion.Item eventKey={user.name} key={user.name}>
+                    <Accordion.Header>{user.name}</Accordion.Header>
+                    <Accordion.Body>
+                      {user.have_video === "使用者目前尚未有勾選之影片" ? (
+                        <div>使用者目前尚未有勾選之影片</div>
+                      ) : (
+                        <Accordion>
+                          {user.record.map((record, index) => {
+                            return (
+                              <Accordion.Item
+                                eventKey={record.videoName}
+                                key={record.videoName}
+                              >
+                                <Accordion.Header>
+                                  <p>
+                                    <b
+                                      className={
+                                        record.videoType === 1
+                                          ? "text-danger"
+                                          : "text-primary"
+                                      }
+                                    >
+                                      ({convertType(record.videoType)})
+                                    </b>
+                                    {record.videoName}
+                                  </p>
+                                </Accordion.Header>
+                                <Accordion.Body>
+                                  {record.record_result ===
+                                  "使用者目前尚未有任何紀錄" ? (
+                                    <p className="text-center fs-4 m-0">
+                                      {record.videoName}尚未有任何紀錄
+                                    </p>
+                                  ) : (
+                                    <Container>
+                                      <Row>
+                                        <Col md={6} xs={10}>
+                                          總{convertType(record.videoType)}
+                                          次數：
+                                          <b>{record.totalPraticeTimes}</b>
                                         </Col>
-                                        <Col md={4} xs={8}>
-                                          {convertType(record.videoType)}次數：
-                                          <b>{quiz.eachQuestionPraticeTimes}</b>
-                                        </Col>
-                                        <Col md={4} xs={8}>
-                                          {convertType(record.videoType)}
+                                        <Col md={6} xs={10}>
+                                          總{convertType(record.videoType)}
                                           準確率：
-                                          <b>{quiz.eachQuizAccuracy * 100}%</b>
+                                          <b>{record.record_result}%</b>
                                         </Col>
                                       </Row>
-                                    );
-                                  })}
-                                </Container>
-                              )}
-                            </Accordion.Body>
-                          </Accordion.Item>
-                        );
-                      })}
-                    </Accordion>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
-            );
-          })}
-        </Accordion>
-        <ReactPaginate
-          forcePage={paginationSettings.currentPage}
-          breakLabel={"..."}
-          previousLabel={"<"}
-          nextLabel={">"}
-          onPageChange={(page) => {
-            handlePageChange(page.selected);
-          }}
-          pageRangeDisplayed={2}
-          marginPagesDisplayed={1}
-          pageCount={paginationSettings.lastPage}
-          renderOnZeroPageCount={null}
-          containerClassName="justify-content-center pagination"
-          previousClassName="page-item"
-          previousLinkClassName="page-link"
-          nextClassName="page-item"
-          nextLinkClassName="page-link"
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          breakClassName="page-item"
-          breakLinkClassName="page-link"
-          activeClassName="active"
-        />
+                                      {record.totalQuiz.map((quiz, index) => {
+                                        return (
+                                          <Row key={index} className="mt-2">
+                                            <p className="fs-5">
+                                              第{index + 1}章節
+                                            </p>
+                                            <Col md={4} xs={8}>
+                                              是否為必答題：
+                                              <b className="text-danger">
+                                                {quiz.video_must_correct === 1
+                                                  ? "是"
+                                                  : "否"}
+                                              </b>
+                                            </Col>
+                                            <Col md={4} xs={8}>
+                                              {convertType(record.videoType)}
+                                              次數：
+                                              <b>
+                                                {quiz.eachQuestionPraticeTimes}
+                                              </b>
+                                            </Col>
+                                            <Col md={4} xs={8}>
+                                              {convertType(record.videoType)}
+                                              準確率：
+                                              <b>
+                                                {quiz.eachQuizAccuracy * 100}%
+                                              </b>
+                                            </Col>
+                                          </Row>
+                                        );
+                                      })}
+                                    </Container>
+                                  )}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      )}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                );
+              })}
+            </Accordion>
+            <ReactPaginate
+              forcePage={paginationSettings.currentPage}
+              breakLabel={"..."}
+              previousLabel={"<"}
+              nextLabel={">"}
+              onPageChange={(page) => {
+                handlePageChange(page.selected);
+              }}
+              pageRangeDisplayed={2}
+              marginPagesDisplayed={1}
+              pageCount={paginationSettings.lastPage}
+              renderOnZeroPageCount={null}
+              containerClassName="justify-content-center pagination"
+              previousClassName="page-item"
+              previousLinkClassName="page-link"
+              nextClassName="page-item"
+              nextLinkClassName="page-link"
+              pageClassName="page-item"
+              pageLinkClassName="page-link"
+              breakClassName="page-item"
+              breakLinkClassName="page-link"
+              activeClassName="active"
+            />
+          </>
+        )}
       </Container>
     </>
   );
