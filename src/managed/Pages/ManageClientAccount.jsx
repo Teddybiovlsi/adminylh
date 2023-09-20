@@ -176,82 +176,22 @@ export default function ManageClientAccount() {
 
   // 用戶狀態(啟用/停用)改變時，重新選擇資料
   useEffect(() => {
-    if (userState == 0) {
-      if (userVideo == 0) {
-        setFilteraccountInfo(
-          accountInfo.filter(
-            (item) => item.client_is_lock == 0 && item.client_have_video == 0
-          )
-        );
-      } else if (userVideo == 1) {
-        setFilteraccountInfo(
-          accountInfo.filter(
-            (item) => item.client_is_lock == 0 && item.client_have_video == 1
-          )
-        );
-      } else {
-        setFilteraccountInfo(
-          accountInfo.filter((item) => item.client_is_lock == 0)
-        );
-      }
-    } else if (userState == 1) {
-      if (userVideo == 0) {
-        setFilteraccountInfo(
-          accountInfo.filter(
-            (item) => item.client_is_lock == 1 && item.client_have_video == 0
-          )
-        );
-      } else if (userVideo == 1) {
-        setFilteraccountInfo(
-          accountInfo.filter(
-            (item) => item.client_is_lock == 1 && item.client_have_video == 1
-          )
-        );
-      } else {
-        setFilteraccountInfo(
-          accountInfo.filter((item) => item.client_is_lock == 1)
-        );
-      }
-    } else if (userVideo == 0) {
-      if (userState == 0) {
-        setFilteraccountInfo(
-          accountInfo.filter(
-            (item) => item.client_is_lock == 0 && item.client_have_video == 0
-          )
-        );
-      } else if (userState == 1) {
-        setFilteraccountInfo(
-          accountInfo.filter(
-            (item) => item.client_is_lock == 1 && item.client_have_video == 0
-          )
-        );
-      } else {
-        setFilteraccountInfo(
-          accountInfo.filter((item) => item.client_have_video == 0)
-        );
-      }
-    } else if (userVideo == 1) {
-      if (userState == 0) {
-        setFilteraccountInfo(
-          accountInfo.filter(
-            (item) => item.client_is_lock == 0 && item.client_have_video == 1
-          )
-        );
-      } else if (userState == 1) {
-        setFilteraccountInfo(
-          accountInfo.filter(
-            (item) => item.client_is_lock == 1 && item.client_have_video == 1
-          )
-        );
-      } else {
-        setFilteraccountInfo(
-          accountInfo.filter((item) => item.client_have_video == 1)
-        );
-      }
-    } else {
-      setFilteraccountInfo(accountInfo);
-    }
+    const filteredData = accountInfo.filter((item) => {
+      const isLockMatch =
+        Number(userState) === 0
+          ? item.client_is_lock === 0
+          : item.client_is_lock === 1;
+      const isVideoMatch =
+        Number(userVideo) === 0
+          ? item.client_have_video === 0
+          : item.client_have_video === 1;
+
+      return isLockMatch && isVideoMatch;
+    });
+
+    setFilteraccountInfo(filteredData);
   }, [userState, userVideo]);
+
   // 當篩選後的資料長度為0時，顯示錯誤訊息
   useEffect(() => {
     if (filteraccountInfo.length == 0) {
