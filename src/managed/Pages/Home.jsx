@@ -28,7 +28,6 @@ import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import FilterType from "../JsonFile/FilterVideoType.json";
 import styles from "../../styles/pages/HomePage.module.scss";
-import { last } from "lodash";
 
 export default function Home() {
   const convertType = (type) => {
@@ -345,7 +344,7 @@ export default function Home() {
     const start = page * paginationSettings.rowsPerPage;
     const end = start + paginationSettings.rowsPerPage;
 
-    console.log(start, end);
+    // console.log(start, end);
 
     setPaginationSettings({
       ...paginationSettings,
