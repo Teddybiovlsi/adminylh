@@ -159,12 +159,15 @@ export default function ManageClientAccount() {
   // first render, get acoount data
   useEffect(() => {
     let ignore = false;
+    const fetchData = async () => {
+      await fetchaAccountData({
+        api: "account",
+      });
+    };
     if (!ignore) {
       // set loading to true
       setLoading(true);
-      fetchaAccountData({
-        api: "account",
-      });
+      fetchData();
     }
     return () => {
       ignore = true;

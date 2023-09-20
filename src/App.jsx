@@ -37,6 +37,7 @@ import EditClientVideoQA from "./managed/Form/EditClientVideoQA";
 import "./styles/app.css";
 import styles from "./styles/pages/NotFoundPage.module.scss";
 import LogIn from "./managed/Pages/LogIn";
+import ManageClientRecord from "./managed/Pages/ManageClientRecord";
 
 function App() {
   const location = useLocation();
@@ -72,6 +73,10 @@ function App() {
             <Route
               path="/ManageClientAccount"
               element={<ManageClientAccount />}
+            />
+            <Route
+              path="/ManagePraticeRecord"
+              element={<ManageClientRecord />}
             />
             <Route path="/MultiAddUser" element={<MultiAddUser />} />
             <Route path="/MultiAddVideo" element={<EditClientVideoID />} />
