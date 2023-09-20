@@ -1,6 +1,13 @@
 import limitPage from "../JsonFile/FilterPageContentSize.json";
 import React, { useEffect, useState } from "react";
-import { Accordion, Container, Row, Col, Form } from "react-bootstrap";
+import {
+  Accordion,
+  Container,
+  Row,
+  Col,
+  Form,
+  InputGroup,
+} from "react-bootstrap";
 import PageTitle from "../../components/Title";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import { get } from "../axios";
@@ -23,6 +30,9 @@ export default function ManageClientRecord() {
   const [eachUserRecord, setEachUserRecord] = useState([]);
   //   slice後的使用者紀錄資料
   const [eachUserRecordSlice, setEachUserRecordSlice] = useState([]);
+
+  const [searchTextUserName, setSearchTextUserName] = useState("");
+
   const [errorMessage, setErrorMessage] = useState("");
 
   const [paginationSettings, setPaginationSettings] = useState({
@@ -76,10 +86,20 @@ export default function ManageClientRecord() {
   }, []);
 
   useEffect(() => {
+    let filterUserName = eachUserRecord;
+
+    if (searchTextUserName !== "") {
+      filterUserName = eachUserRecord.filter((user) =>
+        user.name.includes(searchTextUserName)
+      );
+    }
+
     const start =
       paginationSettings.currentPage * paginationSettings.rowsPerPage;
     const end = start + paginationSettings.rowsPerPage;
-    setEachUserRecordSlice(eachUserRecord.slice(start, end));
+
+    setEachUserRecordSlice(filterUserName.slice(start, end));
+
     setPaginationSettings({
       ...paginationSettings,
       lastPage: Math.ceil(
@@ -87,6 +107,7 @@ export default function ManageClientRecord() {
       ),
     });
   }, [
+    searchTextUserName,
     eachUserRecord,
     paginationSettings.currentPage,
     paginationSettings.rowsPerPage,
@@ -98,6 +119,24 @@ export default function ManageClientRecord() {
       <PageTitleHeading text={"紀錄資訊欄位"} styleOptions={3} />
       <Container>
         <Row>
+          <Col md={12} className="p-2">
+            <Form>
+              <InputGroup>
+                <InputGroup.Text>
+                  <i className="bi bi-search"></i>
+                </InputGroup.Text>
+                <Form.Control
+                  type="text"
+                  defaultValue={searchTextUserName}
+                  placeholder="使用者名稱搜尋.."
+                  style={{ boxShadow: "none" }}
+                  onChange={(e) => {
+                    setSearchTextUserName(e.target.value);
+                  }}
+                />
+              </InputGroup>
+            </Form>
+          </Col>
           <Col md={{ span: 4, offset: 8 }}>
             <Form.Select
               className="mt-1"
