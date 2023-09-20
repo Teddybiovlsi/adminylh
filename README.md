@@ -32,9 +32,12 @@ npm run dev
 - **[package-lock.json]**
 - **[package.json]**
 
+## 已完成頁面
+ - [x] [首頁](/src/managed/Pages/Home.jsx)
+ - [x] [使用者紀錄頁面](/src/managed/Pages/ManageClientRecord.jsx)
+
 ## 代辦事項
   - 各頁面重新檢查並優化
-  - 使用者紀錄頁面完成
   - 後台使用者管理頁面完成
 
 
