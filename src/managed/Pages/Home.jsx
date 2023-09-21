@@ -38,23 +38,28 @@ export default function Home() {
     adminToken: manage.token,
     adminMail: manage.email,
   };
-  // videoData is an array
-  const [videoData, setVideoData] = useState([
-    {
-      id: 0,
-      video_id: "",
-      video_name: "",
-      video_path: "",
-      video_language: "",
-      video_class: "",
-      video_language_index: "",
-      video_class_index: "",
-    },
-  ]);
-  // 利用選單過濾影片資料
-  const [filterVideoData, setFilterVideoData] = useState(videoData);
-  // 顯示在畫面上的資料
-  const [showData, setShowData] = useState(videoData);
+
+  const initialState = {
+    // API取得的影片資料
+    videoData: [
+      {
+        id: 0,
+        video_id: "",
+        video_name: "",
+        video_path: "",
+        video_language: "",
+        video_class: "",
+        video_language_index: "",
+        video_class_index: "",
+      },
+    ],
+    // 利用選單過濾影片資料
+    filterVideoData: [],
+    // 顯示在畫面上的資料
+    showData: [],
+  };
+
+  const [state, setState] = useState(initialState);
 
   const [selectVideoindex, setSelectVideoindex] = useState([]);
   // loading is true, show loading text, until loading is false
@@ -101,7 +106,7 @@ export default function Home() {
     } else if (selectVideoindex.length > 1) {
       showErrorAndDisableButton("一次僅限勾選一個影片進行編輯");
     } else {
-      const [video] = videoData.filter((item) =>
+      const [video] = state.videoData.filter((item) =>
         selectVideoindex.includes(item.id)
       );
       navigate("/Admin/Edit/Video", {
@@ -177,8 +182,12 @@ export default function Home() {
       const { data } = await get(api);
       const videoData = data.data;
       const checkIsArray = Array.isArray(videoData);
-      setVideoData(checkIsArray ? videoData : [videoData]);
-      setFilterVideoData(checkIsArray ? videoData : [videoData]);
+      setState((state) => ({
+        ...state,
+        videoData: checkIsArray ? videoData : [videoData],
+        filterVideoData: checkIsArray ? videoData : [videoData],
+        showData: checkIsArray ? videoData : [videoData],
+      }));
       setTimeout(() => {
         setLoading(false);
       }, 1000);
@@ -191,8 +200,12 @@ export default function Home() {
       ) {
         handleSessionTimeout();
       }
-      setVideoData([]);
-      setFilterVideoData([]);
+      setState((state) => ({
+        ...state,
+        videoData: [],
+        filterVideoData: [],
+        showData: [],
+      }));
       setLoading(false);
       if (error.response) {
         setErrorMessage(StatusCode(error.response.status));
@@ -235,8 +248,8 @@ export default function Home() {
   );
 
   const filteredData = useMemo(
-    () => filterVideos(videoData),
-    [filterVideos, videoData]
+    () => filterVideos(state.videoData),
+    [filterVideos, state.videoData]
   );
 
   const { rowsPerPage } = paginationSettings;
@@ -250,32 +263,35 @@ export default function Home() {
       currentPage: 0,
     }));
 
-    setShowData(filteredData.slice(0, rowsPerPage));
+    setState((state) => ({
+      ...state,
+      showData: filteredData.slice(0, rowsPerPage),
+    }));
   }, [filteredData, rowsPerPage]);
 
   useEffect(() => {
-    if (showData.length === 0) {
+    if (state.showData.length === 0) {
       setErrorFilterMessage("該語言/類別中無資料");
     } else {
       setErrorFilterMessage("");
     }
-  }, [showData]);
+  }, [state.showData]);
 
   const pickedVideoName = useMemo(() => {
     if (selectVideoindex.length === 0) {
       return [];
-    } else if (selectVideoindex.length === videoData.length) {
-      return videoData.map((item) => item.video_name);
+    } else if (selectVideoindex.length === state.videoData.length) {
+      return state.videoData.map((item) => item.video_name);
     } else {
       const names = selectVideoindex.map((item) => {
-        const found = videoData.find(
+        const found = state.videoData.find(
           (element) => element.id == item
         ).video_name;
         return found;
       });
       return [...new Set(names)];
     }
-  }, [selectVideoindex, videoData]);
+  }, [selectVideoindex, state.videoData]);
 
   useEffect(() => {
     setCreateUserButton(selectVideoindex.length !== 0 ? false : true);
@@ -289,20 +305,25 @@ export default function Home() {
       ...paginationSettings,
       currentPage: page,
     });
-    setShowData(filterVideoData.slice(start, end));
+    setState((state) => ({
+      ...state,
+      showData: state.filterVideoData.slice(start, end),
+    }));
   };
 
   useEffect(() => {
     setPaginationSettings({
       ...paginationSettings,
       lastPage: Math.ceil(
-        filterVideoData.length / paginationSettings.rowsPerPage
+        state.filterVideoData.length / paginationSettings.rowsPerPage
       ),
       currentPage: 0,
     });
-
-    setShowData(videoData.slice(0, paginationSettings.rowsPerPage));
-  }, [videoData]);
+    setState((state) => ({
+      ...state,
+      showData: state.filterVideoData.slice(0, paginationSettings.rowsPerPage),
+    }));
+  }, [state.videoData]);
 
   const handleSelectVideoindex = (ID) => {
     setSelectVideoindex(
@@ -519,7 +540,7 @@ export default function Home() {
               <VideoTitle />
             </thead>
             <tbody>
-              {showData.map((info, index) => {
+              {state.showData.map((info, index) => {
                 return <VideoInfo {...info} key={index} />;
               })}
             </tbody>
@@ -564,7 +585,7 @@ export default function Home() {
           state={{
             videoIndex: selectVideoindex,
             videoName: pickedVideoName,
-            videoData: videoData,
+            videoData: state.videoData,
           }}
           className={styles.disabledLink}
         >
