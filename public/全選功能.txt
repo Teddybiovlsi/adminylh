@@ -1,0 +1,27 @@
+// 全選方塊功能(暫時不使用)
+  // if select all video, set isCheckAllVideo to true and set selectVideoindex to all video ID
+  // const handleSelectAllVideo = () => {
+  //   // set isCheckAllVideo to !isCheckAllVideo
+  //   setIsCheckAllVideo(!isCheckAllVideo);
+
+  //   // 依照當下頁面所篩選之資料筆數，決定全選會選到的資料範圍
+
+  //   const start = paginationSettings.currentPage * size;
+  //   const end = start + size;
+
+  //   isCheckAllVideo
+  //     ? setSelectVideoindex([])
+  //     : setSelectVideoindex(
+  //         filterVideoData.slice(start, end).map((item) => item.id)
+  //       );
+  // };
+  // useEffect(() => {
+  //   const start =
+  //     paginationSettings.currentPage * paginationSettings.rowsPerPage;
+  //   const end = start + paginationSettings.rowsPerPage;
+  //   // if selectVideoindex length equal to videoData slice length, set isCheckAllVideo to true
+  //   setIsCheckAllVideo(
+  //     selectVideoindex.length == videoData.slice(start, end).length
+  //   );
+  // }, [selectVideoindex, videoData]);
+  // ........................................................
