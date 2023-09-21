@@ -100,26 +100,22 @@ export default function FrontEndRegistration() {
     }
   }, [shouldRedirect]);
 
-  // 單一勾選影片
   const handleSelectVideoindex = (ID) => {
-    // if selectVideoindex includes ID, set selectVideoindex to selectVideoindex filter ID
-    // otherwise, set selectVideoindex to selectVideoindex add ID
-    setVideoTempIndex(
-      videoTempIndex.includes(ID)
-        ? videoTempIndex.filter((item) => item !== ID)
-        : [...videoTempIndex, ID]
-    );
-  };
-  // 全部勾選影片
-  const handleSelectAllVideo = () => {
-    // set isCheckAllVideo to !isCheckAllVideo
-    setIsCheckAllVideo(!isCheckAllVideo);
-    // if isCheckAllVideo is true, set selectVideoindex to []
-    // otherwise, set selectVideoindex to all video ID
+    const newVideoTempIndex = videoTempIndex.includes(ID)
+      ? videoTempIndex.filter((item) => item !== ID)
+      : [...videoTempIndex, ID];
 
-    isCheckAllVideo
-      ? setVideoTempIndex([])
-      : setVideoTempIndex(videoData.map((item) => item.id));
+    setVideoTempIndex(newVideoTempIndex);
+    setIsCheckAllVideo(newVideoTempIndex.length === videoData.length);
+  };
+
+  const handleSelectAllVideo = () => {
+    const newVideoTempIndex = isCheckAllVideo
+      ? []
+      : videoData.map((item) => item.id);
+
+    setVideoTempIndex(newVideoTempIndex);
+    setIsCheckAllVideo(newVideoTempIndex.length === videoData.length);
   };
   // 修改影片事件
   const handleEditVideo = () => {
