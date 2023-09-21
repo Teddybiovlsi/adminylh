@@ -1,61 +1,59 @@
-import limitPage from "../JsonFile/FilterPageContentSize.json";
 import React, { useEffect, useState } from "react";
 import {
   Accordion,
-  Container,
-  Row,
   Col,
+  Container,
   Form,
   InputGroup,
+  Row,
 } from "react-bootstrap";
+import ReactPaginate from "react-paginate";
+import LoadingComponent from "../../components/LoadingComponent";
 import PageTitle from "../../components/Title";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import { get } from "../axios";
-import ReactPaginate from "react-paginate";
-import LoadingComponent from "../../components/LoadingComponent";
+import convertType from "../../functions/typeConverter";
+import limitPage from "../JsonFile/FilterPageContentSize.json";
 
 export default function ManageClientRecord() {
-  const convertType = (type) => {
-    switch (type) {
-      case 0:
-        return "練習";
-      case 1:
-        return "測驗";
-      default:
-        return "練習";
-    }
-  };
-
-  const [loading, setLoading] = useState(true);
-  //   原始使用者紀錄資料
-  const [eachUserRecord, setEachUserRecord] = useState([]);
-  //   slice後的使用者紀錄資料
-  const [eachUserRecordSlice, setEachUserRecordSlice] = useState([]);
-  // 暫存搜尋使用者
-  const [eachUserRecordTempSearch, setEachUserRecordTempSearch] = useState([]);
-
-  const [searchTextUserName, setSearchTextUserName] = useState("");
-
-  const [searchTextUserResultIsNone, setSearchTextUserResultIsNone] =
-    useState(false);
-
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const [paginationSettings, setPaginationSettings] = useState({
-    rowsPerPage: 5,
-    currentPage: 0,
-    lastPage: 1,
+  const [state, setState] = useState({
+    loading: true,
+    eachUserRecord: [],
+    eachUserRecordSlice: [],
+    eachUserRecordTempSearch: [],
+    searchTextUserName: "",
+    searchTextUserResultIsNone: false,
+    errorMessage: "",
+    paginationSettings: {
+      rowsPerPage: 5,
+      currentPage: 0,
+      lastPage: 1,
+    },
   });
 
-  const handlePageChange = (page) => {
-    const start = page * paginationSettings.rowsPerPage;
-    const end = start + paginationSettings.rowsPerPage;
+  const {
+    loading,
+    eachUserRecord,
+    eachUserRecordSlice,
+    eachUserRecordTempSearch,
+    searchTextUserName,
+    searchTextUserResultIsNone,
+    errorMessage,
+    paginationSettings,
+  } = state;
 
-    setEachUserRecordSlice(eachUserRecordTempSearch.slice(start, end));
+  const handlePageChange = ({ selected: page }) => {
+    const { rowsPerPage } = paginationSettings;
+    const start = page * rowsPerPage;
+    const end = start + rowsPerPage;
 
-    setPaginationSettings({
-      ...paginationSettings,
-      currentPage: page,
+    setState({
+      ...state,
+      eachUserRecordSlice: eachUserRecordTempSearch.slice(start, end),
+      paginationSettings: {
+        ...paginationSettings,
+        currentPage: page,
+      },
     });
   };
 
@@ -65,32 +63,33 @@ export default function ManageClientRecord() {
       const data = await response.data.data;
       const checkIsArray = Array.isArray(data);
 
-      setEachUserRecord(checkIsArray ? data : [data]);
-      setEachUserRecordSlice(checkIsArray ? data : [data]);
-      // 將 loading 設為 false
-      setTimeout(() => {
-        setLoading(false);
-      }, 1500);
-      // clear error message
-      setErrorMessage("");
+      setState({
+        ...state,
+        eachUserRecord: checkIsArray ? data : [data],
+        eachUserRecordSlice: checkIsArray ? data : [data],
+        errorMessage: "",
+        loading: false,
+      });
     } catch (error) {
-      // 將 loading 設為 false
-      setLoading(false);
-      // if error.response is true, get error message
-      if (error.response) {
-        setErrorMessage(StatusCode(error.response.status));
-      }
+      setState({
+        ...state,
+        errorMessage: error.response ? error.response.data : error.message,
+        loading: false,
+      });
     }
   };
 
   useEffect(() => {
     let ignore = false;
-    const fetchClientRecord = () => {
-      fetchaAccountData({ api: "Admin/Record" });
+
+    const fetchClientRecord = async () => {
+      await fetchaAccountData({ api: "Admin/Record" });
     };
+
     if (!ignore) {
       fetchClientRecord();
     }
+
     return () => {
       ignore = true;
     };
@@ -105,30 +104,28 @@ export default function ManageClientRecord() {
       );
     }
 
-    const start =
-      paginationSettings.currentPage * paginationSettings.rowsPerPage;
-    const end = start + paginationSettings.rowsPerPage;
+    const { currentPage, rowsPerPage } = paginationSettings;
+    const start = currentPage * rowsPerPage;
+    const end = start + rowsPerPage;
 
-    filterUserName.length !== 0
-      ? setSearchTextUserResultIsNone(false)
-      : setSearchTextUserResultIsNone(true);
-
-    setEachUserRecordTempSearch(filterUserName);
-    setEachUserRecordSlice(filterUserName.slice(start, end));
-
-    setPaginationSettings({
-      ...paginationSettings,
-      currentPage: 0,
-      lastPage: Math.ceil(
-        filterUserName.length / paginationSettings.rowsPerPage
-      ),
+    setState({
+      ...state,
+      eachUserRecordTempSearch: filterUserName,
+      eachUserRecordSlice: filterUserName.slice(start, end),
+      paginationSettings: {
+        ...paginationSettings,
+        currentPage: 0,
+        lastPage: Math.ceil(filterUserName.length / rowsPerPage),
+      },
+      searchTextUserResultIsNone: filterUserName.length === 0,
     });
   }, [searchTextUserName, eachUserRecord, paginationSettings.rowsPerPage]);
 
-  if (loading)
+  if (loading) {
     return (
       <LoadingComponent title="紀錄資訊欄位" text="紀錄資訊載入中，請稍後" />
     );
+  }
 
   return (
     <>
@@ -148,9 +145,9 @@ export default function ManageClientRecord() {
                   defaultValue={searchTextUserName}
                   placeholder="使用者名稱搜尋.."
                   style={{ boxShadow: "none" }}
-                  onChange={(e) => {
-                    setSearchTextUserName(e.target.value);
-                  }}
+                  onChange={(e) =>
+                    setState({ ...state, searchTextUserName: e.target.value })
+                  }
                 />
               </InputGroup>
             </Form>
@@ -159,29 +156,27 @@ export default function ManageClientRecord() {
             <Form.Select
               className="mt-1"
               aria-label="請選擇每頁顯示筆數"
-              onChange={(event) => {
-                setPaginationSettings({
-                  ...paginationSettings,
-                  currentPage: 0,
-                  rowsPerPage: Number(event.target.value),
-                });
-              }}
-              selected={paginationSettings.rowsPerPage}
-            >
-              {
-                // use map to show 每頁顯示筆數
-                limitPage.map((limit, _) => {
-                  return (
-                    <option key={limit.id} value={limit.value}>
-                      每頁顯示{limit.value}筆
-                    </option>
-                  );
+              onChange={(event) =>
+                setState({
+                  ...state,
+                  paginationSettings: {
+                    ...paginationSettings,
+                    currentPage: 0,
+                    rowsPerPage: Number(event.target.value),
+                  },
                 })
               }
+              selected={paginationSettings.rowsPerPage}
+            >
+              {limitPage.map((limit) => (
+                <option key={limit.id} value={limit.value}>
+                  每頁顯示{limit.value}筆
+                </option>
+              ))}
             </Form.Select>
           </Col>
         </Row>
-        {searchTextUserResultIsNone == true ? (
+        {searchTextUserResultIsNone ? (
           <Row>
             <Col md={12} className="p-2">
               <p className="text-center fs-4 m-0">查無使用者</p>
@@ -190,107 +185,93 @@ export default function ManageClientRecord() {
         ) : (
           <>
             <Accordion className="mb-3">
-              {eachUserRecordSlice.map((user, index) => {
-                return (
-                  <Accordion.Item eventKey={user.name} key={user.name}>
-                    <Accordion.Header>{user.name}</Accordion.Header>
-                    <Accordion.Body>
-                      {user.have_video === "使用者目前尚未有勾選之影片" ? (
-                        <div>使用者目前尚未有勾選之影片</div>
-                      ) : (
-                        <Accordion>
-                          {user.record.map((record, index) => {
-                            return (
-                              <Accordion.Item
-                                eventKey={record.videoName}
-                                key={record.videoName}
-                              >
-                                <Accordion.Header>
-                                  <p>
-                                    <b
-                                      className={
-                                        record.videoType === 1
-                                          ? "text-danger"
-                                          : "text-primary"
-                                      }
-                                    >
-                                      ({convertType(record.videoType)})
-                                    </b>
-                                    {record.videoName}
-                                  </p>
-                                </Accordion.Header>
-                                <Accordion.Body>
-                                  {record.record_result ===
-                                  "使用者目前尚未有任何紀錄" ? (
-                                    <p className="text-center fs-4 m-0">
-                                      {record.videoName}尚未有任何紀錄
-                                    </p>
-                                  ) : (
-                                    <Container>
-                                      <Row>
-                                        <Col md={6} xs={10}>
-                                          總{convertType(record.videoType)}
-                                          次數：
-                                          <b>{record.totalPraticeTimes}</b>
-                                        </Col>
-                                        <Col md={6} xs={10}>
-                                          總{convertType(record.videoType)}
-                                          準確率：
-                                          <b>{record.record_result}%</b>
-                                        </Col>
-                                      </Row>
-                                      {record.totalQuiz.map((quiz, index) => {
-                                        return (
-                                          <Row key={index} className="mt-2">
-                                            <p className="fs-5">
-                                              第{index + 1}章節
-                                            </p>
-                                            <Col md={4} xs={8}>
-                                              是否為必答題：
-                                              <b className="text-danger">
-                                                {quiz.video_must_correct === 1
-                                                  ? "是"
-                                                  : "否"}
-                                              </b>
-                                            </Col>
-                                            <Col md={4} xs={8}>
-                                              {convertType(record.videoType)}
-                                              次數：
-                                              <b>
-                                                {quiz.eachQuestionPraticeTimes}
-                                              </b>
-                                            </Col>
-                                            <Col md={4} xs={8}>
-                                              {convertType(record.videoType)}
-                                              準確率：
-                                              <b>
-                                                {quiz.eachQuizAccuracy * 100}%
-                                              </b>
-                                            </Col>
-                                          </Row>
-                                        );
-                                      })}
-                                    </Container>
-                                  )}
-                                </Accordion.Body>
-                              </Accordion.Item>
-                            );
-                          })}
-                        </Accordion>
-                      )}
-                    </Accordion.Body>
-                  </Accordion.Item>
-                );
-              })}
+              {eachUserRecordSlice.map((user) => (
+                <Accordion.Item eventKey={user.name} key={user.name}>
+                  <Accordion.Header>{user.name}</Accordion.Header>
+                  <Accordion.Body>
+                    {user.have_video === "使用者目前尚未有勾選之影片" ? (
+                      <div>使用者目前尚未有勾選之影片</div>
+                    ) : (
+                      <Accordion>
+                        {user.record.map((record) => (
+                          <Accordion.Item
+                            eventKey={record.videoName}
+                            key={record.videoName}
+                          >
+                            <Accordion.Header>
+                              <p>
+                                <b
+                                  className={
+                                    record.videoType === 1
+                                      ? "text-danger"
+                                      : "text-primary"
+                                  }
+                                >
+                                  ({convertType(record.videoType)})
+                                </b>
+                                {record.videoName}
+                              </p>
+                            </Accordion.Header>
+                            <Accordion.Body>
+                              {record.record_result ===
+                              "使用者目前尚未有任何紀錄" ? (
+                                <p className="text-center fs-4 m-0">
+                                  {record.videoName}尚未有任何紀錄
+                                </p>
+                              ) : (
+                                <Container>
+                                  <Row>
+                                    <Col md={6} xs={10}>
+                                      總{convertType(record.videoType)}
+                                      次數：
+                                      <b>{record.totalPraticeTimes}</b>
+                                    </Col>
+                                    <Col md={6} xs={10}>
+                                      總{convertType(record.videoType)}
+                                      準確率：
+                                      <b>{record.record_result}%</b>
+                                    </Col>
+                                  </Row>
+                                  {record.totalQuiz.map((quiz, index) => (
+                                    <Row key={index} className="mt-2">
+                                      <p className="fs-5">第{index + 1}章節</p>
+                                      <Col md={4} xs={8}>
+                                        是否為必答題：
+                                        <b className="text-danger">
+                                          {quiz.video_must_correct === 1
+                                            ? "是"
+                                            : "否"}
+                                        </b>
+                                      </Col>
+                                      <Col md={4} xs={8}>
+                                        {convertType(record.videoType)}
+                                        次數：
+                                        <b>{quiz.eachQuestionPraticeTimes}</b>
+                                      </Col>
+                                      <Col md={4} xs={8}>
+                                        {convertType(record.videoType)}
+                                        準確率：
+                                        <b>{quiz.eachQuizAccuracy * 100}%</b>
+                                      </Col>
+                                    </Row>
+                                  ))}
+                                </Container>
+                              )}
+                            </Accordion.Body>
+                          </Accordion.Item>
+                        ))}
+                      </Accordion>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
+              ))}
             </Accordion>
             <ReactPaginate
               forcePage={paginationSettings.currentPage}
               breakLabel={"..."}
               previousLabel={"<"}
               nextLabel={">"}
-              onPageChange={(page) => {
-                handlePageChange(page.selected);
-              }}
+              onPageChange={handlePageChange}
               pageRangeDisplayed={2}
               marginPagesDisplayed={1}
               pageCount={paginationSettings.lastPage}
