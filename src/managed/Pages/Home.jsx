@@ -2,17 +2,7 @@ import limitPage from "../JsonFile/FilterPageContentSize.json";
 import LanguageList from "../JsonFile/SelectLanguageList.json";
 import ClassList from "../JsonFile/SelectClassTypeList.json";
 import { React, useEffect, useState, useRef } from "react";
-import {
-  Form,
-  Table,
-  Pagination,
-  Modal,
-  Navbar,
-  Container,
-  Row,
-  Col,
-  InputGroup,
-} from "react-bootstrap";
+import { Form, Table, Modal, Container, Row, Col } from "react-bootstrap";
 import { get, post } from "../axios";
 import StatusCode from "../../sys/StatusCode";
 import ReactPaginate from "react-paginate";
@@ -26,6 +16,10 @@ import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import FilterType from "../JsonFile/FilterVideoType.json";
 import styles from "../../styles/pages/HomePage.module.scss";
 import convertType from "../../components/functions/convertTypeFunction";
+import { useCallback } from "react";
+import { useMemo } from "react";
+import { memo } from "react";
+import VideoNavbar from "../../components/VideoNavBar";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -35,10 +29,10 @@ export default function Home() {
   );
 
   // 請求localStorage中的管理者資料
-  const [localData, setLocalData] = useState({
+  const localData = {
     adminToken: manage.token,
     adminMail: manage.email,
-  });
+  };
   // videoData is an array
   const [videoData, setVideoData] = useState([
     {
@@ -57,9 +51,7 @@ export default function Home() {
   // 顯示在畫面上的資料
   const [showData, setShowData] = useState(videoData);
 
-  const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [selectVideoindex, setSelectVideoindex] = useState([]);
-  const [selectVideoName, setSelectVideoName] = useState([]);
   // loading is true, show loading text, until loading is false
   const [loading, setLoading] = useState(false);
   // 取得影片類別
@@ -151,7 +143,7 @@ export default function Home() {
   // 刪除影片送出事件
   const handleDeleteSubmit = async (event) => {
     event.preventDefault();
-    const token = captchaRef.current.getValue();
+    const token = captchaRef.current?.getValue();
     token == "" && toast.error("請勾選我不是機器人", { theme: "light" });
   };
 
@@ -177,42 +169,26 @@ export default function Home() {
   // get video data async function
   const fetchVideoData = async ({ api }) => {
     try {
-      const response = await get(api);
-      // get data from res.data.data
-      // because res.data.data is a promise
-      // so we need to use await to get the value of res.data.data
-      // and then we can use data to get the value of res.data.data
-      const data = await response.data.data;
-      // check if data is an array
-      // if data is an array, checkIsArray is true
-      // otherwise, checkIsArray is false
-      const checkIsArray = Array.isArray(data);
-      // set videoData
-      // if checkIsArray is true, set videoData to data
-      // otherwise, set videoData to [data]
-      setVideoData(checkIsArray ? data : [data]);
-      setFilterVideoData(checkIsArray ? data : [data]);
-      // 將 loading 設為 false
+      const { data } = await get(api);
+      const videoData = data.data;
+      const checkIsArray = Array.isArray(videoData);
+      setVideoData(checkIsArray ? videoData : [videoData]);
+      setFilterVideoData(checkIsArray ? videoData : [videoData]);
       setTimeout(() => {
         setLoading(false);
       }, 1000);
-      // clear error message
       setErrorMessage("");
     } catch (error) {
       console.log(error.response.data);
-      //若錯誤狀態碼為440，則清除localStorage中的管理者資料，並跳出提示訊息
       if (
-        error.response.data.message == "登入逾時，請重新登入" &&
-        error.response.status === 404
+        error.response?.data?.message === "登入逾時，請重新登入" &&
+        error.response?.status === 404
       ) {
         handleSessionTimeout();
       }
-      // if catch error, clear videoData
       setVideoData([]);
       setFilterVideoData([]);
-      // 將 loading 設為 false
       setLoading(false);
-      // if error.response is true, get error message
       if (error.response) {
         setErrorMessage(StatusCode(error.response.status));
       }
@@ -226,83 +202,78 @@ export default function Home() {
     navigate("/");
   };
 
+  const filterVideos = useCallback(
+    (data) => {
+      if (selectVideoLanguage !== 0) {
+        data = data.filter(
+          (item) => item.video_language_index === selectVideoLanguage
+        );
+      }
+
+      if (selectVideoType !== 0) {
+        data = data.filter(
+          (item) => item.video_class_index === selectVideoType
+        );
+      }
+
+      if (selectVideoPratice !== 2) {
+        data = data.filter((item) => item.video_type === selectVideoPratice);
+      }
+
+      if (searchTextVideo !== "") {
+        data = data.filter((item) => item.video_name.includes(searchTextVideo));
+      }
+
+      return data;
+    },
+    [selectVideoLanguage, selectVideoType, selectVideoPratice, searchTextVideo]
+  );
+
+  const filteredData = useMemo(
+    () => filterVideos(videoData),
+    [filterVideos, videoData]
+  );
+
+  const { rowsPerPage } = paginationSettings;
+
   useEffect(() => {
-    if (filterVideoData.length == 0) {
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+
+    setPaginationSettings((settings) => ({
+      ...settings,
+      lastPage: totalPages,
+      currentPage: 0,
+    }));
+
+    setShowData(filteredData.slice(0, rowsPerPage));
+  }, [filteredData, rowsPerPage]);
+
+  useEffect(() => {
+    if (showData.length === 0) {
       setErrorFilterMessage("該語言/類別中無資料");
     } else {
       setErrorFilterMessage("");
     }
-  }, [filterVideoData]);
+  }, [showData]);
 
-  useEffect(() => {
-    let filterVideoData = videoData;
-
-    if (Number(selectVideoLanguage) !== 0) {
-      filterVideoData = filterVideoData.filter(
-        (item) => item.video_language_index === Number(selectVideoLanguage)
-      );
-    }
-
-    if (Number(selectVideoType) !== 0) {
-      filterVideoData = filterVideoData.filter(
-        (item) => item.video_class_index === Number(selectVideoType)
-      );
-    }
-
-    if (selectVideoPratice !== 2) {
-      filterVideoData = filterVideoData.filter(
-        (item) => item.video_type === selectVideoPratice
-      );
-    }
-
-    if (searchTextVideo !== "") {
-      filterVideoData = filterVideoData.filter((item) =>
-        item.video_name.includes(searchTextVideo)
-      );
-    }
-
-    setFilterVideoData(filterVideoData);
-
-    const totalPages = Math.ceil(
-      filterVideoData.length / paginationSettings.rowsPerPage
-    );
-
-    setPaginationSettings({
-      ...paginationSettings,
-      lastPage: totalPages,
-      currentPage: 0,
-    });
-    setShowData(filterVideoData.slice(0, paginationSettings.rowsPerPage));
-  }, [
-    searchTextVideo,
-    selectVideoPratice,
-    selectVideoType,
-    selectVideoLanguage,
-    paginationSettings.rowsPerPage,
-  ]);
-
-  useEffect(() => {
-    if (selectVideoindex.length == 0) {
-      setSelectVideoName([]);
-    } else if (selectVideoindex.length == videoData.length) {
-      setSelectVideoName(videoData.map((item) => item.video_name));
+  const pickedVideoName = useMemo(() => {
+    if (selectVideoindex.length === 0) {
+      return [];
+    } else if (selectVideoindex.length === videoData.length) {
+      return videoData.map((item) => item.video_name);
     } else {
-      selectVideoindex.map((item) => {
+      const names = selectVideoindex.map((item) => {
         const found = videoData.find(
           (element) => element.id == item
         ).video_name;
-
-        setSelectVideoName(
-          selectVideoName.includes(found)
-            ? selectVideoName.filter((item) => item == found)
-            : [...selectVideoName, found]
-        );
+        return found;
       });
+      return [...new Set(names)];
     }
-  }, [selectVideoindex]);
+  }, [selectVideoindex, videoData]);
 
   useEffect(() => {
-    setCreateUserButton(selectVideoindex.length != 0 ? false : true);
+    setCreateUserButton(selectVideoindex.length !== 0 ? false : true);
   }, [selectVideoindex]);
 
   const handlePageChange = (page) => {
@@ -328,37 +299,7 @@ export default function Home() {
     setShowData(videoData.slice(0, paginationSettings.rowsPerPage));
   }, [videoData]);
 
-  // 全選方塊功能(暫時不使用)
-  // if select all video, set isCheckAllVideo to true and set selectVideoindex to all video ID
-  // const handleSelectAllVideo = () => {
-  //   // set isCheckAllVideo to !isCheckAllVideo
-  //   setIsCheckAllVideo(!isCheckAllVideo);
-
-  //   // 依照當下頁面所篩選之資料筆數，決定全選會選到的資料範圍
-
-  //   const start = paginationSettings.currentPage * size;
-  //   const end = start + size;
-
-  //   isCheckAllVideo
-  //     ? setSelectVideoindex([])
-  //     : setSelectVideoindex(
-  //         filterVideoData.slice(start, end).map((item) => item.id)
-  //       );
-  // };
-  // useEffect(() => {
-  //   const start =
-  //     paginationSettings.currentPage * paginationSettings.rowsPerPage;
-  //   const end = start + paginationSettings.rowsPerPage;
-  //   // if selectVideoindex length equal to videoData slice length, set isCheckAllVideo to true
-  //   setIsCheckAllVideo(
-  //     selectVideoindex.length == videoData.slice(start, end).length
-  //   );
-  // }, [selectVideoindex, videoData]);
-  // ........................................................
-
   const handleSelectVideoindex = (ID) => {
-    // if selectVideoindex includes ID, set selectVideoindex to selectVideoindex filter ID
-    // otherwise, set selectVideoindex to selectVideoindex add ID
     setSelectVideoindex(
       selectVideoindex.includes(ID)
         ? selectVideoindex.filter((item) => item !== ID)
@@ -408,51 +349,56 @@ export default function Home() {
     );
   };
 
-  const VideoInfo = ({
-    index,
-    id,
-    video_id,
-    video_name,
-    video_path,
-    video_class,
-    video_type,
-    video_language,
-  }) => {
-    return (
-      <tr key={index}>
-        <td className={styles.container_division_table_rowTable_data}>
-          <input
-            type="checkbox"
-            // checked video by video ID
-            checked={selectVideoindex.includes(id)}
-            onChange={() => {
-              handleSelectVideoindex(id);
-            }}
-            value={id}
-            className={styles.container_division_table_rowTable_data_checkbox}
-          />
-        </td>
-        <td className={styles.container_division_table_rowTable_data_autoHide}>
-          {video_class}
-        </td>
-        <td className={video_type === 0 ? "text-primary" : "text-danger"}>
-          {convertType(video_type)}
-        </td>
-        <td className={styles.container_division_table_rowTable_data_autoHide}>
-          {video_language}
-        </td>
-        <td className={styles.container_division_table_rowTable_data}>
-          <Link
-            to={`/Video/`}
-            state={{ videoUUID: video_id, videoPath: video_path }}
-            className="text-decoration-none"
+  const VideoInfo = memo(
+    ({
+      id,
+      video_id,
+      video_name,
+      video_path,
+      video_class,
+      video_type,
+      video_language,
+    }) => {
+      return (
+        <tr>
+          <td className={styles.container_division_table_rowTable_data}>
+            <input
+              type="checkbox"
+              // checked video by video ID
+              checked={selectVideoindex.includes(id)}
+              onChange={() => {
+                handleSelectVideoindex(id);
+              }}
+              value={id}
+              className={styles.container_division_table_rowTable_data_checkbox}
+            />
+          </td>
+          <td
+            className={styles.container_division_table_rowTable_data_autoHide}
           >
-            {video_name}
-          </Link>
-        </td>
-      </tr>
-    );
-  };
+            {video_class}
+          </td>
+          <td className={video_type === 0 ? "text-primary" : "text-danger"}>
+            {convertType(video_type)}
+          </td>
+          <td
+            className={styles.container_division_table_rowTable_data_autoHide}
+          >
+            {video_language}
+          </td>
+          <td className={styles.container_division_table_rowTable_data}>
+            <Link
+              to={`/Video/`}
+              state={{ videoUUID: video_id, videoPath: video_path }}
+              className="text-decoration-none"
+            >
+              {video_name}
+            </Link>
+          </td>
+        </tr>
+      );
+    }
+  );
 
   if (loading) {
     return <LoadingComponent title="影片資訊欄位" text="資訊載入中" />;
@@ -467,72 +413,15 @@ export default function Home() {
   return (
     <div className="container pb-4">
       <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
-      <Navbar bg="light" variant="light">
-        <Container>
-          <Col xs>
-            {" "}
-            <ToolTipBtn
-              placement="bottom"
-              btnAriaLabel="新增影片"
-              btnOnclickEventName={() => {
-                handleShowAddVideoModal();
-              }}
-              btnText={
-                <i
-                  className="bi bi-file-earmark-plus"
-                  style={{ fontSize: 1.2 + "rem" }}
-                ></i>
-              }
-              btnVariant="light"
-              tooltipText="新增影片"
-            />
-            <ToolTipBtn
-              placement="bottom"
-              btnAriaLabel="修改影片"
-              btnDisabled={disabledEditBtn ? true : false}
-              btnOnclickEventName={handleEditVideo}
-              btnText={
-                <i
-                  className="bi bi-pencil-square"
-                  style={{ fontSize: 1.2 + "rem" }}
-                ></i>
-              }
-              btnVariant="light"
-              tooltipText="編輯影片"
-            />
-            <ToolTipBtn
-              placement="bottom"
-              btnAriaLabel="刪除影片"
-              btnDisabled={disabledDelBtn ? true : false}
-              btnOnclickEventName={() => {
-                handleShowDeleteVideoModal();
-              }}
-              btnText={
-                <i
-                  className="bi bi-trash3-fill"
-                  style={{ fontSize: 1.2 + "rem" }}
-                ></i>
-              }
-              btnVariant="light"
-              tooltipText="刪除影片"
-            />
-            <InputGroup>
-              <InputGroup.Text>
-                <i className="bi bi-search"></i>
-              </InputGroup.Text>
-              <Form.Control
-                type="text"
-                defaultValue={searchTextVideo}
-                placeholder="影片名稱搜尋.."
-                style={{ boxShadow: "none" }}
-                onChange={(e) => {
-                  setSearchTextVideo(e.target.value);
-                }}
-              />
-            </InputGroup>
-          </Col>
-        </Container>
-      </Navbar>
+      <VideoNavbar
+        handleShowAddVideoModal={handleShowAddVideoModal}
+        handleEditVideo={handleEditVideo}
+        handleShowDeleteVideoModal={handleShowDeleteVideoModal}
+        disabledEditBtn={disabledEditBtn}
+        disabledDelBtn={disabledDelBtn}
+        searchTextVideo={searchTextVideo}
+        setSearchTextVideo={setSearchTextVideo}
+      />
       <Container className="mt-2">
         <Row>
           <Row>
@@ -540,7 +429,7 @@ export default function Home() {
               <Form.Select
                 aria-label="請選擇影片類型"
                 onChange={(event) => {
-                  setSelectVideoType(event.target.value);
+                  setSelectVideoType(Number(event.target.value));
                 }}
               >
                 {ClassList.map((item, _) => {
@@ -556,11 +445,11 @@ export default function Home() {
               <Form.Select
                 aria-label="請選擇影片語言"
                 onChange={(event) => {
-                  setSelectVideoLanguage(event.target.value);
+                  setSelectVideoLanguage(Number(event.target.value));
                 }}
-                selected={selectVideoLanguage}
+                value={selectVideoLanguage}
               >
-                {LanguageList.map((item, _) => {
+                {LanguageList.map((item) => {
                   return (
                     <option key={item.id} value={item.value}>
                       {item.label}
@@ -579,7 +468,7 @@ export default function Home() {
                 selected={selectVideoPratice}
               >
                 <option value="2">全部</option>
-                {FilterType.map((item, _) => {
+                {FilterType.map((item) => {
                   return (
                     <option key={item.id} value={item.value}>
                       {item.label}
@@ -669,7 +558,7 @@ export default function Home() {
           to={!createUserButton ? "/Client/Register" : null}
           state={{
             videoIndex: selectVideoindex,
-            videoName: selectVideoName,
+            videoName: pickedVideoName,
             videoData: videoData,
           }}
           className={styles.disabledLink}
