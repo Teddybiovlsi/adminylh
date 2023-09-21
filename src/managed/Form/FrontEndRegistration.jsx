@@ -25,33 +25,45 @@ import ToastAlert from "../../components/ToastAlert";
 import FormIdentity from "./shared/FormIdentity";
 import { Stepper, Step } from "react-form-stepper";
 import styles from "../../styles/Form/ClientRegistration.module.scss";
+import useModal from "../../hooks/useModal ";
 
 export default function FrontEndRegistration() {
   // check if useLocation.state is null
   if (!useLocation().state) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/Home" replace />;
   }
 
   const location = useLocation();
+  // if (useLocation() && useLocation().state.videoIndex) {
+  //   const { videoIndex, videoName, videoData } = useLocation().state;
+  //   // 使用 videoIndex、videoName 和 videoData
+  //   console.log(videoIndex, videoName, videoData);
+  // }
 
   const [isCheckAllVideo, setIsCheckAllVideo] = useState(false);
   const [videoIndex, setVideoIndex] = useState(location.state?.videoIndex);
-  const [videoTempIndex, setVideoTempIndex] = useState(videoIndex);
+  const [videoTempIndex, setVideoTempIndex] = useState(
+    location.state?.videoIndex
+  );
 
   const [videoName, setVideoName] = useState(location.state?.videoName);
-  const [videoTempName, setVideoTempName] = useState(videoName);
+  const [videoTempName, setVideoTempName] = useState(location.state?.videoName);
+
   // 所有影片資料
   const [videoData, setVideoData] = useState(location.state?.videoData);
   // 篩選影片資料
   const [videoFilterData, setVideoFilterData] = useState(videoData);
   // 以下是第一頁的表單內容
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  // 影片修改Modal
+  const [showSelectVideo, handleCloseSelectVideo, handleShowSelectVideo] =
+    useModal();
 
-  const [show2, setShow2] = useState(false);
-  const handleCloseM2 = () => setShow2(false);
-  const handleShowM2 = () => setShow2(true);
+  const [
+    showSelectVideoConfirm,
+    handleCloseSelectVideoConfirm,
+    handleShowSelectVideoConfirm,
+  ] = useModal();
+
   // 限制重複點擊
   const [disabledBtn, setDisabledBtn] = useState(false);
 
@@ -69,19 +81,15 @@ export default function FrontEndRegistration() {
     } else if (videoData.length === videoTempIndex.length) {
       setVideoTempName(videoData.map((item) => item.video_name));
     } else {
-      videoTempIndex.map((item) => {
+      const videoTempNames = videoTempIndex.map((item) => {
         const found = videoData.find(
           (element) => element.id == item
         ).video_name;
-
-        setVideoTempName(
-          videoTempName.includes(found)
-            ? videoTempName.filter((item) => item == found)
-            : [...videoTempName, found]
-        );
+        return found;
       });
+      setVideoTempName(videoTempNames);
     }
-  }, [videoTempIndex]);
+  }, [videoTempIndex, videoData]);
 
   // 當表單完整送出後，跳轉到首頁
   const [shouldRedirect, setShouldRedirect] = React.useState(false);
@@ -133,15 +141,15 @@ export default function FrontEndRegistration() {
         setDisabledBtn(false);
       }, 3000);
     } else {
-      handleShowM2();
+      handleShowSelectVideoConfirm();
     }
   };
   // 確認修改影片事件
   const handleConfirmEditVideo = () => {
     setVideoIndex(videoTempIndex);
     setVideoName(videoTempName);
-    handleClose();
-    handleCloseM2();
+    handleCloseSelectVideo();
+    handleCloseSelectVideoConfirm();
     toast.success("修改影片成功!", {
       position: "top-right",
       autoClose: 3000,
@@ -267,15 +275,9 @@ export default function FrontEndRegistration() {
   };
 
   useEffect(() => {
-    {
-      step === 0 ? setIsFirstPage(true) : setIsFirstPage(false);
-    }
-    {
-      step === 1 ? setIsSubmitPage(true) : setIsSubmitPage(false);
-    }
-    {
-      step === 2 ? setIsLastPage(true) : setIsLastPage(false);
-    }
+    setIsFirstPage(step === 0);
+    setIsSubmitPage(step === 1);
+    setIsLastPage(step === 2);
   }, [step]);
 
   const ShowClientVideoTable = ({ id, name }) => {
@@ -505,7 +507,7 @@ export default function FrontEndRegistration() {
             <BtnBootstrap
               btnPosition="me-auto"
               variant="outline-success"
-              onClickEventName={handleShow}
+              onClickEventName={handleShowSelectVideo}
               text={<i className="bi bi-plus-lg"></i>}
             />
           )}
@@ -521,7 +523,7 @@ export default function FrontEndRegistration() {
       </div>
 
       {/* 影片修改Modal */}
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={showSelectVideo} onHide={handleCloseSelectVideo}>
         <Modal.Header closeButton>
           <Modal.Title>請選擇要修改/新增的影片</Modal.Title>
         </Modal.Header>
@@ -571,7 +573,7 @@ export default function FrontEndRegistration() {
         <Modal.Footer>
           <BtnBootstrap
             btnPosition="me-auto"
-            onClickEventName={handleClose}
+            onClickEventName={handleCloseSelectVideo}
             text="取消"
             variant="outline-secondary"
           />
@@ -584,7 +586,10 @@ export default function FrontEndRegistration() {
         </Modal.Footer>
       </Modal>
       {/* 再次確認影片資訊視窗 */}
-      <Modal show={show2} onHide={handleCloseM2}>
+      <Modal
+        show={showSelectVideoConfirm}
+        onHide={handleCloseSelectVideoConfirm}
+      >
         <Modal.Header closeButton>
           <Modal.Title>請再次確認要修改的影片</Modal.Title>
         </Modal.Header>
@@ -610,7 +615,7 @@ export default function FrontEndRegistration() {
         <Modal.Footer>
           <BtnBootstrap
             btnPosition="me-auto"
-            onClickEventName={handleCloseM2}
+            onClickEventName={handleCloseSelectVideoConfirm}
             text="取消"
             variant="outline-secondary"
           />
