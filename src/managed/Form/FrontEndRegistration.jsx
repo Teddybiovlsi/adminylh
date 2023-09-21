@@ -5,7 +5,7 @@
 // 若傳送成功，5秒後自動跳轉回到首頁
 
 import React, { useEffect, useState } from "react";
-import { Form, Modal, Table } from "react-bootstrap";
+import { Alert, Form, Modal, Table } from "react-bootstrap";
 import * as formik from "formik";
 import * as yup from "yup";
 import Card from "react-bootstrap/Card";
@@ -293,7 +293,7 @@ export default function FrontEndRegistration() {
             <h5>
               若影片無誤請按下一步，<b>進行創建帳號</b>
             </h5>
-            {videoName.length !== 0 ? (
+            {videoName.length !== 0 && (
               <Table>
                 <thead>
                   <tr>
@@ -306,10 +306,9 @@ export default function FrontEndRegistration() {
                   })}
                 </tbody>
               </Table>
-            ) : (
-              <div>
-                <h5>目前無影片</h5>
-              </div>
+            )}
+            {videoName.length === 0 && (
+              <Alert variant="danger">目前無影片</Alert>
             )}
           </div>
         );
