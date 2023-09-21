@@ -14,13 +14,10 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import { get, post } from "../axios";
-import { check } from "prettier";
 import StatusCode from "../../sys/StatusCode";
-import Loading from "../../components/Loading";
 import ReactPaginate from "react-paginate";
-import { Link, Navigate, redirect, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ToolTipBtn from "../../components/ToolTipBtn";
-import BtnBootstrap from "../../components/BtnBootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
@@ -28,19 +25,9 @@ import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import FilterType from "../JsonFile/FilterVideoType.json";
 import styles from "../../styles/pages/HomePage.module.scss";
+import convertType from "../../components/functions/convertTypeFunction";
 
 export default function Home() {
-  const convertType = (type) => {
-    switch (type) {
-      case 0:
-        return "練習";
-      case 1:
-        return "測驗";
-      default:
-        return "練習";
-    }
-  };
-
   const navigate = useNavigate();
 
   const manage = JSON.parse(
@@ -52,10 +39,6 @@ export default function Home() {
     adminToken: manage.token,
     adminMail: manage.email,
   });
-  // console.log(localData.adminMail);
-
-  // limit video data size in one page
-  const [size, setSize] = useState(10);
   // videoData is an array
   const [videoData, setVideoData] = useState([
     {
@@ -113,71 +96,53 @@ export default function Home() {
   const handleCloseAddVideoModal = () => setShowAddVideoModal(false);
 
   const handleEditVideo = () => {
-    if (selectVideoindex.length == 0) {
-      toast.error("請勾選影片，再點選編輯按鍵", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      setDisabledEditBtn(true);
-      setTimeout(() => {
-        setDisabledEditBtn(false);
-      }, 3000);
+    if (selectVideoindex.length === 0) {
+      showErrorAndDisableButton(
+        "請勾選影片，再點選編輯按鍵",
+        setDisabledEditBtn
+      );
+    } else if (selectVideoindex.length > 1) {
+      showErrorAndDisableButton("一次僅限勾選一個影片進行編輯");
     } else {
-      if (selectVideoindex.length > 1) {
-        toast.error("一次僅限勾選一個影片進行編輯", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        setDisabledEditBtn(true);
-        setTimeout(() => {
-          setDisabledEditBtn(false);
-        }, 3000);
-      } else {
-        const videoFilterData = videoData.filter((item) =>
-          selectVideoindex.includes(item.id)
-        );
-        navigate("/Admin/Edit/Video", {
-          state: {
-            videoIndex: selectVideoindex[0],
-            videoLink: videoFilterData[0].video_path,
-            videoID: videoFilterData[0].video_id,
-          },
-        });
-      }
+      const [video] = videoData.filter((item) =>
+        selectVideoindex.includes(item.id)
+      );
+      navigate("/Admin/Edit/Video", {
+        state: {
+          videoIndex: selectVideoindex[0],
+          videoLink: video.video_path,
+          videoID: video.video_id,
+        },
+      });
     }
   };
 
   const handleShowDeleteVideoModal = () => {
-    if (selectVideoindex.length == 0) {
-      toast.error("請勾選影片，再點選刪除按鍵", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      setDisabledDelBtn(true);
-      setTimeout(() => {
-        setDisabledDelBtn(false);
-      }, 3000);
+    if (selectVideoindex.length === 0) {
+      showErrorAndDisableButton(
+        "請勾選影片，再點選刪除按鍵",
+        setDisabledDelBtn
+      );
     } else {
       setShowDeleteVideoModal(true);
     }
+  };
+
+  const showErrorAndDisableButton = (message, setDisableBtn) => {
+    toast.error(`${message}`, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+    setDisableBtn(true);
+    setTimeout(() => {
+      setDisableBtn(false);
+    }, 3800);
   };
 
   const handleCloseDeleteVideoModal = () => setShowDeleteVideoModal(false);
@@ -343,8 +308,6 @@ export default function Home() {
   const handlePageChange = (page) => {
     const start = page * paginationSettings.rowsPerPage;
     const end = start + paginationSettings.rowsPerPage;
-
-    // console.log(start, end);
 
     setPaginationSettings({
       ...paginationSettings,
@@ -526,10 +489,7 @@ export default function Home() {
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="修改影片"
-              btnDisabled={
-                (selectVideoindex.length == 0 ? true : false) ||
-                (disabledEditBtn ? true : false)
-              }
+              btnDisabled={disabledEditBtn ? true : false}
               btnOnclickEventName={handleEditVideo}
               btnText={
                 <i
@@ -543,10 +503,7 @@ export default function Home() {
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="刪除影片"
-              btnDisabled={
-                (selectVideoindex.length == 0 ? true : false) ||
-                (disabledDelBtn ? true : false)
-              }
+              btnDisabled={disabledDelBtn ? true : false}
               btnOnclickEventName={() => {
                 handleShowDeleteVideoModal();
               }}
