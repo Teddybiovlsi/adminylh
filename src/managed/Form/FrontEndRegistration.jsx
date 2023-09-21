@@ -68,11 +68,9 @@ export default function FrontEndRegistration() {
   const [disabledBtn, setDisabledBtn] = useState(false);
 
   useEffect(() => {
-    if (videoData.length === videoTempIndex.length) {
-      setIsCheckAllVideo(true);
-    } else {
-      setIsCheckAllVideo(false);
-    }
+    setIsCheckAllVideo(
+      videoData.length === videoTempIndex.length ? true : false
+    );
   }, [videoData, videoTempIndex]);
 
   useEffect(() => {
