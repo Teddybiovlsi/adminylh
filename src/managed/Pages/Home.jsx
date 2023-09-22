@@ -25,6 +25,7 @@ import limitPage from "../JsonFile/FilterPageContentSize.json";
 
 import convertType from "../../functions/typeConverter";
 import styles from "../../styles/pages/HomePage.module.scss";
+import useModal from "../../hooks/useModal ";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -91,11 +92,10 @@ export default function Home() {
   // 主頁上方Navbar選單(新增/刪除影片)
   const [searchTextVideo, setSearchTextVideo] = useState("");
 
-  const [showAddVideoModal, setShowAddVideoModal] = useState(false);
-  const [showDeleteVideoModal, setShowDeleteVideoModal] = useState(false);
+  const [showAddVideoModal, handleShowAddVideoModal, handleCloseAddVideoModal] =
+    useModal(false);
 
-  const handleShowAddVideoModal = () => setShowAddVideoModal(true);
-  const handleCloseAddVideoModal = () => setShowAddVideoModal(false);
+  const [showDeleteVideoModal, setShowDeleteVideoModal] = useState(false);
 
   const handleEditVideo = () => {
     if (selectVideoindex.length === 0) {
