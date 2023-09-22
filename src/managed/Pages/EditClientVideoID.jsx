@@ -16,21 +16,11 @@ import FilterType from "../JsonFile/FilterVideoType.json";
 import ReactPaginate from "react-paginate";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
+import convertType from "../../functions/typeConverter";
 
 export default function EditClientVideoID() {
   const { state } = useLocation();
   if (!state) window.location.href = "/";
-
-  const convertType = (type) => {
-    switch (type) {
-      case 0:
-        return "練習用";
-      case 1:
-        return "測驗用";
-      default:
-        return "練習用";
-    }
-  };
 
   const user = JSON.parse(
     localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
