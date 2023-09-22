@@ -72,12 +72,12 @@ export default function EditClientVideoID() {
   // 存放目前總頁數的資料(帳號用):lastPage
   // 存放目前總頁數的資料(影片用):lastPageVideo
   const [paginationSettings, setPaginationSettings] = useState({
-    rowsPerPage: 5,
-    rowsPerPageVideo: 5,
     currentPage: 0,
     currentPageVideo: 0,
     lastPage: 1,
     lastPageVideo: 1,
+    rowsPerPage: 5,
+    rowsPerPageVideo: 5,
   });
   // 存放目前頁數的資料(帳號用)
   const [showAccountData, setShowAccountData] = useState(
