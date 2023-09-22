@@ -3,38 +3,36 @@ import {
   Col,
   Container,
   Form,
+  InputGroup,
   ListGroup,
   Modal,
   Row,
-  InputGroup,
 } from "react-bootstrap";
+import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import { get, post } from "../axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
 import FilterType from "../JsonFile/FilterVideoType.json";
 import ReactPaginate from "react-paginate";
+import { get, post } from "../axios";
 import ToastAlert from "../../components/ToastAlert";
-import { toast } from "react-toastify";
 import convertType from "../../functions/typeConverter";
 
 export default function EditClientVideoID() {
   const { state } = useLocation();
-  if (!state) window.location.href = "/";
+  if (!state) {
+    window.location.href = "/";
+  }
 
   const user = JSON.parse(
     localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
   );
-
-  const location = useLocation();
   // 將已勾選的帳號存入checkedAccount當中
-  const [checkedAccount, setCheckedAccount] = useState(
-    location.state?.ClientAcc
-  );
+  const [checkedAccount, setCheckedAccount] = useState(state?.ClientAcc);
 
   //   存放Modal中暫時勾選的帳號
   const [tempCheckedAccount, setTempCheckedAccount] = useState(
-    location.state?.ClientAcc
+    state?.ClientAcc
   );
 
   const [tempCheckedVideo, setTempCheckedVideo] = useState([]);
