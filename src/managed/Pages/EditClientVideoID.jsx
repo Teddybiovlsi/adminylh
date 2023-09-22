@@ -17,6 +17,7 @@ import ReactPaginate from "react-paginate";
 import { get, post } from "../axios";
 import ToastAlert from "../../components/ToastAlert";
 import convertType from "../../functions/typeConverter";
+import useModal from "../../hooks/useModal ";
 
 export default function EditClientVideoID() {
   const { state } = useLocation();
@@ -57,10 +58,6 @@ export default function EditClientVideoID() {
   //   若伺服器發生錯誤，則顯示錯誤訊息
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleConfirmCheckedAccount = () => {
-    setCheckedAccount(tempCheckedAccount);
-    handleAccountModal(false);
-  };
   // 搜尋欄位內容(帳號用)
   const [searchText, setSearchText] = useState("");
   // 搜尋欄位內容(影片用)
@@ -91,15 +88,20 @@ export default function EditClientVideoID() {
     searchVideoResult.slice(0, paginationSettings.rowsPerPageVideo)
   );
   //   顯示帳號列表的Modal
-  const [showAccountModal, setShowAccountModal] = useState(false);
-  const handleAccountModal = (show) => setShowAccountModal(show);
-  //   顯示影片列表的Modal
-  const [showVideoModal, setShowVideoModal] = useState(false);
-  const handleVideoModal = (show) => setShowVideoModal(show);
+  const [showAccountModal, handleClosedAccountModal, handleShowAccountModal] =
+    useModal();
 
-  const handleConfirmCheckedVideo = () => {
-    setCheckedVideo(tempCheckedVideo);
-    handleVideoModal(false);
+  const [showVideoModal, handleClosedVideoModal, handleShowVideoModal] =
+    useModal();
+
+  const handleConfirmCheckedItems = (type, items) => {
+    if (type === "account") {
+      setCheckedAccount(items);
+      handleClosedAccountModal();
+    } else if (type === "video") {
+      setCheckedVideo(items);
+      handleClosedVideoModal();
+    }
   };
 
   let navigate = useNavigate();
@@ -357,9 +359,7 @@ export default function EditClientVideoID() {
               variant="outline-secondary"
               btnPosition="w-100 btn btn-lg"
               text={"增減帳號"}
-              onClickEventName={() => {
-                handleAccountModal(true);
-              }}
+              onClickEventName={handleShowAccountModal}
             />
           </Col>
           <Col md={6}>
@@ -386,21 +386,14 @@ export default function EditClientVideoID() {
               variant="outline-secondary"
               btnPosition="w-100 btn btn-lg"
               text={"增減影片"}
-              onClickEventName={() => {
-                handleVideoModal(true);
-              }}
+              onClickEventName={handleShowVideoModal}
             />
           </Col>
         </Row>
       </Container>
 
       {/* 帳號類 */}
-      <Modal
-        show={showAccountModal}
-        onHide={() => {
-          handleAccountModal(false);
-        }}
-      >
+      <Modal show={showAccountModal} onHide={handleClosedAccountModal}>
         <Modal.Header closeButton>
           <Modal.Title>請選擇新增之帳號</Modal.Title>
         </Modal.Header>
@@ -503,7 +496,7 @@ export default function EditClientVideoID() {
             variant="outline-secondary"
             text={"取消"}
             onClickEventName={() => {
-              handleAccountModal(false);
+              handleClosedAccountModal();
             }}
           />
           <BtnBootstrap
@@ -511,19 +504,14 @@ export default function EditClientVideoID() {
             variant="outline-primary"
             text={"確認"}
             onClickEventName={() => {
-              handleConfirmCheckedAccount();
+              handleConfirmCheckedItems("account", tempCheckedAccount);
             }}
           />
         </Modal.Footer>
       </Modal>
 
       {/* 影片類 */}
-      <Modal
-        show={showVideoModal}
-        onHide={() => {
-          handleVideoModal(false);
-        }}
-      >
+      <Modal show={showVideoModal} onHide={handleClosedVideoModal}>
         <Modal.Header closeButton>
           <Modal.Title>請選擇新增之影片</Modal.Title>
         </Modal.Header>
@@ -656,16 +644,14 @@ export default function EditClientVideoID() {
             btnSize="md"
             variant="outline-secondary"
             text={"取消"}
-            onClickEventName={() => {
-              handleVideoModal(false);
-            }}
+            onClickEventName={handleClosedVideoModal}
           />
           <BtnBootstrap
             btnSize="md"
             variant="outline-primary"
             text={"確認"}
             onClickEventName={() => {
-              handleConfirmCheckedVideo();
+              handleConfirmCheckedItems("video", tempCheckedVideo);
             }}
           />
         </Modal.Footer>
