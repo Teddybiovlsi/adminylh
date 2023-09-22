@@ -31,62 +31,62 @@ export default function Home() {
   const navigate = useNavigate();
 
   const manage = JSON.parse(
-    localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
+    localStorage?.manage || sessionStorage?.manage || "{}"
   );
 
   // 請求localStorage中的管理者資料
   const localData = {
-    adminToken: manage.token,
-    adminMail: manage.email,
+    adminToken: manage.token ?? "",
+    adminMail: manage.email ?? "",
   };
-
+  // 影片資料狀態
   const initialState = {
-    // API取得的影片資料
+    createUserButton: true,
+    errorFilterMessage: "",
+    errorMessage: "",
+    filterVideoData: [],
+    loading: true,
+    paginationSettings: {
+      currentPage: 0,
+      lastPage: 1,
+      rowsPerPage: 5,
+    },
+    selectVideoLanguage: 0,
+    selectVideoPratice: 2,
+    selectVideoType: 0,
+    selectVideoindex: [],
+    showData: [],
     videoData: [
       {
         id: 0,
+        video_class: "",
+        video_class_index: "",
         video_id: "",
+        video_language: "",
+        video_language_index: "",
         video_name: "",
         video_path: "",
-        video_language: "",
-        video_class: "",
-        video_language_index: "",
-        video_class_index: "",
       },
     ],
-    // 利用選單過濾影片資料
-    filterVideoData: [],
-    // 顯示在畫面上的資料
-    showData: [],
   };
 
   const [state, setState] = useState(initialState);
 
-  const [selectVideoindex, setSelectVideoindex] = useState([]);
-  // loading is true, show loading text, until loading is false
-  const [loading, setLoading] = useState(false);
-  // 取得影片類別
-  // selectVideoType is 0, get all video data
-  const [selectVideoType, setSelectVideoType] = useState(0);
-  // 取得影片練習/測驗
-  const [selectVideoPratice, setSelectVideoPratice] = useState(2);
+  const {
+    createUserButton, // 創建帳號按鈕
+    errorFilterMessage, // 篩選查無資料訊息
+    errorMessage, // 錯誤訊息
+    filterVideoData, // 篩選後的影片資料
+    loading, // 載入中
+    paginationSettings, // 分頁設定
+    selectVideoLanguage, // 選擇的影片語言
+    selectVideoPratice, // 選擇的影片練習/測驗
+    selectVideoType, // 選擇的影片類別
+    selectVideoindex, // 選擇的影片ID
+    showData, // 顯示的影片資料
+    videoData, // 影片原始資料(API取得)
+  } = state;
 
-  // 取得影片語系
-  // selectVideoLanguage is 0, get all video data
-  const [selectVideoLanguage, setSelectVideoLanguage] = useState(0);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const [errorFilterMessage, setErrorFilterMessage] = useState("");
-  // 創建用戶帳號button
-  const [createUserButton, setCreateUserButton] = useState(true);
-
-  const [paginationSettings, setPaginationSettings] = useState({
-    rowsPerPage: 5,
-    currentPage: 0,
-    lastPage: 1,
-  });
-
-  // track current page video data size
   const [disabledEditBtn, setDisabledEditBtn] = useState(false);
   const [disabledDelBtn, setDisabledDelBtn] = useState(false);
   // 主頁上方Navbar選單(新增/刪除影片)
@@ -106,7 +106,7 @@ export default function Home() {
     } else if (selectVideoindex.length > 1) {
       showErrorAndDisableButton("一次僅限勾選一個影片進行編輯");
     } else {
-      const [video] = state.videoData.filter((item) =>
+      const [video] = videoData.filter((item) =>
         selectVideoindex.includes(item.id)
       );
       navigate("/Admin/Edit/Video", {
@@ -168,8 +168,6 @@ export default function Home() {
     };
 
     if (!ignore) {
-      // set loading to true
-      setLoading(true);
       fetchVideoDataAsync();
     }
     return () => {
@@ -182,16 +180,16 @@ export default function Home() {
       const { data } = await get(api);
       const videoData = data.data;
       const checkIsArray = Array.isArray(videoData);
-      setState((state) => ({
+      setState({
         ...state,
+        errorMessage: "",
         videoData: checkIsArray ? videoData : [videoData],
         filterVideoData: checkIsArray ? videoData : [videoData],
-        showData: checkIsArray ? videoData : [videoData],
-      }));
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-      setErrorMessage("");
+        showData: checkIsArray
+          ? videoData.slice(0, rowsPerPage)
+          : [videoData.slice(0, rowsPerPage)],
+        loading: false,
+      });
     } catch (error) {
       console.log(error.response.data);
       if (
@@ -200,16 +198,14 @@ export default function Home() {
       ) {
         handleSessionTimeout();
       }
-      setState((state) => ({
+      setState({
         ...state,
+        errorMessage: error.response.data,
+        loading: false,
         videoData: [],
         filterVideoData: [],
         showData: [],
-      }));
-      setLoading(false);
-      if (error.response) {
-        setErrorMessage(StatusCode(error.response.status));
-      }
+      });
     }
   };
 
@@ -248,8 +244,8 @@ export default function Home() {
   );
 
   const filteredData = useMemo(
-    () => filterVideos(state.videoData),
-    [filterVideos, state.videoData]
+    () => filterVideos(videoData),
+    [filterVideos, videoData]
   );
 
   const { rowsPerPage } = paginationSettings;
@@ -257,80 +253,82 @@ export default function Home() {
   useEffect(() => {
     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
-    setPaginationSettings((settings) => ({
-      ...settings,
-      lastPage: totalPages,
-      currentPage: 0,
-    }));
-
-    setState((state) => ({
+    setState({
       ...state,
       showData: filteredData.slice(0, rowsPerPage),
-    }));
+      paginationSettings: {
+        ...paginationSettings,
+        lastPage: totalPages,
+        currentPage: 0,
+      },
+    });
   }, [filteredData, rowsPerPage]);
 
   useEffect(() => {
-    if (state.showData.length === 0) {
-      setErrorFilterMessage("該語言/類別中無資料");
-    } else {
-      setErrorFilterMessage("");
-    }
-  }, [state.showData]);
+    setState({
+      ...state,
+      errorFilterMessage: showData.length === 0 ? "該語言/類別中無資料" : "",
+    });
+  }, [showData]);
 
   const pickedVideoName = useMemo(() => {
     if (selectVideoindex.length === 0) {
       return [];
-    } else if (selectVideoindex.length === state.videoData.length) {
-      return state.videoData.map((item) => item.video_name);
+    } else if (selectVideoindex.length === videoData.length) {
+      return videoData.map((item) => item.video_name);
     } else {
       const names = selectVideoindex.map((item) => {
-        const found = state.videoData.find(
+        const found = videoData.find(
           (element) => element.id == item
         ).video_name;
         return found;
       });
       return [...new Set(names)];
     }
-  }, [selectVideoindex, state.videoData]);
+  }, [selectVideoindex, videoData]);
 
   useEffect(() => {
-    setCreateUserButton(selectVideoindex.length !== 0 ? false : true);
+    setState({
+      ...state,
+      createUserButton: selectVideoindex.length !== 0 ? false : true,
+    });
   }, [selectVideoindex]);
 
   const handlePageChange = (page) => {
     const start = page * paginationSettings.rowsPerPage;
     const end = start + paginationSettings.rowsPerPage;
 
-    setPaginationSettings({
-      ...paginationSettings,
-      currentPage: page,
-    });
-    setState((state) => ({
+    setState({
       ...state,
-      showData: state.filterVideoData.slice(start, end),
-    }));
+      showData: filterVideoData.slice(start, end),
+      paginationSettings: {
+        ...paginationSettings,
+        currentPage: page,
+      },
+    });
   };
 
   useEffect(() => {
-    setPaginationSettings({
-      ...paginationSettings,
-      lastPage: Math.ceil(
-        state.filterVideoData.length / paginationSettings.rowsPerPage
-      ),
-      currentPage: 0,
-    });
-    setState((state) => ({
+    setState({
       ...state,
-      showData: state.filterVideoData.slice(0, paginationSettings.rowsPerPage),
-    }));
-  }, [state.videoData]);
+      showData: filterVideoData.slice(0, paginationSettings.rowsPerPage),
+      paginationSettings: {
+        ...paginationSettings,
+        lastPage: Math.ceil(
+          filterVideoData.length / paginationSettings.rowsPerPage
+        ),
+        currentPage: 0,
+      },
+    });
+  }, [videoData]);
 
   const handleSelectVideoindex = (ID) => {
-    setSelectVideoindex(
-      selectVideoindex.includes(ID)
+    setState({
+      ...state,
+      selectVideoindex: selectVideoindex.includes(ID)
         ? selectVideoindex.filter((item) => item !== ID)
-        : [...selectVideoindex, ID]
-    );
+        : [...selectVideoindex, ID],
+    });
   };
 
   // 表格標題
@@ -455,7 +453,10 @@ export default function Home() {
               <Form.Select
                 aria-label="請選擇影片類型"
                 onChange={(event) => {
-                  setSelectVideoType(Number(event.target.value));
+                  setState({
+                    ...state,
+                    selectVideoType: Number(event.target.value),
+                  });
                 }}
               >
                 {ClassList.map((item, _) => {
@@ -471,7 +472,10 @@ export default function Home() {
               <Form.Select
                 aria-label="請選擇影片語言"
                 onChange={(event) => {
-                  setSelectVideoLanguage(Number(event.target.value));
+                  setState({
+                    ...state,
+                    selectVideoLanguage: Number(event.target.value),
+                  });
                 }}
                 value={selectVideoLanguage}
               >
@@ -488,8 +492,10 @@ export default function Home() {
               <Form.Select
                 aria-label="請選擇影片練習/測驗"
                 onChange={(event) => {
-                  console.log(event.target.value);
-                  setSelectVideoPratice(Number(event.target.value));
+                  setState({
+                    ...state,
+                    selectVideoPratice: Number(event.target.value),
+                  });
                 }}
                 selected={selectVideoPratice}
               >
@@ -510,9 +516,12 @@ export default function Home() {
                 className="mt-1"
                 aria-label="請選擇每頁顯示筆數"
                 onChange={(event) => {
-                  setPaginationSettings({
-                    ...paginationSettings,
-                    rowsPerPage: Number(event.target.value),
+                  setState({
+                    ...state,
+                    paginationSettings: {
+                      ...paginationSettings,
+                      rowsPerPage: Number(event.target.value),
+                    },
                   });
                 }}
                 selected={paginationSettings.rowsPerPage}
@@ -540,7 +549,7 @@ export default function Home() {
               <VideoTitle />
             </thead>
             <tbody>
-              {state.showData.map((info, index) => {
+              {showData.map((info, index) => {
                 return <VideoInfo {...info} key={index} />;
               })}
             </tbody>
@@ -585,7 +594,7 @@ export default function Home() {
           state={{
             videoIndex: selectVideoindex,
             videoName: pickedVideoName,
-            videoData: state.videoData,
+            videoData: videoData,
           }}
           className={styles.disabledLink}
         >
