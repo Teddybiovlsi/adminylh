@@ -25,7 +25,7 @@ import limitPage from "../JsonFile/FilterPageContentSize.json";
 
 import convertType from "../../functions/typeConverter";
 import styles from "../../styles/pages/HomePage.module.scss";
-import useModal from "../../hooks/useModal ";
+import useModal from "../../hooks/useModal";
 
 export default function Home() {
   const navigate = useNavigate();
