@@ -1,17 +1,18 @@
-import React from 'react';
-import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
+import React from "react";
+import Button from "react-bootstrap/Button";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 export default function ShowInfoIcon({
-  placement = 'top',
-  btnAriaLabel = '',
+  placement = "top",
+  btnAriaLabel = "",
   btnDisabled = false,
   btnOnclickEventName,
-  btnSize = 'sm',
-  btnType = 'button',
-  btnVariant = 'secondary',
-  tooltipText = 'Hello for tooltip',
+  btnSize = "sm",
+  btnType = "button",
+  btnVariant = "secondary",
+  tooltipText = "Hello for tooltip",
+  isInfoOrVideo = "info",
 }) {
   return (
     <>
@@ -21,6 +22,7 @@ export default function ShowInfoIcon({
         overlay={<Tooltip id={`tooltip-${placement}`}>{tooltipText}</Tooltip>}
       >
         <Button
+          className="ms-1"
           aria-label={btnAriaLabel}
           disabled={btnDisabled}
           onClick={btnOnclickEventName}
@@ -28,7 +30,11 @@ export default function ShowInfoIcon({
           type={btnType}
           variant={btnVariant}
         >
-          <i className='bi bi-info-lg'></i>
+          {isInfoOrVideo === "info" ? (
+            <i className="bi bi-info-lg"></i>
+          ) : (
+            <i className="bi bi-play-btn"></i>
+          )}
         </Button>
       </OverlayTrigger>
     </>
