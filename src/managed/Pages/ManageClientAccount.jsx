@@ -238,27 +238,6 @@ export default function ManageClientAccount() {
       setErrorMessage("上傳失敗，請重新嘗試");
     }
   };
-
-  // 用戶狀態(啟用/停用)改變時，重新選擇資料
-  // useEffect(() => {
-  //   const filteredData = accountInfo.filter((item) => {
-  //     const isLockMatch =
-  //       Number(userState) === 0
-  //         ? item.client_is_lock == 0
-  //         : item.client_is_lock == 1;
-  //     const isVideoMatch =
-  //       Number(userVideo) === 0
-  //         ? item.client_have_video.length === 0
-  //         : item.client_have_video.length > 0;
-
-  //     console.log(isLockMatch, isVideoMatch);
-  //     return isLockMatch && isVideoMatch;
-  //   });
-  //   console.log(filteredData);
-
-  //   setFilteraccountInfo(filteredData);
-  // }, [userState, userVideo]);
-
   const filterUserInfo = useCallback(
     (data) => {
       data =
@@ -273,9 +252,18 @@ export default function ManageClientAccount() {
                 : item.client_have_video.length
             )
           : data;
+      data =
+        searchInfo !== ""
+          ? data.filter((item) => {
+              return (
+                item.client_account.includes(searchInfo) ||
+                item.client_name.includes(searchInfo)
+              );
+            })
+          : data;
       return data;
     },
-    [userState, userVideo]
+    [userState, userVideo, searchInfo]
   );
 
   const filteredAccountData = useMemo(
@@ -398,21 +386,6 @@ export default function ManageClientAccount() {
       return name;
     }
   };
-  useEffect(() => {
-    // 若搜尋欄位不為空，則顯示搜尋結果
-    if (searchInfo !== "") {
-      setFilteraccountInfo(
-        accountInfo.filter((item) => {
-          return (
-            item.client_account.includes(searchInfo) ||
-            item.client_name.includes(searchInfo)
-          );
-        })
-      );
-    } else {
-      setFilteraccountInfo(accountInfo);
-    }
-  }, [searchInfo]);
 
   // 若帳號欄位有任一被勾選，則編輯、解鎖、刪除按鈕皆可使用
   useEffect(() => {
@@ -726,7 +699,7 @@ export default function ManageClientAccount() {
         </Form.Select>
       </div>
       <div className={`mt-3 mb-3`}>
-        {errorFilterMessage == "" && (
+        {filteredAccountData.length !== 0 && (
           <Table>
             <thead>
               <AccountTitle />
@@ -738,9 +711,9 @@ export default function ManageClientAccount() {
             </tbody>
           </Table>
         )}
-        {errorFilterMessage != "" && (
+        {filteredAccountData.length === 0 && (
           <div className={`mt-3 mb-3`}>
-            <h2 className="text-center p-2">{errorFilterMessage}</h2>
+            <h2 className="text-center p-2">該區段查無資料，請重新嘗試</h2>
           </div>
         )}
         {/* 用戶資訊Modal */}
@@ -878,15 +851,13 @@ export default function ManageClientAccount() {
                   <Col>已勾選影片：</Col>
                 </Row>
                 <ListGroup as="ol" numbered>
-                  {filteraccountInfo[0].client_have_video.map(
-                    (video, index) => {
-                      return (
-                        <ListGroup.Item as="li" key={index}>
-                          {video.video_name}
-                        </ListGroup.Item>
-                      );
-                    }
-                  )}
+                  {filterVideoInfo[0].client_have_video.map((video, index) => {
+                    return (
+                      <ListGroup.Item as="li" key={index}>
+                        {video.video_name}
+                      </ListGroup.Item>
+                    );
+                  })}
                 </ListGroup>
                 <Row className="mt-2">
                   <BtnBootstrap
@@ -894,8 +865,9 @@ export default function ManageClientAccount() {
                     btnSize="normal"
                     text={"點擊增/減影片"}
                     onClickEventName={() => {
+                      console.log(filterVideoInfo[0].client_have_video);
                       setTempCheckedVideo(
-                        filteraccountInfo[0].client_has_check_video
+                        filterVideoInfo[0].client_has_check_video
                       );
                     }}
                   />
