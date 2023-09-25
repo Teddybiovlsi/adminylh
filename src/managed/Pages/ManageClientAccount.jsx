@@ -1,10 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { get, del, put } from "../axios";
 import {
   Col,
   Container,
   Form,
   InputGroup,
+  ListGroup,
   Modal,
   Navbar,
   Row,
@@ -24,6 +31,14 @@ import BtnBootstrap from "../../components/BtnBootstrap";
 import { toast } from "react-toastify";
 import ToastAlert from "../../components/ToastAlert";
 import styles from "../../styles/pages/ManageClientAccount.module.scss";
+import { List } from "react-bootstrap-icons";
+import { AiOutlineCloseCircle } from "react-icons/ai";
+import ReactPaginate from "react-paginate";
+import useModal from "../../hooks/useModal";
+
+import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
+import FilterType from "../JsonFile/FilterVideoType.json";
+import convertType from "../../functions/typeConverter";
 
 export default function ManageClientAccount() {
   // 用來儲存修改姓名的資料
@@ -33,23 +48,39 @@ export default function ManageClientAccount() {
   // 用來儲存修改密碼的資料
   const userPwd = useRef(null);
 
+  const user = JSON.parse(
+    localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
+  );
+
   const [accountInfo, setAccountInfo] = useState([]);
   // 用來儲存搜尋欄位的資料
   const [searchInfo, setSearchInfo] = useState("");
+
+  const [videoData, setVideoData] = useState([]);
+
+  const [searchVideoResult, setSearchVideoResult] = useState([]);
+
   // 用來儲存篩選後的資料
   const [filteraccountInfo, setFilteraccountInfo] = useState([]);
   // 用來儲存篩選後的資料，用於懸浮視窗Modal
   const [filterPersonInfo, setFilterPersonInfo] = useState(null);
+  // 用來儲存篩選後的使用者影片資料，用於懸浮視窗Modal
+  const [filterVideoInfo, setFilterVideoInfo] = useState(null);
+
+  const [searchTextVideo, setSearchTextVideo] = useState("");
+
+  const [tempCheckedVideo, setTempCheckedVideo] = useState([]);
+
   // 用來儲存是否全選帳號
   const [isCheckAllAccount, setIsCheckAllAccount] = useState(false);
   // 用來儲存選擇的帳號
   const [selectAccount, setSelectAccount] = useState([]);
   // 用來儲存用戶狀態(正常使用中/鎖定中)
-  const [userState, setUserState] = useState("");
+  const [userState, setUserState] = useState(2);
   // 用來儲存用戶影片狀態(有影片/無影片)
-  const [userVideo, setUserVideo] = useState("");
+  const [userVideo, setUserVideo] = useState(2);
   // 若帳號資訊尚未載入完成，則顯示Loading
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   // 若帳號資訊載入失敗，則顯示錯誤訊息
   const [errorMessage, setErrorMessage] = useState("");
   // 若篩選後的資料為空，則顯示錯誤訊息
@@ -63,6 +94,9 @@ export default function ManageClientAccount() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
+
+  const [showVideoModal, handleClosedVideoModal, handleShowVideoModal] =
+    useModal();
 
   const handleDeleteVideo = () => {
     // put selectAccount value into an array
@@ -84,8 +118,10 @@ export default function ManageClientAccount() {
     // call fetchaAccountData function to reload account data
     // 設置3秒才重新載入資料，避免資料未在資料庫更新時就重新載入資料
     setTimeout(() => {
-      fetchaAccountData({
+      fetchData({
         api: "account",
+        setData: setAccountInfo,
+        setSearchResult: setFilteraccountInfo,
       });
     }, 3000);
   };
@@ -144,8 +180,10 @@ export default function ManageClientAccount() {
       // call fetchaAccountData function to reload account data
       // 設置3秒才重新載入資料，避免資料未在資料庫更新時就重新載入資料
       setTimeout(() => {
-        fetchaAccountData({
+        fetchData({
           api: "account",
+          setData: setAccountInfo,
+          setSearchResult: setFilteraccountInfo,
         });
       }, 3000);
     }, 2000);
@@ -159,38 +197,92 @@ export default function ManageClientAccount() {
   // first render, get acoount data
   useEffect(() => {
     let ignore = false;
-    const fetchData = async () => {
-      await fetchaAccountData({
+    const fetchDataAsync = async () => {
+      await fetchData({
         api: "account",
+        setData: setAccountInfo,
+        setSearchResult: setFilteraccountInfo,
+      });
+      await fetchData({
+        api: `videos/${user.token}/${user.email}`,
+        setData: setVideoData,
+        setSearchResult: setSearchVideoResult,
       });
     };
     if (!ignore) {
-      // set loading to true
-      setLoading(true);
-      fetchData();
+      fetchDataAsync();
     }
     return () => {
       ignore = true;
     };
   }, []);
 
+  const fetchData = async ({ api, setData, setSearchResult }) => {
+    try {
+      const response = await get(api);
+      const data = await response.data.data;
+      const checkIsArray = Array.isArray(data);
+      setData(checkIsArray ? data : [data]);
+      setSearchResult(checkIsArray ? data : [data]);
+      setErrorMessage("");
+      setLoading(false);
+    } catch (error) {
+      handleApiError(error);
+    }
+  };
+
+  const handleApiError = (error) => {
+    if (error.code === "ECONNABORTED") {
+      setErrorMessage("伺服器連線逾時，請重新嘗試");
+    } else {
+      setErrorMessage("上傳失敗，請重新嘗試");
+    }
+  };
+
   // 用戶狀態(啟用/停用)改變時，重新選擇資料
-  useEffect(() => {
-    const filteredData = accountInfo.filter((item) => {
-      const isLockMatch =
-        Number(userState) === 0
-          ? item.client_is_lock === 0
-          : item.client_is_lock === 1;
-      const isVideoMatch =
-        Number(userVideo) === 0
-          ? item.client_have_video === 0
-          : item.client_have_video === 1;
+  // useEffect(() => {
+  //   const filteredData = accountInfo.filter((item) => {
+  //     const isLockMatch =
+  //       Number(userState) === 0
+  //         ? item.client_is_lock == 0
+  //         : item.client_is_lock == 1;
+  //     const isVideoMatch =
+  //       Number(userVideo) === 0
+  //         ? item.client_have_video.length === 0
+  //         : item.client_have_video.length > 0;
 
-      return isLockMatch && isVideoMatch;
-    });
+  //     console.log(isLockMatch, isVideoMatch);
+  //     return isLockMatch && isVideoMatch;
+  //   });
+  //   console.log(filteredData);
 
-    setFilteraccountInfo(filteredData);
-  }, [userState, userVideo]);
+  //   setFilteraccountInfo(filteredData);
+  // }, [userState, userVideo]);
+
+  const filterUserInfo = useCallback(
+    (data) => {
+      if (userState !== 2) {
+        data = data.filter((item) => item.client_is_lock === userState);
+      }
+
+      if (userVideo !== 2) {
+        data = data.filter((item) =>
+          item.client_have_video.length > 0
+            ? item.client_have_video.length > 0
+            : item.client_have_video.length === 0
+        );
+        console.log(data);
+      }
+
+      return data;
+    },
+    [userState, userVideo]
+  );
+
+  const filteredAccountData = useMemo(
+    () => filterUserInfo(accountInfo),
+    [filterUserInfo, accountInfo]
+  );
 
   // 當篩選後的資料長度為0時，顯示錯誤訊息
   useEffect(() => {
@@ -207,37 +299,6 @@ export default function ManageClientAccount() {
     }
   }, [filteraccountInfo]);
 
-  const fetchaAccountData = async ({ api }) => {
-    try {
-      const response = await get(api);
-      // get data from res.data.data
-      // because res.data.data is a promise
-      // so we need to use await to get the value of res.data.data
-      // and then we can use data to get the value of res.data.data
-      const data = await response.data.data;
-      // check if data is an array
-      // if data is an array, checkIsArray is true
-      // otherwise, checkIsArray is false
-      const checkIsArray = Array.isArray(data);
-      // set videoData
-      // if checkIsArray is true, set videoData to data
-      // otherwise, set videoData to [data]
-      setAccountInfo(checkIsArray ? data : [data]);
-      // 將預設篩選後的資料設為 data
-      setFilteraccountInfo(checkIsArray ? data : [data]);
-      // 將 loading 設為 false
-      setLoading(false);
-      // clear error message
-      setErrorMessage("");
-    } catch (error) {
-      // 將 loading 設為 false
-      setLoading(false);
-      // if error.response is true, get error message
-      if (error.response) {
-        setErrorMessage(StatusCode(error.response.status));
-      }
-    }
-  };
   // 執行刪除帳號API
   const fetchDeleteAccount = async ({ api }) => {
     try {
@@ -301,8 +362,10 @@ export default function ManageClientAccount() {
         setFilteraccountInfo([]);
         // fetch data again
         setTimeout(() => {
-          fetchaAccountData({
+          fetchData({
             api: "account",
+            setData: setAccountInfo,
+            setSearchResult: setFilteraccountInfo,
           });
         }, 3000);
       }, 3000);
@@ -398,8 +461,18 @@ export default function ManageClientAccount() {
     );
   };
 
+  const VideoInfoModal = (user_video) => {
+    setFilterVideoInfo(
+      accountInfo.filter((item) => item.client_account == user_video)
+    );
+  };
+
   const handleCloseAccountModal = () => {
     setFilterPersonInfo(null);
+  };
+
+  const handleCloseVidoeModal = () => {
+    setFilterVideoInfo(null);
   };
 
   // 表格標題
@@ -449,11 +522,11 @@ export default function ManageClientAccount() {
           <ShowLockIcon
             placement="bottom"
             islock={client_is_lock}
-            tooltipText={client_is_lock === 0 ? "開放使用中" : "鎖定中"}
+            tooltipText={client_is_lock ? "開放使用中" : "鎖定中"}
           />
           <ShowVideoIcon
             placement="bottom"
-            haveVideo={client_have_video}
+            haveVideo={!!client_have_video.length > 0 ? 1 : 0}
             tooltipText={client_have_video === 0 ? "無影片" : "有影片"}
           />
         </td>
@@ -466,6 +539,16 @@ export default function ManageClientAccount() {
             }}
             btnSize="sm"
             tooltipText="帳號資訊"
+          />
+          <ShowInfoIcon
+            placement="bottom"
+            btnAriaLabel="勾選影片資訊"
+            btnOnclickEventName={() => {
+              VideoInfoModal(client_account);
+            }}
+            btnSize="sm"
+            tooltipText="勾選影片資訊"
+            isInfoOrVideo="video"
           />
         </td>
       </tr>
@@ -612,7 +695,7 @@ export default function ManageClientAccount() {
           aria-label="請選擇用戶影片狀態"
           className={styles.container_selectbar}
           onChange={(event) => {
-            setUserVideo(event.target.value);
+            setUserVideo(Number(event.target.value));
           }}
           style={{
             width: "220px",
@@ -630,7 +713,7 @@ export default function ManageClientAccount() {
           aria-label="請選擇用戶帳號狀態"
           className={styles.container_selectbar}
           onChange={(event) => {
-            setUserState(event.target.value);
+            setUserState(Number(event.target.value));
           }}
           style={{ width: "220px" }}
         >
@@ -650,7 +733,7 @@ export default function ManageClientAccount() {
               <AccountTitle />
             </thead>
             <tbody>
-              {filteraccountInfo.map((item, index) => {
+              {filteredAccountData.map((item, index) => {
                 return <AccountInfo key={index} {...item} />;
               })}
             </tbody>
@@ -781,6 +864,235 @@ export default function ManageClientAccount() {
             />
           </Modal.Footer>
         </Modal>
+
+        <Modal show={filterVideoInfo != null} onHide={handleCloseVidoeModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>影片資訊</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {filterVideoInfo != null && (
+              <Container>
+                <Row>
+                  <Col>姓名：{filterVideoInfo[0].client_name}</Col>
+                </Row>
+                <Row className="mb-2">
+                  <Col>已勾選影片：</Col>
+                </Row>
+                <ListGroup as="ol" numbered>
+                  {filteraccountInfo[0].client_have_video.map(
+                    (video, index) => {
+                      return (
+                        <ListGroup.Item as="li" key={index}>
+                          {video.video_name}
+                        </ListGroup.Item>
+                      );
+                    }
+                  )}
+                </ListGroup>
+                <Row className="mt-2">
+                  <BtnBootstrap
+                    variant="outline-primary"
+                    btnSize="normal"
+                    text={"點擊增/減影片"}
+                    onClickEventName={() => {
+                      setTempCheckedVideo(
+                        filteraccountInfo[0].client_has_check_video
+                      );
+                    }}
+                  />
+                </Row>
+              </Container>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <BtnBootstrap
+              variant="secondary"
+              btnSize="normal"
+              onClickEventName={handleCloseAccountModal}
+              text={"關閉"}
+            />
+            <BtnBootstrap
+              variant="primary"
+              btnSize="normal"
+              text={"修改"}
+              disabled={isDisableEditProfileBtn}
+              onClickEventName={() => {
+                if (
+                  userName.current.value == "" &&
+                  userEmail.current.value == "" &&
+                  userPwd.current.value == ""
+                ) {
+                  setIsDisableEditProfileBtn(true);
+                  toast.error("請輸入修改資料", {
+                    position: "top-center",
+                    autoClose: 2000,
+                  });
+                  setTimeout(() => {
+                    setIsDisableEditProfileBtn(false);
+                  }, 3000);
+                } else {
+                  handleEditAccount(filterPersonInfo[0].client_unique_id);
+                }
+              }}
+            />
+          </Modal.Footer>
+        </Modal>
+
+        {/* 影片類 */}
+        <Modal
+          show={tempCheckedVideo.length > 0}
+          onHide={() => {
+            setTempCheckedVideo([]);
+            handleClosedVideoModal;
+          }}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>請選擇新增之影片</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Container>
+              <Row>
+                <Form.Group as={Col}>
+                  <InputGroup>
+                    <InputGroup.Text>
+                      <i className="bi bi-search"></i>
+                    </InputGroup.Text>
+                    <Form.Control
+                      type="text"
+                      defaultValue={searchTextVideo}
+                      placeholder="影片搜尋.."
+                      style={{ boxShadow: "none" }}
+                      onChange={(e) => {
+                        setSearchTextVideo(e.target.value);
+                      }}
+                    />
+                  </InputGroup>
+                </Form.Group>
+              </Row>
+              <Row className="mt-2 mb-2">
+                <Col md={6}>
+                  <Form.Select
+                    aria-label="請選擇影片練習/測驗"
+                    onChange={(e) => {
+                      e.target.value === "empty"
+                        ? setSearchType("empty")
+                        : setSearchType(Number(e.target.value));
+                    }}
+                  >
+                    <option value="empty">選擇影片練習/測驗</option>
+                    {FilterType.map((item, _) => {
+                      return (
+                        <option key={item.id} value={item.value}>
+                          {item.label}
+                        </option>
+                      );
+                    })}
+                  </Form.Select>
+                </Col>
+
+                <Col md={6}>
+                  <Form.Select
+                    aria-label="請選擇每頁資料筆數"
+                    onChange={(e) => {
+                      setPaginationSettings({
+                        ...paginationSettings,
+                        rowsPerPageVideo: e.target.value,
+                      });
+                    }}
+                  >
+                    {FilterPageSize.map((item, _) => {
+                      return (
+                        <option key={item.id} value={item.value}>
+                          {item.label}
+                        </option>
+                      );
+                    })}
+                  </Form.Select>
+                </Col>
+              </Row>
+              <Row>
+                <ListGroup as="ol" numbered>
+                  {videoData.map((item, index) => {
+                    return (
+                      <Form.Check
+                        key={index}
+                        type="checkbox"
+                        label={
+                          <Container className="ms-2">
+                            <Col>
+                              <Row className="fw-bold">
+                                <p className="m-0 p-0">
+                                  影片名稱：{item.video_name}
+                                  <b
+                                    className={
+                                      item.video_type == 0
+                                        ? "text-primary"
+                                        : "text-danger"
+                                    }
+                                  >
+                                    ({convertType(item.video_type)})
+                                  </b>
+                                </p>
+                              </Row>
+                              <Row>類型：{item.video_class}</Row>
+                              <Row>語言：{item.video_language}</Row>
+                            </Col>
+                          </Container>
+                        }
+                        value={item.id}
+                        checked={tempCheckedVideo.includes(item.id)}
+                        onChange={() => {
+                          handleCheckedVideo(item.id);
+                        }}
+                      />
+                    );
+                  })}
+                </ListGroup>
+              </Row>
+              <Row>
+                <ReactPaginate
+                  // forcePage={paginationSettings.currentPageVideo}
+                  breakLabel={"..."}
+                  nextLabel={">"}
+                  previousLabel={"<"}
+                  onPageChange={(page) =>
+                    handlePageChange(page.selected, false)
+                  }
+                  // pageCount={paginationSettings.lastPageVideo}
+                  pageRangeDisplayed={2}
+                  marginPagesDisplayed={1}
+                  containerClassName="justify-content-center pagination"
+                  breakClassName={"page-item"}
+                  breakLinkClassName={"page-link"}
+                  pageClassName={"page-item"}
+                  pageLinkClassName={"page-link"}
+                  previousClassName={"page-item"}
+                  previousLinkClassName={"page-link"}
+                  nextClassName={"page-item"}
+                  nextLinkClassName={"page-link"}
+                  activeClassName={"active"}
+                />
+              </Row>
+            </Container>
+          </Modal.Body>
+          <Modal.Footer>
+            <BtnBootstrap
+              btnSize="md"
+              variant="outline-secondary"
+              text={"取消"}
+              onClickEventName={handleClosedVideoModal}
+            />
+            <BtnBootstrap
+              btnSize="md"
+              variant="outline-primary"
+              text={"確認"}
+              onClickEventName={() => {
+                // handleConfirmCheckedItems("video", tempCheckedVideo);
+              }}
+            />
+          </Modal.Footer>
+        </Modal>
+
         {/* 確認刪除至回收桶Modal */}
         <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
           <Modal.Header closeButton>
