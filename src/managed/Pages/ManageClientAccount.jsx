@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { get, del, put } from "../axios";
+import { get, del, put, post } from "../axios";
 import {
   Col,
   Container,
@@ -83,8 +83,13 @@ export default function ManageClientAccount() {
   const [loading, setLoading] = useState(true);
   // 若帳號資訊載入失敗，則顯示錯誤訊息
   const [errorMessage, setErrorMessage] = useState("");
-  // 若篩選後的資料為空，則顯示錯誤訊息
-  const [errorFilterMessage, setErrorFilterMessage] = useState("");
+
+  const [paginationSettings, setPaginationSettings] = useState({
+    currentPageVideo: 0,
+    lastPageVideo: 1,
+    rowsPerPageVideo: 5,
+  });
+
   // 若沒有選擇任何帳號，則禁用編輯、解鎖、刪除按鈕
   const [isDisableMultiAddBtn, setIsDisableMultiAddBtn] = useState(false);
   const [isDisableEditBtn, setIsDisableEditBtn] = useState(false);
@@ -273,10 +278,7 @@ export default function ManageClientAccount() {
 
   // 當篩選後的資料長度為0時，顯示錯誤訊息
   useEffect(() => {
-    if (filteraccountInfo.length == 0) {
-      setErrorFilterMessage("該區段查無資料，請重新選擇");
-    } else {
-      setErrorFilterMessage("");
+    if (filteraccountInfo.length > 0) {
       // 在filteraccountInfo有所變動時，檢查是否長度一致，若一致則全選，反之則取消全選
       if (filteraccountInfo.length === selectAccount.length) {
         setIsCheckAllAccount(true);
@@ -338,6 +340,46 @@ export default function ManageClientAccount() {
         autoClose: 2000,
       });
       handleCloseAccountModal();
+      setTimeout(() => {
+        // set loading
+        setLoading(true);
+        // clear selectAccount
+        setSelectAccount([]);
+        // clear accountInfo
+        setAccountInfo([]);
+        // clear filteraccountInfo
+        setFilteraccountInfo([]);
+        // fetch data again
+        setTimeout(() => {
+          fetchData({
+            api: "account",
+            setData: setAccountInfo,
+            setSearchResult: setFilteraccountInfo,
+          });
+        }, 3000);
+      }, 3000);
+    } catch (error) {
+      toast.update(id, {
+        render: "更新失敗",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    }
+  };
+
+  const fetchUpdateUserVideo = async ({ api, data }) => {
+    const id = toast.loading("更新中...");
+
+    try {
+      await post(api, data);
+      toast.update(id, {
+        render: "更新成功，3秒後將重新整理頁面",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+      handleCloseVidoeModal();
       setTimeout(() => {
         // set loading
         setLoading(true);
@@ -836,7 +878,7 @@ export default function ManageClientAccount() {
             />
           </Modal.Footer>
         </Modal>
-
+        {/* 用戶影片資訊Modal */}
         <Modal show={filterVideoInfo != null} onHide={handleCloseVidoeModal}>
           <Modal.Header closeButton>
             <Modal.Title>影片資訊</Modal.Title>
@@ -851,13 +893,16 @@ export default function ManageClientAccount() {
                   <Col>已勾選影片：</Col>
                 </Row>
                 <ListGroup as="ol" numbered>
-                  {filterVideoInfo[0].client_have_video.map((video, index) => {
-                    return (
-                      <ListGroup.Item as="li" key={index}>
-                        {video.video_name}
-                      </ListGroup.Item>
-                    );
-                  })}
+                  {filterVideoInfo[0].client_has_check_video.map(
+                    (videoIndex, index) => {
+                      return (
+                        <ListGroup.Item as="li" key={index}>
+                          {videoData.find((item) => item.id === videoIndex)
+                            ?.video_name || "無影片"}
+                        </ListGroup.Item>
+                      );
+                    }
+                  )}
                 </ListGroup>
                 <Row className="mt-2">
                   <BtnBootstrap
@@ -865,7 +910,6 @@ export default function ManageClientAccount() {
                     btnSize="normal"
                     text={"點擊增/減影片"}
                     onClickEventName={() => {
-                      console.log(filterVideoInfo[0].client_have_video);
                       setTempCheckedVideo(
                         filterVideoInfo[0].client_has_check_video
                       );
@@ -879,37 +923,28 @@ export default function ManageClientAccount() {
             <BtnBootstrap
               variant="secondary"
               btnSize="normal"
-              onClickEventName={handleCloseAccountModal}
+              onClickEventName={handleCloseVidoeModal}
               text={"關閉"}
             />
             <BtnBootstrap
               variant="primary"
               btnSize="normal"
-              text={"修改"}
+              text={"修改影片資料"}
               disabled={isDisableEditProfileBtn}
               onClickEventName={() => {
-                if (
-                  userName.current.value == "" &&
-                  userEmail.current.value == "" &&
-                  userPwd.current.value == ""
-                ) {
-                  setIsDisableEditProfileBtn(true);
-                  toast.error("請輸入修改資料", {
-                    position: "top-center",
-                    autoClose: 2000,
-                  });
-                  setTimeout(() => {
-                    setIsDisableEditProfileBtn(false);
-                  }, 3000);
-                } else {
-                  handleEditAccount(filterPersonInfo[0].client_unique_id);
-                }
+                fetchUpdateUserVideo({
+                  api: `video/update/client`,
+                  data: {
+                    clientID: filterVideoInfo[0].client_unique_video_id,
+                    videoID: filterVideoInfo[0].client_has_check_video,
+                  },
+                });
               }}
             />
           </Modal.Footer>
         </Modal>
 
-        {/* 影片類 */}
+        {/* 影片類新增Modal */}
         <Modal
           show={tempCheckedVideo.length > 0}
           onHide={() => {
@@ -1013,7 +1048,13 @@ export default function ManageClientAccount() {
                         value={item.id}
                         checked={tempCheckedVideo.includes(item.id)}
                         onChange={() => {
-                          handleCheckedVideo(item.id);
+                          setTempCheckedVideo(
+                            tempCheckedVideo.includes(item.id)
+                              ? tempCheckedVideo.filter(
+                                  (video) => video !== item.id
+                                )
+                              : [...tempCheckedVideo, item.id]
+                          );
                         }}
                       />
                     );
@@ -1021,7 +1062,7 @@ export default function ManageClientAccount() {
                 </ListGroup>
               </Row>
               <Row>
-                <ReactPaginate
+                {/* <ReactPaginate
                   // forcePage={paginationSettings.currentPageVideo}
                   breakLabel={"..."}
                   nextLabel={">"}
@@ -1042,7 +1083,7 @@ export default function ManageClientAccount() {
                   nextClassName={"page-item"}
                   nextLinkClassName={"page-link"}
                   activeClassName={"active"}
-                />
+                /> */}
               </Row>
             </Container>
           </Modal.Body>
@@ -1051,14 +1092,24 @@ export default function ManageClientAccount() {
               btnSize="md"
               variant="outline-secondary"
               text={"取消"}
-              onClickEventName={handleClosedVideoModal}
+              onClickEventName={() => {
+                setTempCheckedVideo([]);
+              }}
             />
             <BtnBootstrap
               btnSize="md"
               variant="outline-primary"
               text={"確認"}
               onClickEventName={() => {
-                // handleConfirmCheckedItems("video", tempCheckedVideo);
+                setFilterVideoInfo((prev) => {
+                  return prev.map((item) => {
+                    return {
+                      ...item,
+                      client_has_check_video: tempCheckedVideo,
+                    };
+                  });
+                });
+                setTempCheckedVideo([]);
               }}
             />
           </Modal.Footer>
