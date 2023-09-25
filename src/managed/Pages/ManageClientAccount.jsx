@@ -261,19 +261,18 @@ export default function ManageClientAccount() {
 
   const filterUserInfo = useCallback(
     (data) => {
-      if (userState !== 2) {
-        data = data.filter((item) => item.client_is_lock === userState);
-      }
-
-      if (userVideo !== 2) {
-        data = data.filter((item) =>
-          userVideo === 0
-            ? item.client_have_video.length === 0
-            : item.client_have_video.length > 0
-        );
-        console.log(data);
-      }
-
+      data =
+        userState !== 2
+          ? data.filter((item) => item.client_is_lock === userState)
+          : data;
+      data =
+        userVideo !== 2
+          ? data.filter((item) =>
+              userVideo === 0
+                ? !item.client_have_video.length
+                : item.client_have_video.length
+            )
+          : data;
       return data;
     },
     [userState, userVideo]
