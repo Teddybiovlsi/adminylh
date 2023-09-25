@@ -17,7 +17,7 @@ import ReactPaginate from "react-paginate";
 import { get, post } from "../axios";
 import ToastAlert from "../../components/ToastAlert";
 import convertType from "../../functions/typeConverter";
-import useModal from "../../hooks/useModal ";
+import useModal from "../../hooks/useModal";
 
 export default function EditClientVideoID() {
   const { state } = useLocation();
