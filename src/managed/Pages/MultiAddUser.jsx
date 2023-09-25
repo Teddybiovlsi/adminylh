@@ -7,6 +7,7 @@ import { post } from "../axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import styles from "../../styles/pages/HomePage.module.scss";
+import useModal from "../../hooks/useModal";
 
 export default function MultiAddUser() {
   // 建立一個參考變數
@@ -23,8 +24,7 @@ export default function MultiAddUser() {
   const [showData, setShowData] = useState(sheetData.slice(0, rowsPerPage));
   const [lastPage, setLastPage] = useState(1);
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  const [show, handleClose, handleShow] = useModal();
 
   const [uploadResult, setUploadResult] = useState(false);
   const handleCloseResult = () => setUploadResult(false);
@@ -78,7 +78,7 @@ export default function MultiAddUser() {
     try {
       const clientSubmit = toast.loading("資料上傳中...");
       // 將Modal關閉
-      setShow(false);
+      handleClose();
       const response = await post("clients", data);
       toast.update(clientSubmit, {
         render: "資料上傳成功",
@@ -129,9 +129,7 @@ export default function MultiAddUser() {
           variant="outline-primary"
           type="button"
           btnPosition="mt-3 mb-2 float-end"
-          onClickEventName={() => {
-            setShow(true);
-          }}
+          onClickEventName={handleShow}
           disabled={sheetData.length === 0}
           text="送出"
         />
