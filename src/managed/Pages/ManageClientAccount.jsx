@@ -267,9 +267,9 @@ export default function ManageClientAccount() {
 
       if (userVideo !== 2) {
         data = data.filter((item) =>
-          item.client_have_video.length > 0
-            ? item.client_have_video.length > 0
-            : item.client_have_video.length === 0
+          userVideo === 0
+            ? item.client_have_video.length === 0
+            : item.client_have_video.length > 0
         );
         console.log(data);
       }
@@ -526,8 +526,8 @@ export default function ManageClientAccount() {
           />
           <ShowVideoIcon
             placement="bottom"
-            haveVideo={!!client_have_video.length > 0 ? 1 : 0}
-            tooltipText={client_have_video === 0 ? "無影片" : "有影片"}
+            haveVideo={client_have_video.length > 0 ? 1 : 0}
+            tooltipText={client_have_video.length === 0 ? "無影片" : "有影片"}
           />
         </td>
         <td>
