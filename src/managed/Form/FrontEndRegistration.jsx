@@ -25,7 +25,7 @@ import ToastAlert from "../../components/ToastAlert";
 import FormIdentity from "./shared/FormIdentity";
 import { Stepper, Step } from "react-form-stepper";
 import styles from "../../styles/Form/ClientRegistration.module.scss";
-import useModal from "../../hooks/useModal ";
+import useModal from "../../hooks/useModal";
 
 export default function FrontEndRegistration() {
   // check if useLocation.state is null
