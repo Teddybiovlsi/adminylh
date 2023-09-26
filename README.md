@@ -42,11 +42,16 @@ npm run dev
    - [x] [紀錄管理](/src/managed/Pages/ManageClientRecord.jsx)
 
 ### 元件
+ - [x] [路由保護](/src/AuthProtected.jsx)
  - [x] [導覽列](/src/managed/Header.jsx)
+ - 影片類
+  - [x] [編輯影片](/src/managed/Form/EditClientVideoQA.jsx)
 ### 功能
  - [x] [axios](/src/managed/axios.jsx)
+ - [x] [密碼強度檢查](/src/managed/Form/shared/PwdStrengthMeter.jsx)
 
 ## 代辦事項
+  - [x] [刪除影片功能]
   - 各頁面重新檢查並優化
   - 後台使用者管理頁面完成
 
