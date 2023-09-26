@@ -1,18 +1,15 @@
+import React from "react";
+import { AiFillSetting } from "react-icons/ai";
 import {
   Container,
   Nav,
   Navbar,
   NavDropdown,
   Offcanvas,
-  Button,
-  NavLink,
 } from "react-bootstrap";
-import { BoxArrowLeft } from "react-bootstrap-icons";
 import { LinkContainer } from "react-router-bootstrap";
+import { useNavigate } from "react-router-dom";
 import styles from "../styles/components/NavStyle.module.scss";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { AiFillSetting } from "react-icons/ai";
 
 export default function Header({ expand = "lg" }) {
   const navigate = useNavigate();
@@ -21,14 +18,11 @@ export default function Header({ expand = "lg" }) {
     localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
   );
 
-  // const expTimeFormat = Date.parse(Date(user.expTime));
-  // const nowTimeFormat = Date.now();
-  // console.log("expTimeFormat", expTimeFormat);
-  // console.log("nowTimeFormat", nowTimeFormat);
-  // console.log("compare", new Date(user?.expTime) > new Date());
-  // useEffect(() => {
-  //   console.log("user", user);
-  // }, [user]);
+  const handleLogout = () => {
+    localStorage.getItem("manage") && localStorage.clear();
+    sessionStorage.getItem("manage") && sessionStorage.clear();
+    navigate("/");
+  };
 
   return (
     <Navbar
@@ -52,7 +46,7 @@ export default function Header({ expand = "lg" }) {
         >
           <Offcanvas.Header closeButton>
             <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${expand}`}>
-              Offcanvas
+              主選單
             </Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
@@ -104,15 +98,7 @@ export default function Header({ expand = "lg" }) {
                 align={{ lg: "end" }}
               >
                 {user !== null ? (
-                  <NavDropdown.Item
-                    as={"button"}
-                    onClick={() => {
-                      localStorage.getItem("manage") && localStorage.clear();
-                      sessionStorage.getItem("manage") &&
-                        sessionStorage.clear();
-                      navigate("/");
-                    }}
-                  >
+                  <NavDropdown.Item as={"button"} onClick={handleLogout}>
                     登出
                   </NavDropdown.Item>
                 ) : (
