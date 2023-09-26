@@ -1,38 +1,20 @@
 const PwdStrengthMeter = ({ pwdScore }) => {
   const num = (pwdScore * 100) / 4;
 
+  const passwordLevels = {
+    0: { label: "非常弱:無法通過", color: "#828282" },
+    1: { label: "弱:無法通過", color: "red" },
+    2: { label: "中等", color: "orange" },
+    3: { label: "強", color: "blue" },
+    4: { label: "非常強", color: "green" },
+  };
+
   const createPassLabel = () => {
-    switch (pwdScore) {
-      case 0:
-        return "非常弱:無法通過";
-      case 1:
-        return "弱:無法通過";
-      case 2:
-        return "中等";
-      case 3:
-        return "強";
-      case 4:
-        return "非常強";
-      default:
-        return "";
-    }
+    return passwordLevels[pwdScore]?.label || "";
   };
 
   const funcProgressColor = () => {
-    switch (pwdScore) {
-      case 0:
-        return "#828282";
-      case 1:
-        return "red";
-      case 2:
-        return "orange";
-      case 3:
-        return "blue";
-      case 4:
-        return "Green";
-      default:
-        return "none";
-    }
+    return passwordLevels[pwdScore]?.color || "none";
   };
 
   const changeStrengthBarColor = () => ({
