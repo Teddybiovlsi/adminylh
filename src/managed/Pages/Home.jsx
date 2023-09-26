@@ -9,7 +9,7 @@ import React, {
 import { Link, useNavigate } from "react-router-dom";
 import { Col, Container, Form, Modal, Row, Table } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
-import { get } from "../axios";
+import { get, del } from "../axios";
 import ReactPaginate from "react-paginate";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import { toast } from "react-toastify";
@@ -41,7 +41,6 @@ export default function Home() {
     errorFilterMessage: "",
     errorMessage: "",
     filterVideoData: [],
-    loading: true,
     paginationSettings: {
       currentPage: 0,
       lastPage: 1,
@@ -64,6 +63,7 @@ export default function Home() {
         video_path: "",
       },
     ],
+    checkIsHuman: false,
   };
 
   const [state, setState] = useState(initialState);
@@ -73,7 +73,6 @@ export default function Home() {
     errorFilterMessage, // 篩選查無資料訊息
     errorMessage, // 錯誤訊息
     filterVideoData, // 篩選後的影片資料
-    loading, // 載入中
     paginationSettings, // 分頁設定
     selectVideoLanguage, // 選擇的影片語言
     selectVideoPratice, // 選擇的影片練習/測驗
@@ -81,26 +80,26 @@ export default function Home() {
     selectVideoindex, // 選擇的影片ID
     showData, // 顯示的影片資料
     videoData, // 影片原始資料(API取得)
+    checkIsHuman,
   } = state;
+
+  const [loading, setLoading] = useState(true);
 
   const [disabledEditBtn, setDisabledEditBtn] = useState(false);
   const [disabledDelBtn, setDisabledDelBtn] = useState(false);
   // 主頁上方Navbar選單(新增/刪除影片)
   const [searchTextVideo, setSearchTextVideo] = useState("");
 
-  const [showAddVideoModal, handleShowAddVideoModal, handleCloseAddVideoModal] =
+  const [showAddVideoModal, handleCloseAddVideoModal, handleShowAddVideoModal] =
     useModal(false);
 
   const [showDeleteVideoModal, setShowDeleteVideoModal] = useState(false);
 
   const handleEditVideo = () => {
     if (selectVideoindex.length === 0) {
-      showErrorAndDisableButton(
-        "請勾選影片，再點選編輯按鍵",
-        setDisabledEditBtn
-      );
+      showErrorAndDisableButton("請勾選影片，再點選編輯按鍵", true, false);
     } else if (selectVideoindex.length > 1) {
-      showErrorAndDisableButton("一次僅限勾選一個影片進行編輯");
+      showErrorAndDisableButton("一次僅限勾選一個影片進行編輯", true, false);
     } else {
       const [video] = videoData.filter((item) =>
         selectVideoindex.includes(item.id)
@@ -117,16 +116,13 @@ export default function Home() {
 
   const handleShowDeleteVideoModal = () => {
     if (selectVideoindex.length === 0) {
-      showErrorAndDisableButton(
-        "請勾選影片，再點選刪除按鍵",
-        setDisabledDelBtn
-      );
+      showErrorAndDisableButton("請勾選影片，再點選刪除按鍵", false, true);
     } else {
       setShowDeleteVideoModal(true);
     }
   };
 
-  const showErrorAndDisableButton = (message, setDisableBtn) => {
+  const showErrorAndDisableButton = (message, isEditBtn, isDelBtn) => {
     toast.error(`${message}`, {
       position: "top-center",
       autoClose: 3000,
@@ -137,9 +133,12 @@ export default function Home() {
       progress: undefined,
       theme: "light",
     });
-    setDisableBtn(true);
+    if (isEditBtn) setDisabledEditBtn(true);
+    if (isDelBtn) setDisabledDelBtn(true);
+
     setTimeout(() => {
-      setDisableBtn(false);
+      if (isEditBtn) setDisabledEditBtn(false);
+      if (isDelBtn) setDisabledDelBtn(false);
     }, 3800);
   };
 
@@ -149,8 +148,17 @@ export default function Home() {
   // 刪除影片送出事件
   const handleDeleteSubmit = async (event) => {
     event.preventDefault();
-    const token = captchaRef.current?.getValue();
-    token == "" && toast.error("請勾選我不是機器人", { theme: "light" });
+    const { video_id } = videoData.find(({ id }) =>
+      selectVideoindex.includes(id)
+    );
+    const selectIndex = video_id;
+
+    fetchDeleteVideoData({
+      api: `video/${selectIndex}`,
+    });
+
+    // const token = captchaRef.current?.getValue();
+    // token == "" && toast.error("請勾選我不是機器人", { theme: "light" });
   };
 
   // first render, get video data
@@ -182,13 +190,16 @@ export default function Home() {
         videoData: convertData,
         filterVideoData: convertData,
         showData: convertData.slice(0, rowsPerPage),
-        loading: false,
         paginationSettings: {
           ...paginationSettings,
           currentPage: 0,
           lastPage: Math.ceil(convertData.length / rowsPerPage),
         },
       });
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
     } catch (error) {
       console.log(error.response.data);
       if (
@@ -200,11 +211,41 @@ export default function Home() {
       setState({
         ...state,
         errorMessage: error.response?.data?.message ?? "發生錯誤",
-        loading: false,
         videoData: [],
         filterVideoData: [],
         showData: [],
       });
+      setLoading(false);
+    }
+  };
+
+  const fetchDeleteVideoData = async ({ api }) => {
+    const delID = toast.loading("刪除中，請稍後...");
+    try {
+      const { data } = await del(api);
+      toast.update(delID, {
+        render: "刪除成功",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      navigate(0);
+    } catch (error) {
+      console.log(error.response.data);
+      if (
+        error.response?.data?.message === "登入逾時，請重新登入" &&
+        error.response?.status === 404
+      ) {
+        handleSessionTimeout();
+      }
+      setState({
+        ...state,
+        errorMessage: error.response?.data?.message ?? "發生錯誤",
+        videoData: [],
+        filterVideoData: [],
+        showData: [],
+      });
+      setLoading(false);
     }
   };
 
@@ -279,10 +320,12 @@ export default function Home() {
       const names = selectVideoindex.map((item) => {
         const found = videoData.find(
           (element) => element.id == item
-        ).video_name;
-        return found;
+        )?.video_name;
+        if (found) {
+          return found;
+        }
       });
-      return [...new Set(names)];
+      return [...new Set(names.filter((name) => name))];
     }
   }, [selectVideoindex, videoData]);
 
@@ -623,7 +666,7 @@ export default function Home() {
 
             <Link
               to={{
-                pathname: "/Pratice",
+                pathname: "/Exam",
               }}
               className={styles.linkContainer_link}
             >
@@ -639,17 +682,32 @@ export default function Home() {
             <Modal.Title>請再次確認刪除的影片</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p style={{ color: "red" }}>
+            {/* <p style={{ color: "red" }}>
               若影片確認後無誤，請勾選我不是機器人後送出
+            </p> */}
+            <p style={{ color: "red" }}>
+              若影片確認後無誤，請勾選方塊證明您是本人後送出
             </p>
             <div>
-              <ReCAPTCHA
+              <Form.Check // prettier-ignore
+                type="checkbox"
+                id={`default-checkbox`}
+                label={`確定是我本人`}
+                onChange={(event) => {
+                  setState({
+                    ...state,
+                    checkIsHuman: event.target.checked,
+                  });
+                }}
+              />
+
+              {/* <ReCAPTCHA
                 style={{ textAlign: "center" }}
                 theme="light"
                 sitekey={import.meta.env.VITE_REACT_APP_SITE_KEY_2}
                 ref={captchaRef}
                 badge="inline"
-              />
+              /> */}
             </div>
           </Modal.Body>
           <Modal.Footer>
