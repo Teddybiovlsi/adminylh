@@ -5,12 +5,12 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import PwdStrengthMeter from "../shared/PwdStrengthMeter";
 
 function FormPwd({
+  ControlGroupID = "passwordHelpBlock",
   SetStrengthMeter = false,
   StrengthMeterPwdScore = 0,
   PwdMaxLength = 20,
   GroupClassName = "mb-2",
   InputGroupClassName = "mb-1",
-  LabelForName = "inputPassword",
   ControlName = "password",
   ChangeEvent = null,
   BlurEvent = null,
@@ -27,15 +27,13 @@ function FormPwd({
   ErrorMessage = "",
 }) {
   return (
-    <Form.Group className={GroupClassName}>
-      <Form.Label htmlFor={LabelForName} style={{ cursor: "pointer" }}>
-        {LabelMessage}
-      </Form.Label>
+    <Form.Group className={GroupClassName} controlId={ControlGroupID}>
+      <Form.Label style={{ cursor: "pointer" }}>{LabelMessage}</Form.Label>
       <InputGroup className={InputGroupClassName}>
         <Form.Control
+          autoComplete="nope"
           type={ShowPwdCondition ? "Text" : "Password"}
           name={ControlName}
-          id={LabelForName}
           maxLength={PwdMaxLength}
           aria-describedby="passwordHelpBlock"
           placeholder={FormControlPlaceHolder}
