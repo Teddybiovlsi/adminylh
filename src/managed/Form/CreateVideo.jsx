@@ -7,8 +7,14 @@ import InputFormPreviewFunction from "./shared/InputFormPreviewFunction";
 import InputVideoTypeFunction from "./shared/InputVideoTypeFunction";
 import StatusCode from "../../sys/StatusCode";
 import { post } from "../axios";
+import { useNavigate } from "react-router-dom";
+import { Container } from "react-bootstrap";
+import ToastAlert from "../../components/ToastAlert";
+import { toast } from "react-toastify";
 
 export default function CreateVideo({ VideoMode = false }) {
+  const navigate = useNavigate();
+
   const [videoInfo, setVideoInfo] = useState([
     {
       currentTime: 0,
@@ -33,30 +39,40 @@ export default function CreateVideo({ VideoMode = false }) {
     questionNum: 1,
   });
 
-  // 若註冊成功，則顯示成功訊息
-  const [successMessage, setSuccessMessage] = useState("");
-  // 若註冊失敗，則顯示錯誤訊息
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const [successBoolean, setSuccessBoolean] = useState(false);
-
-  const [shouldRedirect, setShouldRedirect] = React.useState(false);
+  const [disabledSubmit, setDisabledSubmit] = useState(false);
 
   const sendVideoData = async (data) => {
+    const videoFormID = toast.loading("上傳中...");
+    setDisabledSubmit(true);
     try {
       const response = await post("video", data);
-      // if errorMessage is not empty, then set it to empty
-      {
-        errorMessage && setErrorMessage("");
-      }
-      setSuccessMessage("成功創建影片");
-      setSuccessBoolean(true);
-      console.log(response.data);
+      toast.update(videoFormID, {
+        render: "成功創建影片，3秒後將回到首頁",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      setTimeout(() => {
+        setDisabledSubmit(false);
+        navigate("/", { replace: true });
+      }, 3000);
     } catch (error) {
       if (error.code === "ECONNABORTED") {
-        setErrorMessage("連線逾時，請稍後再試");
+        toast.update(videoFormID, {
+          render: "上傳失敗，請稍後再試",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        setDisabledSubmit(false);
       } else {
-        setErrorMessage(StatusCode(error.response.status));
+        toast.update(videoFormID, {
+          render: "上傳失敗，請稍後再試",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        setDisabledSubmit(false);
       }
     }
   };
@@ -98,99 +114,112 @@ export default function CreateVideo({ VideoMode = false }) {
     });
     sendVideoData(formData);
   };
+  const FormStep = (step) => {
+    switch (formType.formStep) {
+      case 1:
+        return (
+          <InputVideoFileFunction
+            FormMode={VideoMode}
+            ChangeEvent={hadleVideoFileIsUpload}
+            VidoeName={formType.videoFileName}
+            GoNextEvent={nextStep}
+          />
+        );
+      case 2:
+        return (
+          <InputVideoTitleFunction
+            FormMode={VideoMode}
+            ChangeEvent={(e) => {
+              setFormType({
+                ...formType,
+                videoTitleName: e.target.value,
+              });
+            }}
+            VideoTitle={
+              formType.videoTitleName ? formType.videoTitleName : null
+            }
+            GoPrevEvent={prevStep}
+            GoNextEvent={nextStep}
+          />
+        );
+      case 3:
+        return (
+          <InputVideoInfoFunction
+            FormMode={VideoMode}
+            ChangeEvent={(e) => {
+              setFormType({
+                ...formType,
+                videoLanguage: e.target.value,
+              });
+            }}
+            VideoLanguage={
+              formType.videoLanguage ? formType.videoLanguage : null
+            }
+            GoPrevEvent={prevStep}
+            GoNextEvent={nextStep}
+          />
+        );
+      case 4:
+        return (
+          <InputVideoTypeFunction
+            FormMode={VideoMode}
+            ChangeEvent={(e) => {
+              setFormType({
+                ...formType,
+                videoType: e.target.value,
+              });
+            }}
+            VideoType={formType.videoType ? formType.videoType : null}
+            GoPrevEvent={prevStep}
+            GoNextEvent={nextStep}
+          />
+        );
+      case 5:
+        return (
+          <InputVideoQAFunction
+            FormMode={VideoMode}
+            FormStep={formType.formStep}
+            VideoFile={formType.videoSource}
+            formType={formType}
+            setDuration={
+              formType.videoDuration === 0
+                ? (duration) => {
+                    setFormType({
+                      ...formType,
+                      videoDuration: duration,
+                    });
+                  }
+                : null
+            }
+            VideoQA={videoInfo}
+            setVideoQA={setVideoInfo}
+            GoPrevEvent={prevStep}
+            GoNextEvent={nextStep}
+          />
+        );
+      case 6:
+        return (
+          <InputFormPreviewFunction
+            FormMode={VideoMode}
+            VideoName={formType.videoFileName}
+            VideoTitle={formType.videoTitleName}
+            VideoLanguage={formType.videoLanguage}
+            VideoType={formType.videoType}
+            VideoQA={videoInfo}
+            GoPrevEvent={prevStep}
+            SubmitEvent={submitAction}
+            SubmitEventDisabled={disabledSubmit}
+          />
+        );
+      default:
+        return;
+    }
+  };
 
-  switch (formType.formStep) {
-    case 1:
-      return (
-        <InputVideoFileFunction
-          FormMode={VideoMode}
-          ChangeEvent={hadleVideoFileIsUpload}
-          VidoeName={formType.videoFileName}
-          GoNextEvent={nextStep}
-        />
-      );
-    case 2:
-      return (
-        <InputVideoTitleFunction
-          FormMode={VideoMode}
-          ChangeEvent={(e) => {
-            setFormType({
-              ...formType,
-              videoTitleName: e.target.value,
-            });
-          }}
-          VideoTitle={formType.videoTitleName ? formType.videoTitleName : null}
-          GoPrevEvent={prevStep}
-          GoNextEvent={nextStep}
-        />
-      );
-    case 3:
-      return (
-        <InputVideoInfoFunction
-          FormMode={VideoMode}
-          ChangeEvent={(e) => {
-            setFormType({
-              ...formType,
-              videoLanguage: e.target.value,
-            });
-          }}
-          VideoLanguage={formType.videoLanguage ? formType.videoLanguage : null}
-          GoPrevEvent={prevStep}
-          GoNextEvent={nextStep}
-        />
-      );
-    case 4:
-      return (
-        <InputVideoTypeFunction
-          FormMode={VideoMode}
-          ChangeEvent={(e) => {
-            setFormType({
-              ...formType,
-              videoType: e.target.value,
-            });
-          }}
-          VideoType={formType.videoType ? formType.videoType : null}
-          GoPrevEvent={prevStep}
-          GoNextEvent={nextStep}
-        />
-      );
-    case 5:
-      return (
-        <InputVideoQAFunction
-          FormMode={VideoMode}
-          FormStep={formType.formStep}
-          VideoFile={formType.videoSource}
-          formType={formType}
-          setDuration={
-            formType.videoDuration === 0
-              ? (duration) => {
-                  setFormType({
-                    ...formType,
-                    videoDuration: duration,
-                  });
-                }
-              : null
-          }
-          VideoQA={videoInfo}
-          setVideoQA={setVideoInfo}
-          GoPrevEvent={prevStep}
-          GoNextEvent={nextStep}
-        />
-      );
-    case 6:
-      return (
-        <InputFormPreviewFunction
-          FormMode={VideoMode}
-          VideoName={formType.videoFileName}
-          VideoTitle={formType.videoTitleName}
-          VideoLanguage={formType.videoLanguage}
-          VideoType={formType.videoType}
-          VideoQA={videoInfo}
-          GoPrevEvent={prevStep}
-          SubmitEvent={submitAction}
-        />
-      );
-    default:
-      return;
-  }
+  return (
+    <Container>
+      {FormStep(formType.formStep)}
+      <ToastAlert />
+    </Container>
+  );
 }
