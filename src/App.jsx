@@ -61,7 +61,6 @@ function App() {
             <Route path="/Client/Register" element={<FrontEndRegistration />} />
             <Route path="/Pratice" element={<Pratice />} />
             <Route path="/Exam" element={<Exam />} />
-            {/* <Route path="/preview" element={<PreviewPaper />} /> */}
             <Route path="/Video" element={<VideoPlayer />} />
             <Route
               path="/ManageClientAccount"
