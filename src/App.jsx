@@ -20,18 +20,12 @@ import {
   GoogleReCaptcha,
 } from "react-google-recaptcha-v3";
 import ManageClientAccount from "./managed/Pages/ManageClientAccount";
-import AboutUs from "./managed/Pages/AboutUs";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import MultiAddUser from "./managed/Pages/MultiAddUser";
 import RestoreAccount from "./managed/Pages/RestoreAccount";
 import EditClientVideoID from "./managed/Pages/EditClientVideoID";
-import { Col, Container, Form, Row } from "react-bootstrap";
-import BtnBootstrap from "./components/BtnBootstrap";
-import StatusCode from "./sys/StatusCode";
-import { post } from "./managed/axios";
-import ToastAlert from "./components/ToastAlert";
-import { toast } from "react-toastify";
+
 import AuthProtected from "./AuthProtected";
 import EditClientVideoQA from "./managed/Form/EditClientVideoQA";
 import "./styles/app.css";
@@ -81,7 +75,6 @@ function App() {
             <Route path="/MultiAddUser" element={<MultiAddUser />} />
             <Route path="/MultiAddVideo" element={<EditClientVideoID />} />
             <Route path="/RestoreAccount" element={<RestoreAccount />} />
-            <Route path="/aboutus" element={<AboutUs />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
