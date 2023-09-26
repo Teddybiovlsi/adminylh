@@ -118,6 +118,7 @@ export default function LogIn() {
             <Form.Label>帳號</Form.Label>
             <Form.Control
               required
+              autoComplete="nope"
               type="text"
               placeholder="請輸入帳號"
               onChange={(e) => {
@@ -138,6 +139,7 @@ export default function LogIn() {
             <Form.Label>密碼</Form.Label>
             <Form.Control
               required
+              autoComplete="none"
               type="password"
               placeholder="請輸入密碼"
               onChange={(e) => {
