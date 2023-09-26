@@ -9,7 +9,7 @@ import React, {
 import { Link, useNavigate } from "react-router-dom";
 import { Col, Container, Form, Modal, Row, Table } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
-import { get, post } from "../axios";
+import { get } from "../axios";
 import ReactPaginate from "react-paginate";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import { toast } from "react-toastify";
@@ -179,16 +179,21 @@ export default function Home() {
     try {
       const { data } = await get(api);
       const videoData = data.data;
-      const checkIsArray = Array.isArray(videoData);
+      const convertData = Array.isArray(videoData) ? videoData : [videoData];
       setState({
         ...state,
         errorMessage: "",
-        videoData: checkIsArray ? videoData : [videoData],
-        filterVideoData: checkIsArray ? videoData : [videoData],
+        videoData: convertData,
+        filterVideoData: convertData,
         showData: checkIsArray
           ? videoData.slice(0, rowsPerPage)
           : [videoData.slice(0, rowsPerPage)],
         loading: false,
+        paginationSettings: {
+          ...paginationSettings,
+          currentPage: 0,
+          lastPage: Math.ceil(videoData.length / rowsPerPage),
+        },
       });
     } catch (error) {
       console.log(error.response.data);
