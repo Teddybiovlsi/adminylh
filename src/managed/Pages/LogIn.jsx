@@ -10,17 +10,23 @@ import "react-toastify/dist/ReactToastify.css";
 export default function LogIn() {
   const isUserLoggedIn =
     !localStorage.getItem("manage") && !sessionStorage.getItem("manage");
-  const [userInfo, setUserInfo] = useState({
-    account: "",
-    password: "",
-    isRemember: false,
+
+  const [initialState, setInitialState] = useState({
+    userInformation: {
+      account: "",
+      password: "",
+      isRemember: false,
+    },
+    tempuser: null,
+    validated: false,
+    ErrorMessage: "",
   });
 
-  const [tempuser, setTempUser] = useState(null);
-  const navigate = useNavigate();
-  const [validated, setValidated] = useState(false);
-  const [ErrorMessage, setErrorMessage] = useState("");
   const [isDisabledLoginButton, setIsDisabledLoginButton] = useState(false);
+
+  const { userInformation, tempuser, validated, ErrorMessage } = initialState;
+
+  const navigate = useNavigate();
 
   const handleSubmit = useCallback(
     (event) => {
@@ -31,12 +37,12 @@ export default function LogIn() {
       }
       if (form.checkValidity() === true) {
         event.preventDefault();
-        fetchaLoginData(userInfo);
+        fetchaLoginData(userInformation);
       }
 
-      setValidated(true);
+      setInitialState({ ...initialState, validated: true });
     },
-    [userInfo]
+    [userInformation]
   );
 
   const fetchaLoginData = useCallback(async (data) => {
@@ -47,8 +53,7 @@ export default function LogIn() {
 
       const userInfo = await response.data;
 
-      setTempUser(userInfo);
-      // console.log(userInfo);
+      setInitialState({ ...initialState, tempuser: userInfo });
 
       toast.update(clientSubmit, {
         render: "登入成功，3秒後將回到當前頁面",
@@ -84,7 +89,7 @@ export default function LogIn() {
 
   useEffect(() => {
     if (tempuser !== null) {
-      if (userInfo.isRemember) {
+      if (userInformation.isRemember) {
         localStorage.setItem("manage", JSON.stringify(tempuser));
         setTimeout(() => {
           navigate("/Home");
@@ -96,15 +101,13 @@ export default function LogIn() {
         }, 3000);
       }
     }
-  }, [tempuser, userInfo.isRemember]);
+  }, [tempuser, userInformation.isRemember]);
 
   useEffect(() => {
     if (!isUserLoggedIn) {
       navigate("/Home");
     }
   }, [isUserLoggedIn, navigate]);
-
-  // const clientSubmit = useMemo(() => toast.loading("登入中..."), []);
 
   return (
     <Container>
@@ -118,7 +121,13 @@ export default function LogIn() {
               type="text"
               placeholder="請輸入帳號"
               onChange={(e) => {
-                setUserInfo({ ...userInfo, account: e.target.value });
+                setInitialState({
+                  ...initialState,
+                  userInformation: {
+                    ...userInformation,
+                    account: e.target.value,
+                  },
+                });
               }}
             />
             <Form.Control.Feedback type="invalid">
@@ -132,7 +141,13 @@ export default function LogIn() {
               type="password"
               placeholder="請輸入密碼"
               onChange={(e) => {
-                setUserInfo({ ...userInfo, password: e.target.value });
+                setInitialState({
+                  ...initialState,
+                  userInformation: {
+                    ...userInformation,
+                    password: e.target.value,
+                  },
+                });
               }}
               isInvalid={ErrorMessage.passwordErrorMessage}
             />
@@ -147,11 +162,14 @@ export default function LogIn() {
                 label="記住我"
                 className="mt-2"
                 id="remember"
-                value={userInfo.isRemember}
+                value={userInformation.isRemember}
                 onClick={() => {
-                  setUserInfo({
-                    ...userInfo,
-                    isRemember: !userInfo.isRemember,
+                  setInitialState({
+                    ...initialState,
+                    userInformation: {
+                      ...userInformation,
+                      isRemember: !userInformation.isRemember,
+                    },
                   });
                 }}
               />
