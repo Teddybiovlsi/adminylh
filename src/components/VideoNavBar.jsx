@@ -2,6 +2,7 @@ import { Navbar, Container, Col, InputGroup, Form } from "react-bootstrap";
 import ToolTipBtn from "./ToolTipBtn";
 
 const VideoNavbar = ({
+  isAdmin = false,
   handleShowAddVideoModal,
   handleEditVideo,
   handleShowDeleteVideoModal,
@@ -41,20 +42,23 @@ const VideoNavbar = ({
             btnVariant="light"
             tooltipText="編輯影片"
           />
-          <ToolTipBtn
-            placement="bottom"
-            btnAriaLabel="刪除影片"
-            btnDisabled={disabledDelBtn ? true : false}
-            btnOnclickEventName={handleShowDeleteVideoModal}
-            btnText={
-              <i
-                className="bi bi-trash3-fill"
-                style={{ fontSize: 1.2 + "rem" }}
-              ></i>
-            }
-            btnVariant="light"
-            tooltipText="刪除影片"
-          />
+
+          {isAdmin && (
+            <ToolTipBtn
+              placement="bottom"
+              btnAriaLabel="刪除影片"
+              btnDisabled={disabledDelBtn ? true : false}
+              btnOnclickEventName={handleShowDeleteVideoModal}
+              btnText={
+                <i
+                  className="bi bi-trash3-fill"
+                  style={{ fontSize: 1.2 + "rem" }}
+                ></i>
+              }
+              btnVariant="light"
+              tooltipText="刪除影片"
+            />
+          )}
           <InputGroup>
             <InputGroup.Text>
               <i className="bi bi-search"></i>
