@@ -107,6 +107,9 @@ export default function MultiAddUser() {
             <h2>
               <strong>請匯入批次建立帳號之excel檔案</strong>
             </h2>
+            <a href="https://docs.google.com/spreadsheets/d/13mxJScnt1iN94260bZd44soAok4JHe_z/export?format=xlsx">
+              範例檔案
+            </a>
           </Form.Label>
 
           <Form.Control
