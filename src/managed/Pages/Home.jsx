@@ -185,14 +185,12 @@ export default function Home() {
         errorMessage: "",
         videoData: convertData,
         filterVideoData: convertData,
-        showData: checkIsArray
-          ? videoData.slice(0, rowsPerPage)
-          : [videoData.slice(0, rowsPerPage)],
+        showData: convertData.slice(0, rowsPerPage),
         loading: false,
         paginationSettings: {
           ...paginationSettings,
           currentPage: 0,
-          lastPage: Math.ceil(videoData.length / rowsPerPage),
+          lastPage: Math.ceil(convertData.length / rowsPerPage),
         },
       });
     } catch (error) {
@@ -205,7 +203,7 @@ export default function Home() {
       }
       setState({
         ...state,
-        errorMessage: error.response.data,
+        errorMessage: error.response?.data?.message ?? "發生錯誤",
         loading: false,
         videoData: [],
         filterVideoData: [],
