@@ -39,6 +39,7 @@ import useModal from "../../hooks/useModal";
 import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
 import FilterType from "../JsonFile/FilterVideoType.json";
 import convertType from "../../functions/typeConverter";
+import { number } from "prop-types";
 
 export default function ManageClientAccount() {
   // 用來儲存修改姓名的資料
@@ -51,6 +52,8 @@ export default function ManageClientAccount() {
   const user = JSON.parse(
     localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
   );
+
+  const { token, email } = user;
 
   const [accountInfo, setAccountInfo] = useState([]);
   // 用來儲存搜尋欄位的資料
@@ -69,6 +72,8 @@ export default function ManageClientAccount() {
 
   const [searchTextVideo, setSearchTextVideo] = useState("");
 
+  const [searchType, setSearchType] = useState("");
+
   const [tempCheckedVideo, setTempCheckedVideo] = useState([]);
 
   // 用來儲存是否全選帳號
@@ -85,6 +90,9 @@ export default function ManageClientAccount() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [paginationSettings, setPaginationSettings] = useState({
+    currentPageAccount: 0,
+    lastPageAccount: 1,
+    rowsPerPageAccount: 5,
     currentPageVideo: 0,
     lastPageVideo: 1,
     rowsPerPageVideo: 5,
@@ -207,11 +215,13 @@ export default function ManageClientAccount() {
         api: "account",
         setData: setAccountInfo,
         setSearchResult: setFilteraccountInfo,
+        rowsPerPage: paginationSettings.rowsPerPageAccount,
       });
       await fetchData({
-        api: `videos/${user.token}/${user.email}`,
+        api: `videos/${token}/${email}`,
         setData: setVideoData,
         setSearchResult: setSearchVideoResult,
+        rowsPerPage: paginationSettings.rowsPerPageVideo,
       });
     };
     if (!ignore) {
@@ -222,17 +232,17 @@ export default function ManageClientAccount() {
     };
   }, []);
 
-  const fetchData = async ({ api, setData, setSearchResult }) => {
+  const fetchData = async ({ api, setData, setSearchResult, rowsPerPage }) => {
     try {
       const response = await get(api);
       const data = await response.data.data;
-      const checkIsArray = Array.isArray(data);
-      setData(checkIsArray ? data : [data]);
-      setSearchResult(checkIsArray ? data : [data]);
+      const converData = Array.isArray(data) ? data : [data];
+      setData(converData);
+      setSearchResult(converData.slice(0, rowsPerPage));
       setErrorMessage("");
       setLoading(false);
     } catch (error) {
-      handleApiError(error);
+      console.log(error.response);
     }
   };
 
@@ -276,17 +286,67 @@ export default function ManageClientAccount() {
     [filterUserInfo, accountInfo]
   );
 
-  // 當篩選後的資料長度為0時，顯示錯誤訊息
+  const { rowsPerPageAccount, rowsPerPageVideo } = paginationSettings;
+
   useEffect(() => {
-    if (filteraccountInfo.length > 0) {
-      // 在filteraccountInfo有所變動時，檢查是否長度一致，若一致則全選，反之則取消全選
-      if (filteraccountInfo.length === selectAccount.length) {
-        setIsCheckAllAccount(true);
-      } else {
-        setIsCheckAllAccount(false);
-      }
+    const totalPages = Math.ceil(
+      filteredAccountData.length / rowsPerPageAccount
+    );
+
+    setFilteraccountInfo(filteredAccountData.slice(0, rowsPerPageAccount));
+
+    setPaginationSettings({
+      ...paginationSettings,
+      lastPageAccount: totalPages,
+      currentPageAccount: 0,
+    });
+  }, [filteredAccountData, rowsPerPageAccount]);
+
+  // useEffect(() => {
+  //   const totalPages = Math.ceil(filteredVideoData.length / rowsPerPageVideo);
+
+  //   setSearchVideoResult(filteredVideoData.slice(0, rowsPerPageVideo));
+
+  //   setPaginationSettings({
+  //     ...paginationSettings,
+  //     lastPageVideo: totalPages,
+  //     currentPageVideo: 0,
+  //   });
+  // }, [filteredVideoData, rowsPerPageVideo]);
+
+  const handlePageChange = (page, isVideo) => {
+    if (isVideo) {
+      const start = page * rowsPerPageVideo;
+      const end = start + rowsPerPageVideo;
+
+      setSearchVideoResult(videoData.slice(start, end));
+      setPaginationSettings({
+        ...paginationSettings,
+        currentPageVideo: page,
+      });
+    } else {
+      const start = page * Number(rowsPerPageAccount);
+      const end = start + Number(rowsPerPageAccount);
+
+      setFilteraccountInfo(filteredAccountData.slice(start, end));
+      setPaginationSettings({
+        ...paginationSettings,
+        currentPageAccount: page,
+      });
     }
-  }, [filteraccountInfo]);
+  };
+
+  // 當篩選後的資料長度為0時，顯示錯誤訊息
+  // useEffect(() => {
+  //   if (filteraccountInfo.length > 0) {
+  //     // 在filteraccountInfo有所變動時，檢查是否長度一致，若一致則全選，反之則取消全選
+  //     if (filteraccountInfo.length === selectAccount.length) {
+  //       setIsCheckAllAccount(true);
+  //     } else {
+  //       setIsCheckAllAccount(false);
+  //     }
+  //   }
+  // }, [filteraccountInfo]);
 
   // 執行刪除帳號API
   const fetchDeleteAccount = async ({ api }) => {
@@ -408,6 +468,37 @@ export default function ManageClientAccount() {
     }
   };
 
+  // 新增影片篩選條件
+  useEffect(() => {
+    let filteredVideoData = videoData;
+
+    if (searchTextVideo !== "") {
+      filteredVideoData = filteredVideoData.filter((item) =>
+        item.video_name.includes(searchTextVideo)
+      );
+    }
+
+    if (searchType !== "empty") {
+      filteredVideoData = filteredVideoData.filter(
+        (item) => item.video_type === searchType
+      );
+    }
+
+    // 更新搜尋結果
+    setSearchVideoResult(
+      filteredVideoData.slice(0, paginationSettings.rowsPerPageVideo)
+    );
+
+    // 計算分頁相關狀態
+    const rows = filteredVideoData.length;
+    const newPaginationSettings = {
+      ...paginationSettings,
+      currentPageVideo: 0,
+      lastPageVideo: Math.ceil(rows / paginationSettings.rowsPerPageVideo),
+    };
+    setPaginationSettings(newPaginationSettings);
+  }, [searchTextVideo, searchType, paginationSettings.rowsPerPageVideo]);
+
   // 將身分證敏感資訊做處理
   const handleIdAccount = (account) => {
     if (account.length === 10) {
@@ -509,7 +600,7 @@ export default function ManageClientAccount() {
       </tr>
     );
   };
-
+  // 表格內容
   const AccountInfo = ({
     client_unique_id,
     client_name,
@@ -740,27 +831,66 @@ export default function ManageClientAccount() {
               })}
             </Form.Select>
           </Col>
+          <Col md={{ span: 4, offset: 2 }}>
+            <Form.Select
+              aria-label="請選擇每頁資料筆數"
+              onChange={(e) => {
+                setPaginationSettings({
+                  ...paginationSettings,
+                  rowsPerPageAccount: Number(e.target.value),
+                });
+              }}
+            >
+              {FilterPageSize.map((item, _) => {
+                return (
+                  <option key={item.id} value={item.value}>
+                    {item.label}
+                  </option>
+                );
+              })}
+            </Form.Select>
+          </Col>
         </Row>
       </Container>
       <div className="d-flex flex-row-reverse m-2"></div>
       <div className={`mt-3 mb-3`}>
-        {filteredAccountData.length !== 0 && (
+        {filteraccountInfo.length !== 0 && (
           <Table>
             <thead>
               <AccountTitle />
             </thead>
             <tbody>
-              {filteredAccountData.map((item, index) => {
+              {filteraccountInfo.map((item, index) => {
                 return <AccountInfo key={index} {...item} />;
               })}
             </tbody>
           </Table>
         )}
-        {filteredAccountData.length === 0 && (
+        {filteraccountInfo.length === 0 && (
           <div className={`mt-3 mb-3`}>
             <h2 className="text-center p-2">該區段查無資料，請重新嘗試</h2>
           </div>
         )}
+        <ReactPaginate
+          forcePage={paginationSettings.currentPageAccount}
+          breakLabel={"..."}
+          nextLabel={">"}
+          previousLabel={"<"}
+          onPageChange={(page) => handlePageChange(page.selected, false)}
+          pageCount={paginationSettings.lastPageAccount}
+          pageRangeDisplayed={2}
+          marginPagesDisplayed={1}
+          containerClassName="justify-content-center pagination"
+          breakClassName={"page-item"}
+          breakLinkClassName={"page-link"}
+          pageClassName={"page-item"}
+          pageLinkClassName={"page-link"}
+          previousClassName={"page-item"}
+          previousLinkClassName={"page-link"}
+          nextClassName={"page-item"}
+          nextLinkClassName={"page-link"}
+          activeClassName={"active"}
+        />
         {/* 用戶資訊Modal */}
         <Modal show={filterPersonInfo != null} onHide={handleCloseAccountModal}>
           <Modal.Header closeButton>
@@ -1013,7 +1143,7 @@ export default function ManageClientAccount() {
                     onChange={(e) => {
                       setPaginationSettings({
                         ...paginationSettings,
-                        rowsPerPageVideo: e.target.value,
+                        rowsPerPageVideo: Number(e.target.value),
                       });
                     }}
                   >
@@ -1029,7 +1159,7 @@ export default function ManageClientAccount() {
               </Row>
               <Row>
                 <ListGroup as="ol" numbered>
-                  {videoData.map((item, index) => {
+                  {searchVideoResult.map((item, index) => {
                     return (
                       <Form.Check
                         key={index}
@@ -1073,15 +1203,13 @@ export default function ManageClientAccount() {
                 </ListGroup>
               </Row>
               <Row>
-                {/* <ReactPaginate
-                  // forcePage={paginationSettings.currentPageVideo}
+                <ReactPaginate
+                  forcePage={paginationSettings.currentPageVideo}
                   breakLabel={"..."}
                   nextLabel={">"}
                   previousLabel={"<"}
-                  onPageChange={(page) =>
-                    handlePageChange(page.selected, false)
-                  }
-                  // pageCount={paginationSettings.lastPageVideo}
+                  onPageChange={(page) => handlePageChange(page.selected, true)}
+                  pageCount={paginationSettings.lastPageVideo}
                   pageRangeDisplayed={2}
                   marginPagesDisplayed={1}
                   containerClassName="justify-content-center pagination"
@@ -1094,7 +1222,7 @@ export default function ManageClientAccount() {
                   nextClassName={"page-item"}
                   nextLinkClassName={"page-link"}
                   activeClassName={"active"}
-                /> */}
+                />
               </Row>
             </Container>
           </Modal.Body>
