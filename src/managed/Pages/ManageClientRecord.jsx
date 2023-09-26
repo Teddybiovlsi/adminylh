@@ -61,12 +61,19 @@ export default function ManageClientRecord() {
     try {
       const response = await get(api);
       const data = await response.data.data;
-      const checkIsArray = Array.isArray(data);
-
+      const convertData = Array.isArray(data) ? data : [data];
+      const { rowsPerPage, currentPage } = paginationSettings;
+      const start = currentPage * rowsPerPage;
+      const end = start + rowsPerPage;
       setState({
         ...state,
-        eachUserRecord: checkIsArray ? data : [data],
-        eachUserRecordSlice: checkIsArray ? data : [data],
+        eachUserRecord: convertData,
+        eachUserRecordSlice: convertData.slice(start, end),
+        paginationSettings: {
+          ...paginationSettings,
+          currentPage: 0,
+          lastPage: Math.ceil(convertData.length / rowsPerPage),
+        },
         errorMessage: "",
         loading: false,
       });
@@ -121,6 +128,7 @@ export default function ManageClientRecord() {
     });
   }, [searchTextUserName, eachUserRecord, paginationSettings.rowsPerPage]);
 
+  // 載入中動畫
   if (loading) {
     return (
       <LoadingComponent title="紀錄資訊欄位" text="紀錄資訊載入中，請稍後" />
