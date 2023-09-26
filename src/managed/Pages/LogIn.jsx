@@ -7,6 +7,11 @@ import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+function setUserInfo(userInfo, isRemember) {
+  const storage = isRemember ? localStorage : sessionStorage;
+  storage.setItem("manage", JSON.stringify(userInfo));
+}
+
 export default function LogIn() {
   const isUserLoggedIn =
     !localStorage.getItem("manage") && !sessionStorage.getItem("manage");
@@ -17,14 +22,13 @@ export default function LogIn() {
       password: "",
       isRemember: false,
     },
-    tempuser: null,
     validated: false,
     ErrorMessage: "",
   });
 
   const [isDisabledLoginButton, setIsDisabledLoginButton] = useState(false);
 
-  const { userInformation, tempuser, validated, ErrorMessage } = initialState;
+  const { userInformation, validated, ErrorMessage } = initialState;
 
   const navigate = useNavigate();
 
@@ -56,11 +60,16 @@ export default function LogIn() {
       setInitialState({ ...initialState, tempuser: userInfo });
 
       toast.update(clientSubmit, {
-        render: "登入成功，3秒後將回到當前頁面",
+        render: "登入成功，2秒後將回到當前頁面",
         type: "success",
         isLoading: false,
-        autoClose: 3000,
+        autoClose: 2000,
       });
+      setTimeout(() => {
+        setUserInfo(userInfo, data.isRemember);
+        navigate("/Home", { replace: true });
+      }, 2000);
+
       setTimeout(() => {
         setIsDisabledLoginButton(false);
       }, 3000);
@@ -88,22 +97,6 @@ export default function LogIn() {
   }, []);
 
   useEffect(() => {
-    if (tempuser !== null) {
-      if (userInformation.isRemember) {
-        localStorage.setItem("manage", JSON.stringify(tempuser));
-        setTimeout(() => {
-          navigate("/Home");
-        }, 3000);
-      } else {
-        sessionStorage.setItem("manage", JSON.stringify(tempuser));
-        setTimeout(() => {
-          navigate("/Home");
-        }, 3000);
-      }
-    }
-  }, [tempuser, userInformation.isRemember]);
-
-  useEffect(() => {
     if (!isUserLoggedIn) {
       navigate("/Home");
     }
@@ -118,7 +111,6 @@ export default function LogIn() {
             <Form.Label>帳號</Form.Label>
             <Form.Control
               required
-              autoComplete="nope"
               type="text"
               placeholder="請輸入帳號"
               onChange={(e) => {
@@ -139,7 +131,6 @@ export default function LogIn() {
             <Form.Label>密碼</Form.Label>
             <Form.Control
               required
-              autoComplete="none"
               type="password"
               placeholder="請輸入密碼"
               onChange={(e) => {
