@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { get, del, put, post } from "../axios";
+import { useNavigate } from "react-router-dom";
 import {
   Col,
   Container,
@@ -17,29 +18,23 @@ import {
   Row,
   Table,
 } from "react-bootstrap";
+import ReactPaginate from "react-paginate";
+import useModal from "../../hooks/useModal";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import ShowLockIcon from "../../components/ShowLockIcon";
 import ShowInfoIcon from "../../components/ShowInfoIcon";
 import ShowVideoIcon from "../../components/ShowVideoIcon";
-import CustomState from "../JsonFile/SelectCustomerState.json";
-import CustomVideo from "../JsonFile/SelectCustomerVideo.json";
-import Loading from "../../components/Loading";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
-import { useNavigate, Navigate } from "react-router-dom";
-import BtnBootstrap from "../../components/BtnBootstrap";
-import { toast } from "react-toastify";
 import ToastAlert from "../../components/ToastAlert";
-import styles from "../../styles/pages/ManageClientAccount.module.scss";
-import { List } from "react-bootstrap-icons";
-import { AiOutlineCloseCircle } from "react-icons/ai";
-import ReactPaginate from "react-paginate";
-import useModal from "../../hooks/useModal";
-
+import { toast } from "react-toastify";
+import CustomState from "../JsonFile/SelectCustomerState.json";
+import CustomVideo from "../JsonFile/SelectCustomerVideo.json";
 import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
 import FilterType from "../JsonFile/FilterVideoType.json";
 import convertType from "../../functions/typeConverter";
-import { number } from "prop-types";
+import styles from "../../styles/pages/ManageClientAccount.module.scss";
 
 export default function ManageClientAccount() {
   // 用來儲存修改姓名的資料
@@ -49,11 +44,9 @@ export default function ManageClientAccount() {
   // 用來儲存修改密碼的資料
   const userPwd = useRef(null);
 
-  const user = JSON.parse(
-    localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
+  const { token, email, powerDiscription } = JSON.parse(
+    localStorage?.getItem("manage") || sessionStorage?.getItem("manage") || "{}"
   );
-
-  const { token, email } = user;
 
   const [accountInfo, setAccountInfo] = useState([]);
   // 用來儲存搜尋欄位的資料
@@ -689,32 +682,35 @@ export default function ManageClientAccount() {
               btnVariant="light"
               tooltipText="批次新增帳號"
             />
-            <ToolTipBtn
-              placement="bottom"
-              btnAriaLabel="刪除帳號"
-              btnDisabled={isDisableDeleteBtn}
-              btnOnclickEventName={() => {
-                if (selectAccount.length === 0) {
-                  setIsDisableDeleteBtn(true);
-                  toast.error("請選擇要刪除的帳號", {
-                    autoClose: 1500,
-                  });
-                  setTimeout(() => {
-                    setIsDisableDeleteBtn(false);
-                  }, 2000);
-                } else {
-                  setShowDeleteModal(true);
+            {powerDiscription === "Admin" && (
+              <ToolTipBtn
+                placement="bottom"
+                btnAriaLabel="刪除帳號"
+                btnDisabled={isDisableDeleteBtn}
+                btnOnclickEventName={() => {
+                  if (selectAccount.length === 0) {
+                    setIsDisableDeleteBtn(true);
+                    toast.error("請選擇要刪除的帳號", {
+                      autoClose: 1500,
+                    });
+                    setTimeout(() => {
+                      setIsDisableDeleteBtn(false);
+                    }, 2000);
+                  } else {
+                    setShowDeleteModal(true);
+                  }
+                }}
+                btnText={
+                  <i
+                    className="bi bi-person-x-fill"
+                    style={{ fontSize: 1.2 + "rem", color: "red" }}
+                  ></i>
                 }
-              }}
-              btnText={
-                <i
-                  className="bi bi-person-x-fill"
-                  style={{ fontSize: 1.2 + "rem", color: "red" }}
-                ></i>
-              }
-              btnVariant="light"
-              tooltipText="刪除帳號"
-            />
+                btnVariant="light"
+                tooltipText="刪除帳號"
+              />
+            )}
+
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="批次新增帳號影片"

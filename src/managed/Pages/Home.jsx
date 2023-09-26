@@ -30,15 +30,11 @@ import useModal from "../../hooks/useModal";
 export default function Home() {
   const navigate = useNavigate();
 
-  const manage = JSON.parse(
-    localStorage?.manage || sessionStorage?.manage || "{}"
+  // 請求瀏覽器資料
+  const { token, email, powerDiscription } = JSON.parse(
+    localStorage?.getItem("manage") || sessionStorage?.getItem("manage") || "{}"
   );
 
-  // 請求localStorage中的管理者資料
-  const localData = {
-    adminToken: manage.token ?? "",
-    adminMail: manage.email ?? "",
-  };
   // 影片資料狀態
   const initialState = {
     createUserButton: true,
@@ -163,7 +159,7 @@ export default function Home() {
 
     const fetchVideoDataAsync = async () => {
       await fetchVideoData({
-        api: `videos/${localData.adminToken}/${localData.adminMail}`,
+        api: `videos/${token}/${email}`,
       });
     };
 
@@ -441,6 +437,7 @@ export default function Home() {
     <div className="container pb-4">
       <h1 className={styles.container_firstHeading}>影片資訊欄位</h1>
       <VideoNavbar
+        isAdmin={powerDiscription === "Admin" ? true : false}
         handleShowAddVideoModal={handleShowAddVideoModal}
         handleEditVideo={handleEditVideo}
         handleShowDeleteVideoModal={handleShowDeleteVideoModal}
