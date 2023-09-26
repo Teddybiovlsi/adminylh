@@ -18,6 +18,7 @@ function InputFormPreviewFunction({
   VideoQA,
   GoPrevEvent = null,
   SubmitEvent = null,
+  SubmitEventDisabled = false,
 }) {
   return (
     <div className="FormStyle d-flex align-items-center justify-content-center">
@@ -76,6 +77,7 @@ function InputFormPreviewFunction({
         </Card.Body>
         <Card.Footer>
           <BtnBootstrap
+            disabled={SubmitEventDisabled}
             btnName={"formStep"}
             text={"送出表單"}
             onClickEventName={SubmitEvent}
