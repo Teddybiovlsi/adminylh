@@ -704,42 +704,45 @@ export default function ManageClientAccount() {
           </div>
         </Container>
       </Navbar>
-      <div className="d-flex flex-row-reverse m-2">
-        <Form.Select
-          aria-label="請選擇用戶影片狀態"
-          className={styles.container_selectbar}
-          onChange={(event) => {
-            setUserVideo(Number(event.target.value));
-          }}
-          style={{
-            width: "220px",
-          }}
-        >
-          {CustomVideo.map((item, _) => {
-            return (
-              <option key={item.id} value={item.value}>
-                {item.label}
-              </option>
-            );
-          })}
-        </Form.Select>
-        <Form.Select
-          aria-label="請選擇用戶帳號狀態"
-          className={styles.container_selectbar}
-          onChange={(event) => {
-            setUserState(Number(event.target.value));
-          }}
-          style={{ width: "220px" }}
-        >
-          {CustomState.map((item, _) => {
-            return (
-              <option key={item.id} value={item.value}>
-                {item.label}
-              </option>
-            );
-          })}
-        </Form.Select>
-      </div>
+      <Container className="mt-2">
+        <Row>
+          <Col md={3}>
+            <Form.Select
+              aria-label="請選擇用戶影片狀態"
+              className={styles.container_selectbar}
+              onChange={(event) => {
+                setUserVideo(Number(event.target.value));
+              }}
+            >
+              {CustomVideo.map((item, _) => {
+                return (
+                  <option key={item.id} value={item.value}>
+                    {item.label}
+                  </option>
+                );
+              })}
+            </Form.Select>
+          </Col>
+          <Col md={3}>
+            <Form.Select
+              aria-label="請選擇用戶帳號狀態"
+              className={styles.container_selectbar}
+              onChange={(event) => {
+                setUserState(Number(event.target.value));
+              }}
+            >
+              {CustomState.map((item, _) => {
+                return (
+                  <option key={item.id} value={item.value}>
+                    {item.label}
+                  </option>
+                );
+              })}
+            </Form.Select>
+          </Col>
+        </Row>
+      </Container>
+      <div className="d-flex flex-row-reverse m-2"></div>
       <div className={`mt-3 mb-3`}>
         {filteredAccountData.length !== 0 && (
           <Table>
@@ -895,10 +898,18 @@ export default function ManageClientAccount() {
                 <ListGroup as="ol" numbered>
                   {filterVideoInfo[0].client_has_check_video.map(
                     (videoIndex, index) => {
+                      const { video_type, video_name } =
+                        videoData.find((item) => item.id === videoIndex) || {};
                       return (
                         <ListGroup.Item as="li" key={index}>
-                          {videoData.find((item) => item.id === videoIndex)
-                            ?.video_name || "無影片"}
+                          <b
+                            className={
+                              video_type === 1 ? "text-danger" : "text-primary"
+                            }
+                          >
+                            ({convertType(video_type)})
+                          </b>
+                          {video_name || "無影片"}
                         </ListGroup.Item>
                       );
                     }
