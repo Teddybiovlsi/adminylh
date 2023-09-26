@@ -162,7 +162,11 @@ export default function EditClientVideoQA({ FormMode = true }) {
   // if radio box is checked then the information of the Question mustCorrect will be true
   const handleGetQuestionMustCorrect = (index, e) => {
     setTempVideoQA(
-      update(`${index}.mustCorrectQuestion`, (value) => !value, tempVideoQA)
+      update(
+        `${index}.mustCorrectQuestion`,
+        (value) => (!value === true ? 1 : 0),
+        tempVideoQA
+      )
     );
   };
 
@@ -273,7 +277,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
     async function fetchEditVideoData(data) {
       let quizSubmit = toast.loading("資料上傳中...");
       try {
-        // console.log(data);
+        console.log(data);
         const response = await put(`video/${videoID}`, data);
         const VideoInfo = await response.data;
         toast.update(quizSubmit, {
