@@ -24,6 +24,20 @@ export default function Header({ expand = "lg" }) {
     navigate("/");
   };
 
+  const userDropdownTitle = "使用者管理";
+  const userDropdownId = "user-dropdown";
+  const adminDropdownTitle = "後台使用者管理";
+  const adminDropdownId = "admin-dropdown";
+  const videoDropdownTitle = "建立影片表單";
+  const videoDropdownId = "video-dropdown";
+  const settingDropdownTitle = (
+    <>
+      設定
+      <AiFillSetting />
+    </>
+  );
+  const settingDropdownId = "setting-dropdown";
+
   return (
     <Navbar
       collapseOnSelect
@@ -52,7 +66,7 @@ export default function Header({ expand = "lg" }) {
           <Offcanvas.Body>
             <Nav className="me-auto">
               {user !== null ? (
-                <NavDropdown title="使用者管理" id="collasible-nav-dropdown">
+                <NavDropdown title={userDropdownTitle} id={userDropdownId}>
                   <LinkContainer to="/ManageClientAccount">
                     <NavDropdown.Item>帳號管理</NavDropdown.Item>
                   </LinkContainer>{" "}
@@ -62,10 +76,7 @@ export default function Header({ expand = "lg" }) {
                 </NavDropdown>
               ) : null}
               {user !== null ? (
-                <NavDropdown
-                  title="後台使用者管理"
-                  id="collasible-nav-dropdown"
-                >
+                <NavDropdown title={adminDropdownTitle} id={adminDropdownId}>
                   <LinkContainer to="/Admin/Register">
                     <NavDropdown.Item>註冊帳號</NavDropdown.Item>
                   </LinkContainer>{" "}
@@ -75,7 +86,7 @@ export default function Header({ expand = "lg" }) {
                 </NavDropdown>
               ) : null}
               {user !== null ? (
-                <NavDropdown title="建立影片表單" id="collasible-nav-dropdown">
+                <NavDropdown title={videoDropdownTitle} id={videoDropdownId}>
                   <LinkContainer to="/Pratice">
                     <NavDropdown.Item>練習用</NavDropdown.Item>
                   </LinkContainer>{" "}
@@ -88,13 +99,8 @@ export default function Header({ expand = "lg" }) {
 
             <Nav>
               <NavDropdown
-                title={
-                  <>
-                    設定
-                    <AiFillSetting />
-                  </>
-                }
-                id="collasible-nav-dropdown"
+                title={settingDropdownTitle}
+                id={settingDropdownId}
                 align={{ lg: "end" }}
               >
                 {user !== null ? (
