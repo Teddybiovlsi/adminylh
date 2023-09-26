@@ -22,6 +22,8 @@ import { useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";
 import FormAccount from "./shared/FormAccount.jsx";
 import PageTitleHeading from "../../components/PageTitleHeading";
+import ToastAlert from "../../components/ToastAlert";
+import { toast } from "react-toastify";
 
 export default function BackendRegistration() {
   const checkPwdHint = "請再次輸入您的密碼";
@@ -29,46 +31,52 @@ export default function BackendRegistration() {
   const [pwdScore, setPwdScore] = useState(0);
   const [showPwd, { setShowPwd }] = useBoolean(false);
 
-  // 若註冊成功，則顯示成功訊息
-  const [successMessage, setSuccessMessage] = useState("");
-  // 若註冊失敗，則顯示錯誤訊息
-  const [errorMessage, setErrorMessage] = useState("");
+  const [initialValues, setInitialValues] = useState({
+    shouldRedirect: false,
+    disableSubmit: false,
+  });
 
-  const [successBoolean, setSuccessBoolean] = useState(false);
-
-  const [shouldRedirect, setShouldRedirect] = React.useState(false);
+  const { shouldRedirect, disableSubmit } = initialValues;
 
   let navigate = useNavigate();
 
-  useEffect(() => {
-    // redirect to Home page after 5 seconds
-    if (shouldRedirect) {
-      return navigate("/");
-    }
-  }, [shouldRedirect]);
-
   // create a async function to send data to backend
   const sendBackendRegistrationData = async (data, resetForm) => {
+    const id = toast.loading("上傳中...");
+    setInitialValues({ ...initialValues, disableSubmit: true });
     try {
       // 正確格式API
       const response = await post("admin", data);
-      // if errorMessage is not empty, then unset it
-      {
-        errorMessage && setErrorMessage("");
-      }
-      setSuccessMessage("成功創建");
-      setSuccessBoolean(true);
+      toast.update(id, {
+        render: "上傳成功，3秒後將回到首頁",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
       resetForm();
       // redirect to Home page after 5 seconds
       setTimeout(() => {
-        setShouldRedirect(true);
-      }, 5000);
+        navigate("/", { replace: true });
+      }, 3000);
     } catch (error) {
-      if (error.code === "ECONNABORTED") {
-        setErrorMessage("連線逾時，請稍後再試");
+      if (error.response.data.message === "帳號已存在") {
+        toast.update(id, {
+          render: "帳號已存在，請重新嘗試",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       } else {
-        setErrorMessage(StatusCode(error.response.status));
+        toast.update(id, {
+          render: "上傳失敗，請稍後再試",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       }
+      setTimeout(() => {
+        setInitialValues({ ...initialValues, disableSubmit: false });
+      }, 3000);
     }
   };
 
@@ -90,25 +98,15 @@ export default function BackendRegistration() {
   return (
     <>
       <PageTitle title="台大分院雲林分院｜創建後台使用者" />
-      {/* 使用自訂Alert元件 */}
-      {successMessage || errorMessage ? (
-        <AlertBootstrap
-          ifsucceed={successBoolean}
-          variant={successMessage ? "success" : "danger"}
-          children={successMessage ? successMessage : errorMessage}
-        />
-      ) : (
-        ""
-      )}
       <PageTitleHeading text="創建後台使用者" styleOptions={4} />
       <Container>
         <Formik
           validationSchema={schema}
           onSubmit={(data, { resetForm }) => {
-            //call sendBackendRegistrationData function and check if it is successful
             sendBackendRegistrationData(data, resetForm);
           }}
           initialValues={{
+            account: "",
             email: "",
             password: "",
             confirmPassword: "",
@@ -126,6 +124,7 @@ export default function BackendRegistration() {
               <Form.Group className="mb-3" controlId="formNewManageMail">
                 <Form.Label>請輸入電子郵件(email)：</Form.Label>
                 <Form.Control
+                  autoComplete="nope"
                   type="email"
                   name="email"
                   placeholder="請於此輸入電子郵件(email)"
@@ -141,6 +140,7 @@ export default function BackendRegistration() {
               <Form.Group className="mb-2" controlId="formNewManageAccount">
                 <Form.Label>請輸入帳號：</Form.Label>
                 <Form.Control
+                  autoComplete="nope"
                   name="account"
                   type="text"
                   aria-describedby="accountHelpBlock"
@@ -154,6 +154,7 @@ export default function BackendRegistration() {
                 </Form.Control.Feedback>
               </Form.Group>
               <FormPwd
+                ControlGroupID="formNewManagePwd"
                 GroupClassName="mb-1"
                 SetStrengthMeter={true}
                 StrengthMeterPwdScore={pwdScore}
@@ -171,6 +172,7 @@ export default function BackendRegistration() {
                 ErrorMessage={errors.password}
               />
               <FormPwd
+                ControlGroupID="formNewManageCheckPwd"
                 LabelForName="checkInputPassword"
                 ControlName="confirmPassword"
                 LabelMessage="請再次確認輸入密碼"
@@ -193,6 +195,7 @@ export default function BackendRegistration() {
                     btnSize="md"
                     btnType={"submit"}
                     text={"送出"}
+                    disabled={disableSubmit}
                   />
                 </Col>
               </div>
@@ -200,6 +203,7 @@ export default function BackendRegistration() {
           )}
         </Formik>
       </Container>
+      <ToastAlert />
     </>
   );
 }
