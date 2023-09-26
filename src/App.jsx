@@ -1,36 +1,28 @@
-import React, { useEffect, useState } from "react";
-import {
-  Navigate,
-  Route,
-  Routes,
-  redirect,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
-import Header from "./managed/Header";
-import BackendRegistration from "./managed/Form/BackendRegistration";
-import FrontEndRegistration from "./managed/Form/FrontEndRegistration";
-import Home from "./managed/Pages/Home";
-import Pratice from "./managed/Pages/Pratice";
-import Exam from "./managed/Pages/Exam";
-import VideoPlayer from "./managed/Pages/VideoPlayer";
+import React, { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import {
   GoogleReCaptchaProvider,
   GoogleReCaptcha,
 } from "react-google-recaptcha-v3";
-import ManageClientAccount from "./managed/Pages/ManageClientAccount";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import MultiAddUser from "./managed/Pages/MultiAddUser";
-import RestoreAccount from "./managed/Pages/RestoreAccount";
-import EditClientVideoID from "./managed/Pages/EditClientVideoID";
-
 import AuthProtected from "./AuthProtected";
+import BackendRegistration from "./managed/Form/BackendRegistration";
+import EditClientVideoID from "./managed/Pages/EditClientVideoID";
 import EditClientVideoQA from "./managed/Form/EditClientVideoQA";
+import Exam from "./managed/Pages/Exam";
+import FrontEndRegistration from "./managed/Form/FrontEndRegistration";
+import Header from "./managed/Header";
+import Home from "./managed/Pages/Home";
+import LogIn from "./managed/Pages/LogIn";
+import ManageClientAccount from "./managed/Pages/ManageClientAccount";
+import ManageClientRecord from "./managed/Pages/ManageClientRecord";
+import MultiAddUser from "./managed/Pages/MultiAddUser";
+import Pratice from "./managed/Pages/Pratice";
+import RestoreAccount from "./managed/Pages/RestoreAccount";
+import VideoPlayer from "./managed/Pages/VideoPlayer";
 import "./styles/app.css";
 import styles from "./styles/pages/NotFoundPage.module.scss";
-import LogIn from "./managed/Pages/LogIn";
-import ManageClientRecord from "./managed/Pages/ManageClientRecord";
 
 function App() {
   const location = useLocation();
