@@ -32,9 +32,19 @@ npm run dev
 - **[package-lock.json]**
 - **[package.json]**
 
-## 已完成頁面
+## 已完成頁面/元件/功能
+### 頁面
+ - [x] [登入頁面](/src/managed/Pages/Login.jsx)
  - [x] [首頁](/src/managed/Pages/Home.jsx)
  - [x] [使用者紀錄頁面](/src/managed/Pages/ManageClientRecord.jsx)
+ - 使用者管理
+   - [x] [帳號管理](/src/managed/Pages/ManageClientAccount.jsx)
+   - [x] [紀錄管理](/src/managed/Pages/ManageClientRecord.jsx)
+
+### 元件
+ - [x] [導覽列](/src/managed/Header.jsx)
+### 功能
+ - [x] [axios](/src/managed/axios.jsx)
 
 ## 代辦事項
   - 各頁面重新檢查並優化
