@@ -8,7 +8,6 @@ import {
   useNavigate,
 } from "react-router-dom";
 import Header from "./managed/Header";
-import Footer from "./managed/Footer";
 import BackendRegistration from "./managed/Form/BackendRegistration";
 import FrontEndRegistration from "./managed/Form/FrontEndRegistration";
 import Home from "./managed/Pages/Home";
