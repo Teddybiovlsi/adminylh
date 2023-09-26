@@ -28,7 +28,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
 
   const [ifBtnDisable, setIfBtnDisable] = useState(true);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [tempVideoQA, setTempVideoQA] = useState([]);
 
@@ -113,29 +113,26 @@ export default function EditClientVideoQA({ FormMode = true }) {
     });
   };
 
+  async function fetchVideoData({ api }) {
+    try {
+      const response = await get(api);
+      const VideoInfo = await response.data.data;
+      setTempVideoInfo(VideoInfo);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     let ignore = false;
+
+    const fetchVideoDataAsync = async () => {
+      await fetchVideoData({ api: `videoQA/${location?.state?.videoID}` });
+    };
+
     if (!ignore) {
-      async function fetchVideoData({ api }) {
-        try {
-          setIsLoading(true);
-          const response = await get(api);
-          const VideoInfo = await response.data.data;
-          // setTempVideoInfo(VideoInfo);
-          console.log(VideoInfo);
-          setTempVideoInfo(VideoInfo);
-
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 2000);
-        } catch (error) {
-          console.log(error);
-        }
-      }
-
-      fetchVideoData({
-        api: `videoQA/${location?.state?.videoID}`,
-      });
+      fetchVideoDataAsync();
     }
 
     return () => {
