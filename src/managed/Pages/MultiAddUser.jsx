@@ -144,7 +144,7 @@ export default function MultiAddUser() {
             className="float-end"
             style={{ width: "200px" }}
             onChange={(e) => {
-              setRowsPerPage(e.target.value);
+              setRowsPerPage(Number(e.target.value));
             }}
           >
             <option value="10">每頁顯示10筆</option>
