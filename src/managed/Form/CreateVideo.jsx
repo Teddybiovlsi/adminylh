@@ -27,7 +27,7 @@ export default function CreateVideo({ VideoMode = false }) {
   ]);
 
   const [formType, setFormType] = useState({
-    VideoMode: VideoMode,
+    VideoMode: VideoMode ? 1 : 0,
     formStep: 1,
     videoFile: "",
     videoSource: "",
@@ -66,6 +66,7 @@ export default function CreateVideo({ VideoMode = false }) {
         });
         setDisabledSubmit(false);
       } else {
+        console.log(error.response.data);
         toast.update(videoFormID, {
           render: "上傳失敗，請稍後再試",
           type: "error",
