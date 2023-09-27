@@ -259,7 +259,6 @@ export default function EditClientVideoID() {
         (item) => item.video_type === searchType
       );
     }
-
     // 更新搜尋結果
     setSearchVideoResult(filteredVideoData);
 
@@ -304,10 +303,12 @@ export default function EditClientVideoID() {
         ...paginationSettings,
         currentPageVideo: page,
       });
+      // console.log()
+
       if (searchTextVideo !== "") {
         setShowVideoData(searchVideoResult.slice(start, end));
       } else {
-        setShowVideoData(videoData.slice(start, end));
+        setShowVideoData(searchVideoResult.slice(start, end));
       }
     }
   };
