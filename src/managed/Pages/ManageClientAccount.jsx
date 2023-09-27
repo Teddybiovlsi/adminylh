@@ -421,22 +421,7 @@ export default function ManageClientAccount() {
       });
       handleCloseVidoeModal();
       setTimeout(() => {
-        // set loading
-        setLoading(true);
-        // clear selectAccount
-        setSelectAccount([]);
-        // clear accountInfo
-        setAccountInfo([]);
-        // clear filteraccountInfo
-        setFilteraccountInfo([]);
-        // fetch data again
-        setTimeout(() => {
-          fetchData({
-            api: "account",
-            setData: setAccountInfo,
-            setSearchResult: setFilteraccountInfo,
-          });
-        }, 3000);
+        navigate(0);
       }, 3000);
     } catch (error) {
       toast.update(id, {
