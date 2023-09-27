@@ -49,7 +49,11 @@ function InputVideoQAFunction({
   // if radio box is checked then the information of the Question mustCorrect will be true
   const handleGetQuestionMustCorrect = (index, e) => {
     setVideoQA(
-      update(`${index}.mustCorrectQuestion`, (value) => !value, VideoQA)
+      update(
+        `${index}.mustCorrectQuestion`,
+        (value) => (!value === true ? 1 : 0),
+        VideoQA
+      )
     );
   };
 
