@@ -8,8 +8,11 @@ import LoadingComponent from "../../components/LoadingComponent";
 import styles from "../../styles/pages/HomePage.module.scss";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function RestoreAccount() {
+  const navigate = useNavigate();
+
   // 原始資料
   const [restoreAccount, setRestoreAccount] = useState([]);
   // 篩選資料
@@ -17,7 +20,7 @@ export default function RestoreAccount() {
   // 搜尋資料
   const [searchInfo, setSearchInfo] = useState([]);
   // 載入中
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   // 錯誤訊息
   const [errorMessage, setErrorMessage] = useState("");
   // 以下是勾選資料相關變數
@@ -44,20 +47,6 @@ export default function RestoreAccount() {
     fetchRestoreData({
       api: `client/${selectId}/restore`,
     });
-
-    setTimeout(() => {
-      setRestoreAccount([]);
-      setFilterRestoreAccount([]);
-      setSelectRestoreAccount([]);
-
-      setLoading(true);
-
-      setTimeout(() => {
-        fetchaAccountData({
-          api: "clients/deleted",
-        });
-      }, 3000);
-    }, 5000);
   };
 
   const fetchRestoreData = async ({ api }) => {
@@ -68,33 +57,33 @@ export default function RestoreAccount() {
       const response = await get(api);
 
       toast.update(id, {
-        render: response.data.message,
+        render: "復原帳號成功，即將重新載入頁面",
         type: "success",
         isLoading: false,
+        autoClose: 2000,
       });
+
+      setTimeout(() => {
+        navigate(0);
+      }, 2000);
     } catch (error) {
-      // console.log(error);
+      toast.update(id, {
+        render: "伺服器發生錯誤，請重新操作",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
 
   const fetchaAccountData = async ({ api }) => {
     try {
       const response = await get(api);
-      // get data from res.data.data
-      // because res.data.data is a promise
-      // so we need to use await to get the value of res.data.data
-      // and then we can use data to get the value of res.data.data
       const data = await response.data.data;
-      // check if data is an array
-      // if data is an array, checkIsArray is true
-      // otherwise, checkIsArray is false
-      const checkIsArray = Array.isArray(data);
-      // set videoData
-      // if checkIsArray is true, set videoData to data
-      // otherwise, set videoData to [data]
-      setRestoreAccount(checkIsArray ? data : [data]);
+      const convertData = Array.isArray(data) ? data : [data];
+      setRestoreAccount(convertData);
       // 同時也儲存一份資料給篩選用
-      setFilterRestoreAccount(checkIsArray ? data : [data]);
+      setFilterRestoreAccount(convertData);
       // 將 loading 設為 false
       setLoading(false);
       // clear error message
@@ -114,12 +103,15 @@ export default function RestoreAccount() {
 
   useEffect(() => {
     let ignore = false;
-    if (!ignore) {
-      // set loading to true
-      setLoading(true);
-      fetchaAccountData({
+
+    const fetchDataAsync = async () => {
+      await fetchaAccountData({
         api: "clients/deleted",
       });
+    };
+
+    if (!ignore) {
+      fetchDataAsync();
     }
     return () => {
       ignore = true;
