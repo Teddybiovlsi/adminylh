@@ -218,7 +218,7 @@ export default function Home() {
       setLoading(false);
     }
   };
-
+  // 刪除影片API
   const fetchDeleteVideoData = async ({ api }) => {
     const delID = toast.loading("刪除中，請稍後...");
     try {
@@ -238,14 +238,12 @@ export default function Home() {
       ) {
         handleSessionTimeout();
       }
-      setState({
-        ...state,
-        errorMessage: error.response?.data?.message ?? "發生錯誤",
-        videoData: [],
-        filterVideoData: [],
-        showData: [],
+      toast.update(delID, {
+        render: error.response?.data?.message ?? "發生錯誤",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
       });
-      setLoading(false);
     }
   };
 
@@ -342,7 +340,7 @@ export default function Home() {
 
     setState({
       ...state,
-      showData: filterVideoData.slice(start, end),
+      showData: filteredData.slice(start, end),
       paginationSettings: {
         ...paginationSettings,
         currentPage: page,
@@ -714,6 +712,7 @@ export default function Home() {
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="送出"
+              btnDisabled={!checkIsHuman}
               btnOnclickEventName={handleDeleteSubmit}
               btnSize="nm"
               btnText="送出"
