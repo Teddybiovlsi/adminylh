@@ -276,17 +276,27 @@ export default function ManageClientAccount() {
     });
   }, [filteredAccountData, rowsPerPageAccount]);
 
-  // useEffect(() => {
-  //   const totalPages = Math.ceil(filteredVideoData.length / rowsPerPageVideo);
+  useEffect(() => {
+    const totalPages = Math.ceil(videoData.length / rowsPerPageVideo);
 
-  //   setSearchVideoResult(filteredVideoData.slice(0, rowsPerPageVideo));
+    setPaginationSettings({
+      ...paginationSettings,
+      lastPageVideo: totalPages,
+      currentPageVideo: 0,
+    });
+  }, [videoData]);
+
+  // useEffect(() => {
+  //   const totalPages = Math.ceil(searchVideoResult.length / rowsPerPageVideo);
+
+  //   setSearchVideoResult(searchVideoResult.slice(0, rowsPerPageVideo));
 
   //   setPaginationSettings({
   //     ...paginationSettings,
   //     lastPageVideo: totalPages,
   //     currentPageVideo: 0,
   //   });
-  // }, [filteredVideoData, rowsPerPageVideo]);
+  // }, [searchVideoResult, rowsPerPageVideo]);
 
   const handlePageChange = (page, isVideo) => {
     if (isVideo) {
@@ -407,7 +417,7 @@ export default function ManageClientAccount() {
       });
     }
   };
-
+  // 更新使用者影片資訊
   const fetchUpdateUserVideo = async ({ api, data }) => {
     const id = toast.loading("更新中...");
 
@@ -436,7 +446,6 @@ export default function ManageClientAccount() {
   // 新增影片篩選條件
   useEffect(() => {
     let filteredVideoData = videoData;
-
     if (searchTextVideo !== "") {
       filteredVideoData = filteredVideoData.filter((item) =>
         item.video_name.includes(searchTextVideo)
@@ -456,6 +465,7 @@ export default function ManageClientAccount() {
 
     // 計算分頁相關狀態
     const rows = filteredVideoData.length;
+
     const newPaginationSettings = {
       ...paginationSettings,
       currentPageVideo: 0,
