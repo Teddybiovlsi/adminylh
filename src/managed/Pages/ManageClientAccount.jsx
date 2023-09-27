@@ -111,25 +111,6 @@ export default function ManageClientAccount() {
     const api = `client/${data}`;
     // call fetchDeleteVideo function
     fetchDeleteAccount({ api });
-    // close delete modal
-    setShowDeleteModal(false);
-    // clear selectAccount
-    setSelectAccount([]);
-    // clear accountInfo
-    setAccountInfo([]);
-    // clear filteraccountInfo
-    setFilteraccountInfo([]);
-    // setLoading to true
-    setLoading(true);
-    // call fetchaAccountData function to reload account data
-    // 設置3秒才重新載入資料，避免資料未在資料庫更新時就重新載入資料
-    setTimeout(() => {
-      fetchData({
-        api: "account",
-        setData: setAccountInfo,
-        setSearchResult: setFilteraccountInfo,
-      });
-    }, 3000);
   };
 
   // 以下是帳號資訊欄位上方功能列的選項
@@ -343,6 +324,7 @@ export default function ManageClientAccount() {
 
   // 執行刪除帳號API
   const fetchDeleteAccount = async ({ api }) => {
+    const id = toast.loading("刪除使用者中...");
     try {
       const response = await del(api);
       // get response from res.data.data
@@ -351,12 +333,22 @@ export default function ManageClientAccount() {
       // and then we can use data to get the value of res.data.data
       const data = await response.data.data;
 
-      console.log(response);
+      toast.update(id, {
+        render: "刪除成功，3秒後將重新整理頁面",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+      setTimeout(() => {
+        navigate(0);
+      }, 2000);
     } catch (error) {
-      if (error.response) {
-        setErrorMessage(StatusCode(error.response.status));
-      }
-      console.log(error);
+      toast.update(id, {
+        render: "刪除失敗，請稍後再試",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
   // 執行解鎖帳號API
