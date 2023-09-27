@@ -327,11 +327,6 @@ export default function ManageClientAccount() {
     const id = toast.loading("刪除使用者中...");
     try {
       const response = await del(api);
-      // get response from res.data.data
-      // because res.data.data is a promise
-      // so we need to use await to get the value of res.data.data
-      // and then we can use data to get the value of res.data.data
-      const data = await response.data.data;
 
       toast.update(id, {
         render: "刪除成功，3秒後將重新整理頁面",
