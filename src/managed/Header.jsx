@@ -80,7 +80,7 @@ export default function Header({ expand = "lg" }) {
                   <LinkContainer to="/Admin/Register">
                     <NavDropdown.Item>註冊帳號</NavDropdown.Item>
                   </LinkContainer>{" "}
-                  <LinkContainer to="/">
+                  <LinkContainer to="/ManageAdminAccount">
                     <NavDropdown.Item>管理帳號</NavDropdown.Item>
                   </LinkContainer>{" "}
                 </NavDropdown>

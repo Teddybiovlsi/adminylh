@@ -23,6 +23,7 @@ import RestoreAccount from "./managed/Pages/RestoreAccount";
 import VideoPlayer from "./managed/Pages/VideoPlayer";
 import "./styles/app.css";
 import styles from "./styles/pages/NotFoundPage.module.scss";
+import ManageAdminAccount from "./managed/Pages/ManageAdminAccount";
 
 function App() {
   const location = useLocation();
@@ -54,6 +55,7 @@ function App() {
             <Route path="/Pratice" element={<Pratice />} />
             <Route path="/Exam" element={<Exam />} />
             <Route path="/Video" element={<VideoPlayer />} />
+            {/* 使用者管理 */}
             <Route
               path="/ManageClientAccount"
               element={<ManageClientAccount />}
@@ -65,6 +67,12 @@ function App() {
             <Route path="/MultiAddUser" element={<MultiAddUser />} />
             <Route path="/MultiAddVideo" element={<EditClientVideoID />} />
             <Route path="/RestoreAccount" element={<RestoreAccount />} />
+            {/* 管理端管理 */}
+            <Route
+              path="/ManageAdminAccount"
+              element={<ManageAdminAccount />}
+            />
+
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
