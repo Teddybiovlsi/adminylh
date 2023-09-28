@@ -12,6 +12,9 @@
   - **[shared](./src/shared/):** 整個專案頻繁調用的元件庫
   - **[App.jsx](./src/App.jsx):** 路由功能(以後會由導覽列 Nav 實現)(尚未實作)
   - **[main.jsx](./src/main.jsx):** [主頁](./index.html)所調用的 React 檔案，**此專案底下使用嚴謹模式**
+- **[專案批次建立使用者]** 使用Google試算表進行下載/Google帳號部分請向我索取
+  - **[前台使用者](https://docs.google.com/spreadsheets/d/13mxJScnt1iN94260bZd44soAok4JHe_z/export?format=xlsx)**
+  - **[後台使用者](https://docs.google.com/spreadsheets/u/2/d/18fUj27fbdJO_YneQD3gwgxug8XmPVb37/export?format=xlsx)**
 
 ## 專案注意事項：
 
