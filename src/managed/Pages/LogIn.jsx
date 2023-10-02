@@ -55,16 +55,17 @@ export default function LogIn() {
     try {
       const response = await post("admin/login", data);
 
-      const userInfo = await response.data;
-
-      setInitialState({ ...initialState, tempuser: userInfo });
-
       toast.update(clientSubmit, {
-        render: "登入成功，2秒後將回到當前頁面",
+        render: "登入成功，將回到首頁",
         type: "success",
         isLoading: false,
         autoClose: 2000,
       });
+
+      const userInfo = await response.data;
+
+      setInitialState({ ...initialState, tempuser: userInfo });
+
       setTimeout(() => {
         setUserInfo(userInfo, data.isRemember);
         navigate("/Home", { replace: true });
@@ -72,7 +73,7 @@ export default function LogIn() {
 
       setTimeout(() => {
         setIsDisabledLoginButton(false);
-      }, 3000);
+      }, 4000);
     } catch (error) {
       // console.log(error.response.data);
       if (error.code === "ECONNABORTED") {
@@ -83,8 +84,11 @@ export default function LogIn() {
           autoClose: 3000,
         });
       } else {
+        const errorMessage = error.response.data?.message;
+        // console.log(errorMessage);
+
         toast.update(clientSubmit, {
-          render: `${error.response.data.message}`,
+          render: errorMessage?.length > 0 ? errorMessage : "登入失敗",
           type: "error",
           isLoading: false,
           autoClose: 3000,
@@ -92,7 +96,7 @@ export default function LogIn() {
       }
       setTimeout(() => {
         setIsDisabledLoginButton(false);
-      }, 3000);
+      }, 4000);
     }
   }, []);
 
