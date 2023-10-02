@@ -24,6 +24,7 @@ import VideoPlayer from "./managed/Pages/VideoPlayer";
 import "./styles/app.css";
 import styles from "./styles/pages/NotFoundPage.module.scss";
 import ManageAdminAccount from "./managed/Pages/ManageAdminAccount";
+import MultiAddAdmin from "./managed/Pages/MultiAddAdmin";
 
 function App() {
   const location = useLocation();
@@ -72,6 +73,7 @@ function App() {
               path="/ManageAdminAccount"
               element={<ManageAdminAccount />}
             />
+            <Route path="/MultiAddAdmin" element={<MultiAddAdmin />} />
 
             <Route path="*" element={<NotFoundPage />} />
           </Route>
