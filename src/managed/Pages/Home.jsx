@@ -249,8 +249,8 @@ export default function Home() {
 
   const handleSessionTimeout = () => {
     alert("登入逾時，請重新登入");
-    if (sessionStorage.getItem("user")) sessionStorage.clear();
-    if (localStorage.getItem("user")) localStorage.clear();
+    if (sessionStorage.getItem("manage")) sessionStorage.clear();
+    if (localStorage.getItem("manage")) localStorage.clear();
     navigate("/");
   };
 
