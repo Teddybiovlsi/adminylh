@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import {
   Col,
@@ -19,6 +19,7 @@ import BtnBootstrap from "../../components/BtnBootstrap";
 import useModal from "../../hooks/useModal";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import ToastAlert from "../../components/ToastAlert";
 
 const convertUserPower = (power) => {
   const powerList = {
@@ -29,6 +30,13 @@ const convertUserPower = (power) => {
 };
 
 export default function ManageAdminAccount() {
+  // 用來儲存修改姓名的資料
+  const userName = useRef(null);
+  // 用來儲存修改聯絡信箱的資料
+  const userEmail = useRef(null);
+  // 用來儲存修改密碼的資料
+  const userPwd = useRef(null);
+
   const { name, token, email, powerDiscription } = JSON.parse(
     localStorage?.getItem("manage") || sessionStorage?.getItem("manage") || "{}"
   );
@@ -39,7 +47,9 @@ export default function ManageAdminAccount() {
     accountInfo: [],
     deleteaccountInfo: [],
     errorMessage: "",
+    filterPersonInfo: null,
     filteraccountInfo: [],
+    isDisableEditProfileBtn: false,
     loading: true,
     paginationSettings: {
       currentPageAccount: 0,
@@ -54,7 +64,9 @@ export default function ManageAdminAccount() {
     accountInfo,
     deleteaccountInfo,
     errorMessage,
+    filterPersonInfo,
     filteraccountInfo,
+    isDisableEditProfileBtn,
     loading,
     paginationSettings,
     searchInfo,
@@ -63,6 +75,13 @@ export default function ManageAdminAccount() {
 
   const { currentPageAccount, rowsPerPageAccount, lastPageAccount } =
     paginationSettings;
+
+  const handleCloseAccountModal = () => {
+    setInitialState({
+      ...initialState,
+      filterPersonInfo: null,
+    });
+  };
 
   const [showDeleteModal, handleCloseDeleteModal, handleShowDeleteModal] =
     useModal();
@@ -228,7 +247,18 @@ export default function ManageAdminAccount() {
             placement="bottom"
             btnAriaLabel="帳號資訊"
             //   btnDisabled={isDisableDeleteBtn}
-            btnOnclickEventName={() => {}}
+            btnOnclickEventName={() => {
+              setInitialState({
+                ...initialState,
+                filterPersonInfo: {
+                  admin_unique_id,
+                  admin_name,
+                  admin_account,
+                  admin_power,
+                  admin_email,
+                },
+              });
+            }}
             btnText={
               <i
                 className="bi bi-info-lg"
@@ -275,144 +305,253 @@ export default function ManageAdminAccount() {
   }
 
   return (
-    <Container className="pb-4">
-      <h1 className="mt-2 mb-2 fw-bold">帳號資訊欄位</h1>
-      <Navbar bg="light" variant="light">
-        <Container>
-          <div className="me-auto">
-            <ToolTipBtn
-              placement="bottom"
-              btnAriaLabel="批次新增"
-              //   btnOnclickEventName={}
-              btnText={
-                <i
-                  className="bi bi-person-plus-fill"
-                  style={{ fontSize: 1.2 + "rem", color: "green" }}
-                ></i>
-              }
-              btnVariant="light"
-              tooltipText="批次新增帳號"
-            />
+    <>
+      <Container className="pb-4">
+        <h1 className="mt-2 mb-2 fw-bold">帳號資訊欄位</h1>
+        <Navbar bg="light" variant="light">
+          <Container>
+            <div className="me-auto">
+              <ToolTipBtn
+                placement="bottom"
+                btnAriaLabel="批次新增"
+                //   btnOnclickEventName={}
+                btnText={
+                  <i
+                    className="bi bi-person-plus-fill"
+                    style={{ fontSize: 1.2 + "rem", color: "green" }}
+                  ></i>
+                }
+                btnVariant="light"
+                tooltipText="批次新增帳號"
+              />
 
-            <ToolTipBtn
-              placement="bottom"
-              btnAriaLabel="回收桶"
-              btnOnclickEventName={() => {}}
-              btnText={
-                <i
-                  className="bi bi-recycle"
-                  style={{ fontSize: 1.2 + "rem" }}
-                ></i>
-              }
-              btnVariant="light"
-              tooltipText="回收桶"
-            />
-          </div>
+              <ToolTipBtn
+                placement="bottom"
+                btnAriaLabel="回收桶"
+                btnOnclickEventName={() => {}}
+                btnText={
+                  <i
+                    className="bi bi-recycle"
+                    style={{ fontSize: 1.2 + "rem" }}
+                  ></i>
+                }
+                btnVariant="light"
+                tooltipText="回收桶"
+              />
+            </div>
 
-          <div className="d-flex">
-            <Form.Control
-              type="text"
-              placeholder="搜尋"
-              onChange={(event) => {
-                setInitialState({
-                  ...initialState,
-                  searchInfo: event.target.value,
-                });
-              }}
-              // remove input focus border outline
-              style={{ boxShadow: "none", outline: "none", border: "none" }}
-            />
-          </div>
+            <div className="d-flex">
+              <Form.Control
+                type="text"
+                placeholder="搜尋"
+                onChange={(event) => {
+                  setInitialState({
+                    ...initialState,
+                    searchInfo: event.target.value,
+                  });
+                }}
+                // remove input focus border outline
+                style={{ boxShadow: "none", outline: "none", border: "none" }}
+              />
+            </div>
+          </Container>
+        </Navbar>
+        <Container className="mt-2">
+          <Row>
+            <Col>
+              <Form.Select
+                aria-label="請選擇每頁資料筆數"
+                onChange={(e) => {
+                  setInitialState({
+                    ...initialState,
+                    paginationSettings: {
+                      ...paginationSettings,
+                      rowsPerPageAccount: Number(e.target.value),
+                    },
+                  });
+                }}
+              >
+                {FilterPageSize.map((item, _) => {
+                  return (
+                    <option key={item.id} value={item.value}>
+                      {item.label}
+                    </option>
+                  );
+                })}
+              </Form.Select>
+            </Col>
+          </Row>
         </Container>
-      </Navbar>
-      <Container className="mt-2">
-        <Row>
-          <Col>
-            <Form.Select
-              aria-label="請選擇每頁資料筆數"
-              onChange={(e) => {
-                setInitialState({
-                  ...initialState,
-                  paginationSettings: {
-                    ...paginationSettings,
-                    rowsPerPageAccount: Number(e.target.value),
-                  },
-                });
+        <div className={`mt-3 mb-3`}>
+          {filteraccountInfo.length !== 0 && (
+            <Table>
+              <thead>
+                <AccountTitle />
+              </thead>
+              <tbody>
+                {filteraccountInfo.map((item, index) => {
+                  return <AccountInfo key={index} {...item} />;
+                })}
+              </tbody>
+            </Table>
+          )}
+          {filteraccountInfo.length === 0 && (
+            <div className={`mt-3 mb-3`}>
+              <h2 className="text-center p-2">該區段查無資料，請重新嘗試</h2>
+            </div>
+          )}
+          <ReactPaginate
+            forcePage={currentPageAccount}
+            breakLabel={"..."}
+            nextLabel={">"}
+            previousLabel={"<"}
+            onPageChange={(page) => {
+              handlePageChange(Number(page.selected));
+            }}
+            pageCount={lastPageAccount}
+            pageRangeDisplayed={2}
+            marginPagesDisplayed={1}
+            containerClassName="justify-content-center pagination"
+            breakClassName={"page-item"}
+            breakLinkClassName={"page-link"}
+            pageClassName={"page-item"}
+            pageLinkClassName={"page-link"}
+            previousClassName={"page-item"}
+            previousLinkClassName={"page-link"}
+            nextClassName={"page-item"}
+            nextLinkClassName={"page-link"}
+            activeClassName={"active"}
+          />
+        </div>
+        {/* 用戶資訊Modal */}
+        <Modal show={filterPersonInfo != null} onHide={handleCloseAccountModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>帳號資訊</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {filterPersonInfo != null && (
+              <div>
+                <Form.Group
+                  as={Row}
+                  className="mb-2"
+                  controlId="formPlaintextAccount"
+                >
+                  <Form.Label column sm="3">
+                    帳號：
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      plaintext
+                      readOnly
+                      defaultValue={filterPersonInfo.admin_account}
+                      // defaultValue={filterPersonInfo[0].client_account}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group
+                  as={Row}
+                  className="mb-2"
+                  controlId="AccountModalForm.usrPWD"
+                >
+                  <Form.Label column>密碼：</Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      type="password"
+                      placeholder="請在此處輸入修改密碼"
+                      disabled={false}
+                      ref={userPwd}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group
+                  as={Row}
+                  className="mb-2"
+                  controlId="AccountModalForm.ControlInput1"
+                >
+                  <Form.Label column>暱稱：</Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      type="text"
+                      placeholder={`${filterPersonInfo.admin_name}`}
+                      disabled={false}
+                      ref={userName}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group
+                  as={Row}
+                  className="mb-2"
+                  controlId="AccountModalForm.ControlInput2"
+                >
+                  <Form.Label column>信箱：</Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      type="email"
+                      placeholder={`${filterPersonInfo.admin_email}`}
+                      ref={userEmail}
+                    />
+                  </Col>
+                </Form.Group>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <BtnBootstrap
+              variant="secondary"
+              btnSize="normal"
+              onClickEventName={handleCloseAccountModal}
+              text={"關閉"}
+            />
+            <BtnBootstrap
+              variant="primary"
+              btnSize="normal"
+              text={"修改"}
+              disabled={isDisableEditProfileBtn}
+              onClickEventName={() => {
+                if (
+                  userName.current.value == "" &&
+                  userEmail.current.value == "" &&
+                  userPwd.current.value == ""
+                ) {
+                  setIsDisableEditProfileBtn(true);
+                  toast.error("請輸入修改資料", {
+                    position: "top-center",
+                    autoClose: 2000,
+                  });
+                  setTimeout(() => {
+                    setIsDisableEditProfileBtn(false);
+                  }, 3500);
+                } else {
+                  // handleEditAccount(filterPersonInfo[0].client_unique_id);
+                }
               }}
-            >
-              {FilterPageSize.map((item, _) => {
-                return (
-                  <option key={item.id} value={item.value}>
-                    {item.label}
-                  </option>
-                );
-              })}
-            </Form.Select>
-          </Col>
-        </Row>
+            />
+          </Modal.Footer>
+        </Modal>
+        {/* 顯示確認刪除Modal */}
+        <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>請確認是否刪除</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>刪除後請至回收桶復原</p>
+            <p>請留意!回收桶之檔案若超過3個月會自動清除</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <BtnBootstrap
+              variant="secondary"
+              onClickEventName={handleCloseDeleteModal}
+              text="取消"
+            />
+            <BtnBootstrap
+              variant="primary"
+              onClickEventName={handleDeleteAccount}
+              text="確認"
+            />
+          </Modal.Footer>
+        </Modal>
       </Container>
-      <div className={`mt-3 mb-3`}>
-        {filteraccountInfo.length !== 0 && (
-          <Table>
-            <thead>
-              <AccountTitle />
-            </thead>
-            <tbody>
-              {filteraccountInfo.map((item, index) => {
-                return <AccountInfo key={index} {...item} />;
-              })}
-            </tbody>
-          </Table>
-        )}
-        {filteraccountInfo.length === 0 && (
-          <div className={`mt-3 mb-3`}>
-            <h2 className="text-center p-2">該區段查無資料，請重新嘗試</h2>
-          </div>
-        )}
-        <ReactPaginate
-          forcePage={currentPageAccount}
-          breakLabel={"..."}
-          nextLabel={">"}
-          previousLabel={"<"}
-          onPageChange={(page) => {
-            handlePageChange(Number(page.selected));
-          }}
-          pageCount={lastPageAccount}
-          pageRangeDisplayed={2}
-          marginPagesDisplayed={1}
-          containerClassName="justify-content-center pagination"
-          breakClassName={"page-item"}
-          breakLinkClassName={"page-link"}
-          pageClassName={"page-item"}
-          pageLinkClassName={"page-link"}
-          previousClassName={"page-item"}
-          previousLinkClassName={"page-link"}
-          nextClassName={"page-item"}
-          nextLinkClassName={"page-link"}
-          activeClassName={"active"}
-        />
-      </div>
-      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>請確認是否刪除</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>刪除後請至回收桶復原</p>
-          <p>請留意!回收桶之檔案若超過3個月會自動清除</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <BtnBootstrap
-            variant="secondary"
-            onClickEventName={handleCloseDeleteModal}
-            text="取消"
-          />
-          <BtnBootstrap
-            variant="primary"
-            onClickEventName={handleDeleteAccount}
-            text="確認"
-          />
-        </Modal.Footer>
-      </Modal>
-    </Container>
+      <ToastAlert />
+    </>
   );
 }
