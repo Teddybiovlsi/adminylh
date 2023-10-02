@@ -15,7 +15,6 @@ export default function AuthProtected({ user, redirectPath = "/", children }) {
       sessionStorage.getItem("manage") && sessionStorage.removeItem("manage");
       return <Navigate to={redirectPath} />;
     } else {
-      // console.log("憑證未過期", user.expTime, nowTime);
       return children ?? <Outlet />;
     }
   }
