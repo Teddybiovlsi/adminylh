@@ -6,13 +6,13 @@ export default function AuthProtected({ user, redirectPath = "/", children }) {
   const nowTime = new Date();
 
   if (!user) {
-    localStorage.getItem("manage") && localStorage.clear();
-    sessionStorage.getItem("manage") && sessionStorage.clear();
+    localStorage.getItem("manage") && localStorage.removeItem("manage");
+    sessionStorage.getItem("manage") && sessionStorage.removeItem("manage");
     return <Navigate to="/" />;
   } else {
     if (new Date(user.expTime) < nowTime) {
-      localStorage.getItem("manage") && localStorage.clear();
-      sessionStorage.getItem("manage") && sessionStorage.clear();
+      localStorage.getItem("manage") && localStorage.removeItem("manage");
+      sessionStorage.getItem("manage") && sessionStorage.removeItem("manage");
       return <Navigate to={redirectPath} />;
     } else {
       // console.log("憑證未過期", user.expTime, nowTime);

@@ -19,8 +19,8 @@ export default function Header({ expand = "lg" }) {
   );
 
   const handleLogout = () => {
-    localStorage.getItem("manage") && localStorage.clear();
-    sessionStorage.getItem("manage") && sessionStorage.clear();
+    localStorage.getItem("manage") && localStorage.removeItem("manage");
+    sessionStorage.getItem("manage") && sessionStorage.removeItem("manage");
     navigate("/");
   };
 
