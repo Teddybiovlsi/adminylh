@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
 import ToolTipBtn from "../../components/ToolTipBtn";
-import { Col, Container, Form, Navbar, Row, Table } from "react-bootstrap";
+import {
+  Col,
+  Container,
+  Form,
+  Modal,
+  Navbar,
+  Row,
+  Table,
+} from "react-bootstrap";
 import ReactPaginate from "react-paginate";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
 import ShowInfoIcon from "../../components/ShowInfoIcon";
-import { get } from "../axios";
+import { del, get } from "../axios";
+import BtnBootstrap from "../../components/BtnBootstrap";
+import useModal from "../../hooks/useModal";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const convertUserPower = (power) => {
   const powerList = {
@@ -21,37 +33,39 @@ export default function ManageAdminAccount() {
     localStorage?.getItem("manage") || sessionStorage?.getItem("manage") || "{}"
   );
 
+  const navigate = useNavigate();
+
   const [initialState, setInitialState] = useState({
-    loading: true,
-    errorMessage: "",
     accountInfo: [],
+    deleteaccountInfo: [],
+    errorMessage: "",
     filteraccountInfo: [],
-    searchaccountInfo: [],
-    searchInfo: "",
+    loading: true,
     paginationSettings: {
       currentPageAccount: 0,
       lastPageAccount: 1,
       rowsPerPageAccount: 5,
     },
-    isCheckAllAccount: false,
-    showDeleteModal: false,
-    isDisableDeleteBtn: false,
-    isDisableMultiAddBtn: false,
-    isDisableUnlockBtn: false,
+    searchInfo: "",
+    searchaccountInfo: [],
   });
 
   const {
+    accountInfo,
+    deleteaccountInfo,
+    errorMessage,
+    filteraccountInfo,
     loading,
     paginationSettings,
-    errorMessage,
-    accountInfo,
-    filteraccountInfo,
-    searchaccountInfo,
     searchInfo,
+    searchaccountInfo,
   } = initialState;
 
-  const { currentPageAccount, lastPageAccount, rowsPerPageAccount } =
+  const { currentPageAccount, rowsPerPageAccount, lastPageAccount } =
     paginationSettings;
+
+  const [showDeleteModal, handleCloseDeleteModal, handleShowDeleteModal] =
+    useModal();
 
   // 初始化載入管理者帳號資訊
   const fetchManageAccountInfo = async ({ api }) => {
@@ -82,6 +96,35 @@ export default function ManageAdminAccount() {
       });
     }
   };
+
+  // 刪除管理者帳號
+  const deleteManageAccount = async ({ api }) => {
+    const toastDeleteID = toast.loading("刪除中...");
+    try {
+      const { data } = await del(api);
+      toast.update(toastDeleteID, {
+        render: "刪除成功，將重新整理頁面",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+
+      handleCloseDeleteModal();
+
+      setTimeout(() => {
+        navigate(0);
+      }, 2000);
+    } catch (error) {
+      toast.update(toastDeleteID, {
+        render: "刪除失敗，請稍後再試",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
+      handleCloseDeleteModal();
+    }
+  };
+
   // 第一次載入管理者帳號資訊
   useEffect(() => {
     let ignore = false;
@@ -97,7 +140,7 @@ export default function ManageAdminAccount() {
       ignore = true;
     };
   }, [powerDiscription]);
-
+  // 頁面發生改變事件
   const handlePageChange = (page) => {
     const start = page * rowsPerPageAccount;
     const end = start + Number(rowsPerPageAccount);
@@ -109,6 +152,12 @@ export default function ManageAdminAccount() {
         ...paginationSettings,
         currentPageAccount: page.selected,
       },
+    });
+  };
+
+  const handleDeleteAccount = () => {
+    deleteManageAccount({
+      api: `admin/${token}/${deleteaccountInfo}`,
     });
   };
 
@@ -176,8 +225,13 @@ export default function ManageAdminAccount() {
             <ToolTipBtn
               placement="bottom"
               btnAriaLabel="刪除帳號"
-              //   btnDisabled={isDisableDeleteBtn}
-              btnOnclickEventName={() => {}}
+              btnOnclickEventName={() => {
+                setInitialState({
+                  ...initialState,
+                  deleteaccountInfo: admin_unique_id,
+                });
+                handleShowDeleteModal();
+              }}
               btnText={
                 <i
                   className="bi bi-person-x-fill"
@@ -222,20 +276,6 @@ export default function ManageAdminAccount() {
               btnVariant="light"
               tooltipText="批次新增帳號"
             />
-            {/* <ToolTipBtn
-              placement='bottom'
-              btnAriaLabel='刪除帳號'
-              //   btnDisabled={isDisableDeleteBtn}
-              btnOnclickEventName={() => {}}
-              btnText={
-                <i
-                  className='bi bi-person-x-fill'
-                  style={{ fontSize: 1.2 + 'rem', color: 'red' }}
-                ></i>
-              }
-              btnVariant='light'
-              tooltipText='刪除帳號'
-            /> */}
 
             <ToolTipBtn
               placement="bottom"
@@ -335,6 +375,27 @@ export default function ManageAdminAccount() {
           activeClassName={"active"}
         />
       </div>
+      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>請確認是否刪除</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>刪除後請至回收桶復原</p>
+          <p>請留意!回收桶之檔案若超過3個月會自動清除</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <BtnBootstrap
+            variant="secondary"
+            onClickEventName={handleCloseDeleteModal}
+            text="取消"
+          />
+          <BtnBootstrap
+            variant="primary"
+            onClickEventName={handleDeleteAccount}
+            text="確認"
+          />
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }
