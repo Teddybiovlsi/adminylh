@@ -115,6 +115,17 @@ export default function ManageAdminAccount() {
         navigate(0);
       }, 2000);
     } catch (error) {
+      const { message } = error.response.data;
+      if (message === "登入逾時，請重新登入" || message === "請重新登入") {
+        toast.update(toastDeleteID, {
+          render: message,
+          type: "error",
+          isLoading: false,
+          autoClose: 2000,
+        });
+        handleSessionTimeout();
+      }
+
       toast.update(toastDeleteID, {
         render: "刪除失敗，請稍後再試",
         type: "error",
@@ -159,6 +170,12 @@ export default function ManageAdminAccount() {
     deleteManageAccount({
       api: `admin/${token}/${deleteaccountInfo}`,
     });
+  };
+
+  const handleSessionTimeout = () => {
+    if (sessionStorage.getItem("manage")) sessionStorage.removeItem("manage");
+    if (localStorage.getItem("manage")) localStorage.removeItem("manage");
+    navigate("/");
   };
 
   useEffect(() => {
