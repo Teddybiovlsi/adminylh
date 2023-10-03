@@ -77,11 +77,11 @@ export default function Header({ expand = "lg" }) {
               ) : null}
               {user !== null ? (
                 <NavDropdown title={adminDropdownTitle} id={adminDropdownId}>
-                  <LinkContainer to="/Admin/Register">
-                    <NavDropdown.Item>註冊帳號</NavDropdown.Item>
-                  </LinkContainer>{" "}
                   <LinkContainer to="/ManageAdminAccount">
-                    <NavDropdown.Item>管理帳號</NavDropdown.Item>
+                    <NavDropdown.Item>帳號管理</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/Admin/Register">
+                    <NavDropdown.Item>帳號註冊</NavDropdown.Item>
                   </LinkContainer>{" "}
                 </NavDropdown>
               ) : null}
