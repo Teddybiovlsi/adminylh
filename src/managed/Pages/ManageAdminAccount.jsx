@@ -379,7 +379,9 @@ export default function ManageAdminAccount() {
               <ToolTipBtn
                 placement="bottom"
                 btnAriaLabel="批次新增"
-                //   btnOnclickEventName={}
+                btnOnclickEventName={() => {
+                  navigate("/MultiAddAdmin");
+                }}
                 btnText={
                   <i
                     className="bi bi-person-plus-fill"
