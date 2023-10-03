@@ -99,6 +99,7 @@ export default function ManageAdminAccount() {
           0,
           paginationSettings.rowsPerPageAccount
         ),
+        searchaccountInfo: convertData,
         paginationSettings: {
           ...paginationSettings,
           lastPageAccount: Math.ceil(
@@ -172,7 +173,7 @@ export default function ManageAdminAccount() {
   }, [powerDiscription]);
   // 頁面發生改變事件
   const handlePageChange = (page) => {
-    const start = page * rowsPerPageAccount;
+    const start = page * Number(rowsPerPageAccount);
     const end = start + Number(rowsPerPageAccount);
 
     setInitialState({
@@ -328,7 +329,9 @@ export default function ManageAdminAccount() {
               <ToolTipBtn
                 placement="bottom"
                 btnAriaLabel="回收桶"
-                btnOnclickEventName={() => {}}
+                btnOnclickEventName={() => {
+                  navigate("/RestoreAdminAccount");
+                }}
                 btnText={
                   <i
                     className="bi bi-recycle"
@@ -513,13 +516,13 @@ export default function ManageAdminAccount() {
                   userEmail.current.value == "" &&
                   userPwd.current.value == ""
                 ) {
-                  setIsDisableEditProfileBtn(true);
+                  // setIsDisableEditProfileBtn(true);
                   toast.error("請輸入修改資料", {
                     position: "top-center",
                     autoClose: 2000,
                   });
                   setTimeout(() => {
-                    setIsDisableEditProfileBtn(false);
+                    // setIsDisableEditProfileBtn(false);
                   }, 3500);
                 } else {
                   // handleEditAccount(filterPersonInfo[0].client_unique_id);
