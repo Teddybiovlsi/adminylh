@@ -1,60 +1,120 @@
-import React, { useEffect, useState } from "react";
-import { Navbar, Container, Form, Table } from "react-bootstrap";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Navbar, Container, Form, Table, Modal } from "react-bootstrap";
 import ReactPaginate from "react-paginate";
 import moment from "moment/moment";
-import { get } from "../axios";
+import { del, get, post } from "../axios";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import LoadingComponent from "../../components/LoadingComponent";
 import styles from "../../styles/pages/HomePage.module.scss";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import useModal from "../../hooks/useModal";
+import BtnBootstrap from "../../components/BtnBootstrap";
 
 export default function RestoreAdminAccount() {
+  const { token } = JSON.parse(
+    localStorage?.getItem("manage") || sessionStorage?.getItem("manage") || "{}"
+  );
+
   const navigate = useNavigate();
 
-  // 原始資料
-  const [restoreAccount, setRestoreAccount] = useState([]);
-  // 篩選資料
-  const [filterRestoreAccount, setFilterRestoreAccount] = useState([]);
-  // 搜尋資料
-  const [searchInfo, setSearchInfo] = useState([]);
-  // 載入中
-  const [loading, setLoading] = useState(true);
-  // 錯誤訊息
-  const [errorMessage, setErrorMessage] = useState("");
-  // 以下是勾選資料相關變數
-  // 用來儲存是否全選帳號
-  const [isCheckAllRestoreAccount, setIsCheckAllRestoreAccount] =
-    useState(false);
-  // 用來儲存選擇的帳號
-  const [selectRestoreAccount, setSelectRestoreAccount] = useState([]);
+  const [initialState, setInitialState] = useState({
+    deleteaccountInfo: "",
+    errorMessage: "",
+    filterRestoreAccount: [],
+    loading: true,
+    pageniation: {
+      currentPage: 0,
+      lastPage: 1,
+      rowsPerPage: 10,
+    },
+    restoreAccount: [],
+    searchInfo: "",
+    selectRestoreAccount: [],
+    showData: [],
+  });
 
-  // 以下內容是篩選每頁顯示的資料筆數
-  // 存放每頁顯示的資料筆數
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  // 存放目前頁數
-  const [currentPage, setCurrentPage] = useState(1);
-  // 存放目前頁數的資料
-  const [showData, setShowData] = useState(
-    filterRestoreAccount.slice(0, rowsPerPage)
-  );
-  const [lastPage, setLastPage] = useState(1);
+  const {
+    deleteaccountInfo,
+    filterRestoreAccount,
+    loading,
+    pageniation,
+    restoreAccount,
+    searchInfo,
+    selectRestoreAccount,
+    showData,
+  } = initialState;
+
+  const [showDeleteModal, handleCloseDeleteModal, handleShowDeleteModal] =
+    useModal();
 
   // 復原帳號
   const handleRestoreAccount = () => {
-    const selectId = [selectRestoreAccount];
     fetchRestoreData({
-      api: `client/${selectId}/restore`,
+      api: `admin/${token}/restore`,
+      data: {
+        selectRestoreAccount,
+      },
     });
   };
 
-  const fetchRestoreData = async ({ api }) => {
-    const id = toast.loading("復原帳號中，請稍後...", {
-      position: "top-right",
+  const handleDeleteAccount = () => {
+    fetchPermanentDeleteData({
+      api: `admin/${token}/${deleteaccountInfo}/permanently`,
     });
+  };
+
+  useEffect(() => {
+    let ignore = false;
+
+    const fetchDataAsync = async () => {
+      await fetchaAccountData({
+        api: "admins/deleted",
+      });
+    };
+
+    if (!ignore) {
+      fetchDataAsync();
+    }
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  // 取得回收桶內帳號資訊API
+  const fetchaAccountData = async ({ api }) => {
     try {
       const response = await get(api);
+      const data = await response.data.data;
+      const convertData = Array.isArray(data) ? data : [data];
+
+      setInitialState({
+        ...initialState,
+        restoreAccount: convertData,
+        filterRestoreAccount: convertData,
+        loading: false,
+        errorMessage: "",
+      });
+    } catch (error) {
+      if (error.response?.data?.message === "登入逾時，請重新登入") {
+        alert("登入逾時，請重新登入");
+        handleSessionTimeout();
+      } else {
+        setInitialState({
+          ...initialState,
+          errorMessage: error.response?.data?.message,
+          loading: false,
+        });
+      }
+    }
+  };
+
+  // 復原帳號API
+  const fetchRestoreData = async ({ api, data }) => {
+    const id = toast.loading("復原帳號中，請稍後...");
+    try {
+      const response = await post(api, data);
 
       toast.update(id, {
         render: "復原帳號成功，即將重新載入頁面",
@@ -67,6 +127,11 @@ export default function RestoreAdminAccount() {
         navigate(0);
       }, 2000);
     } catch (error) {
+      if (error.response?.data?.message === "登入逾時，請重新登入") {
+        alert("登入逾時，請重新登入");
+        handleSessionTimeout();
+      }
+      console.log(error.response);
       toast.update(id, {
         render: "伺服器發生錯誤，請重新操作",
         type: "error",
@@ -76,143 +141,109 @@ export default function RestoreAdminAccount() {
     }
   };
 
-  const fetchaAccountData = async ({ api }) => {
+  // 永久刪除帳號API
+  const fetchPermanentDeleteData = async ({ api }) => {
+    const id = toast.loading("刪除帳號中，請稍後...");
     try {
-      const response = await get(api);
-      const data = await response.data.data;
-      const convertData = Array.isArray(data) ? data : [data];
-      setRestoreAccount(convertData);
-      // 同時也儲存一份資料給篩選用
-      setFilterRestoreAccount(convertData);
-      // 將 loading 設為 false
-      setLoading(false);
-      // clear error message
-      setErrorMessage("");
-    } catch (error) {
-      // if catch error, clear videoData
-      setVideoData([]);
-      // setFilterVideoData([]);
-      // 將 loading 設為 false
-      setLoading(false);
-      // if error.response is true, get error message
-      if (error.response) {
-        setErrorMessage(StatusCode(error.response.status));
-      }
-    }
-  };
+      const response = await del(api);
 
-  useEffect(() => {
-    let ignore = false;
-
-    const fetchDataAsync = async () => {
-      await fetchaAccountData({
-        api: "clients/deleted",
+      toast.update(id, {
+        render: "刪除帳號成功，即將重新載入頁面",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
       });
-    };
 
-    if (!ignore) {
-      fetchDataAsync();
+      setTimeout(() => {
+        navigate(0);
+      }, 2000);
+    } catch (error) {
+      if (error.response?.data?.message === "登入逾時，請重新登入") {
+        alert("登入逾時，請重新登入");
+        handleSessionTimeout();
+      }
+      console.log(error.response);
+      toast.update(id, {
+        render: "伺服器發生錯誤，請重新操作",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
-    return () => {
-      ignore = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    // 若搜尋欄位不為空，則顯示搜尋結果
-    if (searchInfo !== "") {
-      setFilterRestoreAccount(
-        restoreAccount.filter((item) => {
-          return (
-            item.client_account.includes(searchInfo) ||
-            item.client_name.includes(searchInfo)
-          );
-        })
-      );
-    } else {
-      setFilterRestoreAccount(restoreAccount);
-    }
-  }, [searchInfo]);
-
-  // 當rowsPerPage改變時，重新計算最後一頁的頁數
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    setShowData(filterRestoreAccount.slice(start, end));
   };
 
-  // 若帳號欄位全部被勾選，則全選按鈕勾選
-  useEffect(() => {
-    // 在初始render時，selectAccount為空陣列，也因為filteraccountInfo也為空陣列
-    // filteraccountInfo.length > 0，則會導致isCheckAllAccount一直為true
-    filterRestoreAccount.length > 0 &&
-      (selectRestoreAccount.length === filterRestoreAccount.length
-        ? setIsCheckAllRestoreAccount(true)
-        : setIsCheckAllRestoreAccount(false));
-    // 例外情形是，勾選的數量比篩選後的數量多，則全選按鈕不勾選
-    selectRestoreAccount.length > filterRestoreAccount.length &&
-      setIsCheckAllRestoreAccount(false);
-  }, [selectRestoreAccount, filterRestoreAccount]);
-  // 全選帳號
-  const handleSelectAllRestoreAccount = () => {
-    setIsCheckAllRestoreAccount(!isCheckAllRestoreAccount);
+  // 登入逾時處理
+  const handleSessionTimeout = () => {
+    if (sessionStorage.getItem("manage")) sessionStorage.removeItem("manage");
+    if (localStorage.getItem("manage")) localStorage.removeItem("manage");
+    navigate("/");
+  };
 
-    isCheckAllRestoreAccount
-      ? setSelectRestoreAccount([])
-      : setSelectRestoreAccount(
-          filterRestoreAccount.map((item) => item.client_unique_id)
-        );
+  const filterAccount = useCallback(
+    (data) =>
+      searchInfo !== ""
+        ? data.filter(
+            (item) =>
+              item.admin_account.includes(searchInfo) ||
+              item.admin_name.includes(searchInfo)
+          )
+        : data,
+    [searchInfo]
+  );
+
+  const filterAccountData = useMemo(() => {
+    return filterAccount(restoreAccount);
+  }, [restoreAccount, filterAccount]);
+
+  const { rowsPerPage } = pageniation;
+
+  useEffect(() => {
+    console.log(filterAccountData);
+
+    const totalPage = Math.ceil(filterAccountData.length / rowsPerPage);
+
+    setInitialState({
+      ...initialState,
+      filterRestoreAccount: filterAccountData,
+      showData: filterAccountData.slice(0, rowsPerPage),
+      pageniation: {
+        ...pageniation,
+        lastPage: totalPage,
+        currentPage: 0,
+      },
+    });
+  }, [filterAccountData, rowsPerPage]);
+
+  const handlePageChange = (page) => {
+    const start = page * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    setInitialState({
+      ...initialState,
+      showData: filterAccountData.slice(start, end),
+      pageniation: {
+        ...pageniation,
+        currentPage: page,
+      },
+    });
   };
 
   // 單一選擇帳號
-  const handleSelectRestoreAccount = (clientUniqueId) => {
-    setSelectRestoreAccount(
-      selectRestoreAccount.includes(clientUniqueId)
-        ? selectRestoreAccount.filter((item) => item !== clientUniqueId)
-        : [...selectRestoreAccount, clientUniqueId]
-    );
+  const handleSelectRestoreAccount = (adminID) => {
+    setInitialState({
+      ...initialState,
+      selectRestoreAccount: selectRestoreAccount.includes(adminID)
+        ? selectRestoreAccount.filter((item) => item !== adminID)
+        : [...selectRestoreAccount, adminID],
+    });
   };
-
-  // 將身分證敏感資訊做處理
-  const handleIdAccount = (account) => {
-    if (account.length === 10) {
-      return account.slice(0, 3) + "***" + account.slice(6, 10);
-    } else if (account.length === 11) {
-      return account.slice(0, 3) + "***" + account.slice(7, 11);
-    }
-  };
-  // 將姓名敏感資訊做處理
-  const handleNameAccount = (name) => {
-    if (name.length === 3) {
-      return name.slice(0, 1) + "O" + name.slice(2, 3);
-    } else if (name.length === 4) {
-      return name.slice(0, 1) + "OO" + name.slice(3, 4);
-    } else if (name.length === 2) {
-      return name.slice(0, 1) + "O";
-    } else {
-      return name;
-    }
-  };
-
   // 表格標題
   const AccountTitle = () => {
     return (
       <tr>
         <th
           className={styles.container_division_table_rowTable_headingCheckBox}
-        >
-          <input
-            type="checkbox"
-            onChange={() => {
-              handleSelectAllRestoreAccount();
-            }}
-            checked={isCheckAllRestoreAccount}
-            className={
-              styles.container_division_table_rowTable_heading_checkbox
-            }
-          />
-        </th>
+        ></th>
         <th className={styles.container_division_table_rowTable_headingType}>
           帳號
         </th>
@@ -224,14 +255,17 @@ export default function RestoreAdminAccount() {
         <th className={styles.container_division_table_rowTable_headingName}>
           刪除時間
         </th>
+        <th className={styles.container_division_table_rowTable_headingName}>
+          操作
+        </th>
       </tr>
     );
   };
 
   const AccountInfo = ({
-    client_unique_id,
-    client_name,
-    client_account,
+    admin_unique_id,
+    admin_name,
+    admin_account,
     deleted_at,
   }) => {
     return (
@@ -240,22 +274,43 @@ export default function RestoreAdminAccount() {
           <input
             type="checkbox"
             // checked client by client account
-            checked={selectRestoreAccount.includes(client_unique_id)}
+            checked={selectRestoreAccount.includes(admin_unique_id)}
             onChange={() => {
-              handleSelectRestoreAccount(client_unique_id);
+              handleSelectRestoreAccount(admin_unique_id);
             }}
-            value={client_unique_id}
+            value={admin_unique_id}
             className={styles.container_division_table_rowTable_data_checkbox}
           />
         </td>
         <td className={styles.container_division_table_rowTable_data}>
-          {handleIdAccount(client_account)}
+          {admin_account}
         </td>
         <td className={styles.container_division_table_rowTable_data}>
-          {handleNameAccount(client_name)}
+          {admin_name}
         </td>
         <td className={styles.container_division_table_rowTable_data}>
           {moment(deleted_at).format("YYYY-MM-DD HH:mm:ss")}
+        </td>
+        <td className={styles.container_division_table_rowTable_data}>
+          <ToolTipBtn
+            placement="bottom"
+            btnAriaLabel="永久刪除"
+            btnOnclickEventName={() => {
+              setInitialState({
+                ...initialState,
+                deleteaccountInfo: admin_unique_id,
+              });
+              handleShowDeleteModal();
+            }}
+            btnText={
+              <i
+                className="bi bi-person-x-fill"
+                style={{ fontSize: 1.2 + "rem", color: "red" }}
+              ></i>
+            }
+            btnVariant="light"
+            tooltipText="永久刪除"
+          />
         </td>
       </tr>
     );
@@ -291,20 +346,29 @@ export default function RestoreAdminAccount() {
               type="text"
               placeholder="搜尋"
               onChange={(event) => {
-                setSearchInfo(event.target.value);
+                setInitialState({
+                  ...initialState,
+                  searchInfo: event.target.value,
+                });
               }}
             />
           </div>
         </Container>
       </Navbar>
-      {filterRestoreAccount.length > 0 ? (
+      {showData.length > 0 ? (
         <div>
           <Form.Select
             aria-label="請選擇每頁顯示筆數"
             className="float-end"
             style={{ width: "200px" }}
             onChange={(e) => {
-              setRowsPerPage(e.target.value);
+              setInitialState({
+                ...initialState,
+                pageniation: {
+                  ...pageniation,
+                  rowsPerPage: Number(e.target.value),
+                },
+              });
             }}
           >
             <option value="10">每頁顯示10筆</option>
@@ -314,14 +378,14 @@ export default function RestoreAdminAccount() {
         </div>
       ) : null}
 
-      {filterRestoreAccount.length > 0 ? (
+      {showData.length > 0 ? (
         <div className={`mt-3 mb-3 ${styles.container_division}`}>
           <Table>
             <thead>
               <AccountTitle />
             </thead>
             <tbody>
-              {filterRestoreAccount.map((item, index) => {
+              {showData.map((item, index) => {
                 return <AccountInfo key={index} {...item} />;
               })}
             </tbody>
@@ -330,8 +394,8 @@ export default function RestoreAdminAccount() {
             breakLabel={"..."}
             nextLabel={">"}
             previousLabel={"<"}
-            onPageChange={(page) => handlePageChange(page.selected + 1)}
-            pageCount={lastPage}
+            onPageChange={(page) => handlePageChange(Number(page.selected))}
+            pageCount={pageniation.lastPage}
             pageRangeDisplayed={3}
             marginPagesDisplayed={1}
             containerClassName="justify-content-center pagination"
@@ -352,6 +416,27 @@ export default function RestoreAdminAccount() {
         </div>
       )}
       <ToastAlert />
+      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>請確認是否刪除</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="text-danger fs-3">請留意！</p>
+          <p className="text-danger fs-4">一旦進行永久刪除後，便無法復原</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <BtnBootstrap
+            variant="secondary"
+            onClickEventName={handleCloseDeleteModal}
+            text="取消"
+          />
+          <BtnBootstrap
+            variant="primary"
+            onClickEventName={handleDeleteAccount}
+            text="確認"
+          />
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
