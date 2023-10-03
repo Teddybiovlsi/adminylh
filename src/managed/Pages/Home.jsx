@@ -202,20 +202,18 @@ export default function Home() {
       }, 3000);
     } catch (error) {
       console.log(error.response.data);
-      if (
-        error.response?.data?.message === "登入逾時，請重新登入" &&
-        error.response?.status === 404
-      ) {
+      if (error.response?.data?.message === "登入逾時，請重新登入") {
         handleSessionTimeout();
+      } else {
+        setState({
+          ...state,
+          errorMessage: error.response?.data?.message ?? "發生錯誤",
+          videoData: [],
+          filterVideoData: [],
+          showData: [],
+        });
+        setLoading(false);
       }
-      setState({
-        ...state,
-        errorMessage: error.response?.data?.message ?? "發生錯誤",
-        videoData: [],
-        filterVideoData: [],
-        showData: [],
-      });
-      setLoading(false);
     }
   };
   // 刪除影片API
