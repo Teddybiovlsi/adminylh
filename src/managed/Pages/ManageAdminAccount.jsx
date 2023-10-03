@@ -14,7 +14,7 @@ import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
 import ShowInfoIcon from "../../components/ShowInfoIcon";
-import { del, get } from "../axios";
+import { del, get, post } from "../axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import useModal from "../../hooks/useModal";
 import { toast } from "react-toastify";
@@ -36,6 +36,8 @@ export default function ManageAdminAccount() {
   const userEmail = useRef(null);
   // 用來儲存修改密碼的資料
   const userPwd = useRef(null);
+  // 用來儲存管理者權限設置的資料
+  const userPower = useRef(null);
 
   const { name, token, email, powerDiscription } = JSON.parse(
     localStorage?.getItem("manage") || sessionStorage?.getItem("manage") || "{}"
@@ -83,6 +85,12 @@ export default function ManageAdminAccount() {
     });
   };
 
+  const [
+    showConfirmOwnerEditModal,
+    handleCloseConfirmOwnerEditModal,
+    handleShowConfirmOwnerEditModal,
+  ] = useModal();
+
   const [showDeleteModal, handleCloseDeleteModal, handleShowDeleteModal] =
     useModal();
 
@@ -109,6 +117,11 @@ export default function ManageAdminAccount() {
       });
     } catch (error) {
       const { message } = error.response.data;
+      if (message === "登入逾時，請重新登入" || message === "請重新登入") {
+        alert(message);
+        handleSessionTimeout();
+      }
+
       setInitialState({
         ...initialState,
         loading: false,
@@ -161,7 +174,7 @@ export default function ManageAdminAccount() {
     let ignore = false;
     const fetchDataAsync = async () => {
       await fetchManageAccountInfo({
-        api: `admin/${powerDiscription}`,
+        api: `admin/${token}/${powerDiscription}`,
       });
     };
     if (!ignore) {
@@ -186,12 +199,63 @@ export default function ManageAdminAccount() {
     });
   };
 
+  // 修改管理者帳號事件
+  const handleEditAccount = async (EditData, OwerAccount = false) => {
+    const toastEditID = toast.loading("修改中...");
+    try {
+      const { data } = await post(`admin/${token}/rewrite`, EditData);
+
+      if (OwerAccount) {
+        toast.update(toastEditID, {
+          render: "修改成功，將進行登出",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+        });
+        handleCloseAccountModal();
+        setTimeout(() => {
+          handleSessionTimeout();
+        }, 2000);
+      } else {
+        toast.update(toastEditID, {
+          render: "修改成功，將重新整理頁面",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+        });
+        setTimeout(() => {
+          navigate(0);
+        }, 2000);
+      }
+    } catch (error) {
+      const { message } = error.response.data;
+      if (message === "登入逾時，請重新登入" || message === "請重新登入") {
+        toast.update(toastEditID, {
+          render: message,
+          type: "error",
+          isLoading: false,
+          autoClose: 2000,
+        });
+        handleSessionTimeout();
+      }
+
+      toast.update(toastEditID, {
+        render: "修改失敗，請稍後再試",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    }
+  };
+
+  // 刪除管理者帳號事件
   const handleDeleteAccount = () => {
     deleteManageAccount({
       api: `admin/${token}/${deleteaccountInfo}`,
     });
   };
 
+  // 登入逾時事件
   const handleSessionTimeout = () => {
     if (sessionStorage.getItem("manage")) sessionStorage.removeItem("manage");
     if (localStorage.getItem("manage")) localStorage.removeItem("manage");
@@ -490,9 +554,26 @@ export default function ManageAdminAccount() {
                   <Col sm="9">
                     <Form.Control
                       type="email"
-                      placeholder={`${filterPersonInfo.admin_email}`}
+                      placeholder={filterPersonInfo.admin_email}
                       ref={userEmail}
                     />
+                  </Col>
+                </Form.Group>
+                <Form.Group
+                  as={Row}
+                  className="mb-2"
+                  controlId="AccountModalForm.ControlInput2"
+                >
+                  <Form.Label column>權限：</Form.Label>
+                  <Col sm="9">
+                    <Form.Select
+                      aria-label="權限選擇"
+                      ref={userPower}
+                      defaultValue={filterPersonInfo.admin_power}
+                    >
+                      <option value="0">一般</option>
+                      <option value="1">最高</option>
+                    </Form.Select>
                   </Col>
                 </Form.Group>
               </div>
@@ -511,26 +592,109 @@ export default function ManageAdminAccount() {
               text={"修改"}
               disabled={isDisableEditProfileBtn}
               onClickEventName={() => {
+                setInitialState({
+                  ...initialState,
+                  isDisableEditProfileBtn: true,
+                });
                 if (
-                  userName.current.value == "" &&
-                  userEmail.current.value == "" &&
-                  userPwd.current.value == ""
+                  !userName.current.value &&
+                  !userEmail.current.value &&
+                  userPwd.current.value == "" &&
+                  userPower.current.value == filterPersonInfo.admin_power
                 ) {
-                  // setIsDisableEditProfileBtn(true);
                   toast.error("請輸入修改資料", {
                     position: "top-center",
                     autoClose: 2000,
                   });
-                  setTimeout(() => {
-                    // setIsDisableEditProfileBtn(false);
-                  }, 3500);
                 } else {
-                  // handleEditAccount(filterPersonInfo[0].client_unique_id);
+                  if (filterPersonInfo.admin_email === email) {
+                    handleShowConfirmOwnerEditModal();
+                  } else {
+                    const EditData = {
+                      adminID: filterPersonInfo.admin_unique_id,
+                      ...(userName.current.value && {
+                        adminName: userName.current.value,
+                      }),
+                      ...(userEmail.current.value !==
+                        filterPersonInfo.admin_email &&
+                        userEmail.current.value && {
+                          adminMail: userEmail.current.value,
+                        }),
+                      ...(userPwd.current.value && {
+                        adminPwd: userPwd.current.value,
+                      }),
+                      ...(userPower.current.value !=
+                        filterPersonInfo.admin_power && {
+                        adminPower: Number(userPower.current.value),
+                      }),
+                    };
+
+                    handleEditAccount(EditData, false);
+                  }
                 }
+
+                setTimeout(() => {
+                  setInitialState({
+                    ...initialState,
+                    isDisableEditProfileBtn: false,
+                  });
+                }, 3500);
               }}
             />
           </Modal.Footer>
         </Modal>
+
+        <Modal
+          show={showConfirmOwnerEditModal}
+          onHide={handleCloseConfirmOwnerEditModal}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>請確認是否修改</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p className="text-danger">
+              請留意！你現在修改的帳號為<b>目前登入的帳號</b>
+            </p>
+            <p className="fs-5">
+              若進行修改，會強制將您進行登出
+              <br /> 請問是否要繼續修改？
+            </p>
+          </Modal.Body>
+          <Modal.Footer>
+            <BtnBootstrap
+              variant="secondary"
+              onClickEventName={handleCloseConfirmOwnerEditModal}
+              text="取消"
+            />
+            <BtnBootstrap
+              variant="primary"
+              onClickEventName={() => {
+                const EditData = {
+                  adminID: filterPersonInfo.admin_unique_id,
+                  ...(userName.current.value && {
+                    adminName: userName.current.value,
+                  }),
+                  ...(userEmail.current.value !==
+                    filterPersonInfo.admin_email &&
+                    userEmail.current.value && {
+                      adminMail: userEmail.current.value,
+                    }),
+                  ...(userPwd.current.value && {
+                    adminPwd: userPwd.current.value,
+                  }),
+                  ...(userPower.current.value !=
+                    filterPersonInfo.admin_power && {
+                    adminPower: Number(userPower.current.value),
+                  }),
+                };
+
+                handleEditAccount(EditData, true);
+              }}
+              text="確認"
+            />
+          </Modal.Footer>
+        </Modal>
+
         {/* 顯示確認刪除Modal */}
         <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
           <Modal.Header closeButton>
