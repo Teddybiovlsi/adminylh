@@ -236,9 +236,10 @@ export default function ManageAdminAccount() {
           isLoading: false,
           autoClose: 2000,
         });
+
         handleSessionTimeout();
       }
-
+      console.log(error);
       toast.update(toastEditID, {
         render: "修改失敗，請稍後再試",
         type: "error",
@@ -513,7 +514,6 @@ export default function ManageAdminAccount() {
                       plaintext
                       readOnly
                       defaultValue={filterPersonInfo.admin_account}
-                      // defaultValue={filterPersonInfo[0].client_account}
                     />
                   </Col>
                 </Form.Group>
@@ -631,6 +631,8 @@ export default function ManageAdminAccount() {
                       }),
                     };
 
+                    console.log(EditData);
+
                     handleEditAccount(EditData, false);
                   }
                 }
@@ -689,7 +691,7 @@ export default function ManageAdminAccount() {
                     adminPower: Number(userPower.current.value),
                   }),
                 };
-
+                console.log(EditData);
                 handleEditAccount(EditData, true);
               }}
               text="確認"

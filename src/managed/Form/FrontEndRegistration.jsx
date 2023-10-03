@@ -205,6 +205,7 @@ export default function FrontEndRegistration() {
           };
 
           const res = await post("client", values);
+          console.log(res);
 
           if (res.status === 200) {
             toast.success("註冊成功!", {
