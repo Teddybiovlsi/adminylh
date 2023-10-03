@@ -106,6 +106,12 @@ export default function ManageClientAccount() {
   const [showVideoModal, handleClosedVideoModal, handleShowVideoModal] =
     useModal();
 
+  const [
+    showProfileVideoModal,
+    handleClosedProfileVideoModal,
+    handleShowProfileVideoModal,
+  ] = useModal();
+
   const handleDeleteVideo = () => {
     // put selectAccount value into an array
     const data = [selectAccount];
@@ -1022,7 +1028,7 @@ export default function ManageClientAccount() {
                       if (
                         filterVideoInfo[0].client_has_check_video.length === 0
                       ) {
-                        handleShowVideoModal();
+                        handleShowProfileVideoModal();
                       }
                       setTempCheckedVideo(
                         filterVideoInfo[0].client_has_check_video
@@ -1060,10 +1066,13 @@ export default function ManageClientAccount() {
 
         {/* 影片類新增Modal */}
         <Modal
-          show={tempCheckedVideo.length > 0 || showVideoModal}
+          show={tempCheckedVideo.length > 0 || showProfileVideoModal}
           onHide={() => {
             setTempCheckedVideo([]);
-            handleClosedVideoModal;
+            handleClosedProfileVideoModal();
+            if (showVideoModal) {
+              handleClosedProfileVideoModal();
+            }
           }}
         >
           <Modal.Header closeButton>
@@ -1206,6 +1215,9 @@ export default function ManageClientAccount() {
               text={"取消"}
               onClickEventName={() => {
                 setTempCheckedVideo([]);
+                if (showProfileVideoModal) {
+                  handleClosedProfileVideoModal();
+                }
               }}
             />
             <BtnBootstrap
