@@ -1025,14 +1025,10 @@ export default function ManageClientAccount() {
                     btnSize="normal"
                     text={"點擊增/減影片"}
                     onClickEventName={() => {
-                      if (
-                        filterVideoInfo[0].client_has_check_video.length === 0
-                      ) {
-                        handleShowProfileVideoModal();
-                      }
                       setTempCheckedVideo(
                         filterVideoInfo[0].client_has_check_video
                       );
+                      handleShowProfileVideoModal();
                     }}
                   />
                 </Row>
@@ -1066,13 +1062,10 @@ export default function ManageClientAccount() {
 
         {/* 影片類新增Modal */}
         <Modal
-          show={tempCheckedVideo.length > 0 || showProfileVideoModal}
+          show={showProfileVideoModal}
           onHide={() => {
             setTempCheckedVideo([]);
             handleClosedProfileVideoModal();
-            if (showVideoModal) {
-              handleClosedProfileVideoModal();
-            }
           }}
         >
           <Modal.Header closeButton>
@@ -1215,9 +1208,7 @@ export default function ManageClientAccount() {
               text={"取消"}
               onClickEventName={() => {
                 setTempCheckedVideo([]);
-                if (showProfileVideoModal) {
-                  handleClosedProfileVideoModal();
-                }
+                handleClosedProfileVideoModal();
               }}
             />
             <BtnBootstrap
@@ -1234,9 +1225,7 @@ export default function ManageClientAccount() {
                   });
                 });
                 setTempCheckedVideo([]);
-                if (showVideoModal) {
-                  handleClosedVideoModal();
-                }
+                handleClosedProfileVideoModal();
               }}
             />
           </Modal.Footer>
