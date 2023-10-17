@@ -1,6 +1,6 @@
 import React from "react";
 import PageTitle from "../../../components/Title";
-import { Card } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import { CardTitleFunction } from "./CardTitleFunction";
 import BtnBootstrap from "../../../components/BtnBootstrap";
 import {
@@ -33,32 +33,58 @@ function InputFormPreviewFunction({
           />
         </Card.Title>
         <Card.Body>
-          <Card.Title>影片名稱:</Card.Title>
-          <Card.Text>{VideoTitle != "" ? VideoTitle : VideoName}</Card.Text>
-          <Card.Title>影片語言:</Card.Title>
-          <Card.Text>{SwitchNumToLanguage(parseInt(VideoLanguage))}</Card.Text>
-          <Card.Title>影片類型:</Card.Title>
-          <Card.Text>{SwitchNumToType(parseInt(VideoType))}</Card.Text>
+          <Container>
+            <Row>
+              <Col className="h5 ps-0" md={4}>
+                影片名稱:
+              </Col>
+              <Col md={6}>{VideoTitle != "" ? VideoTitle : VideoName}</Col>
+            </Row>
+
+            <Row>
+              <Col className="h5 ps-0" md={4}>
+                影片語言:
+              </Col>
+              <Col md={6}>{SwitchNumToLanguage(parseInt(VideoLanguage))}</Col>
+            </Row>
+
+            <Row>
+              <Col className="h5 ps-0" md={4}>
+                影片類型:
+              </Col>
+              <Col md={6}>{SwitchNumToType(parseInt(VideoType))}</Col>
+            </Row>
+          </Container>
+
           {VideoQA?.map((questionInfo, questionIndex) => (
             <Card key={questionIndex} className="mb-2">
               <Card.Title className="mb-2 ms-1">
                 問題 {questionIndex + 1}:
               </Card.Title>
+              <Container>
+                <Row>
+                  <Col className="h5 ps-0" md={4}>
+                    中斷時間:
+                  </Col>
+                  <Col md={6}>{questionInfo.currentTime}秒</Col>
+                </Row>
 
-              <Card.Title className="ms-2">中斷時間:</Card.Title>
-              <Card.Text className="ms-4">
-                {questionInfo.currentTime}秒
-              </Card.Text>
+                <Row>
+                  <Col className="h5 ps-0" md={4}>
+                    {questionInfo.messageType === 0 ? "提示訊息:" : "問題內容:"}
+                  </Col>
+                  <Col md={6}>{questionInfo.questionContent}</Col>
+                </Row>
+              </Container>
 
-              <Card.Title className="ms-2">問題內容:</Card.Title>
-              <Card.Text className="ms-4">
-                {questionInfo.questionContent}
-              </Card.Text>
-
-              <Card.Title className="ms-2">是否為必定答對問題?</Card.Title>
-              <Card.Text className="ms-4">
-                {questionInfo.mustCorrectQuestion ? "是" : "否"}
-              </Card.Text>
+              {FormMode && (
+                <>
+                  <Card.Title className="ms-2">是否為必定答對問題?</Card.Title>
+                  <Card.Text className="ms-4">
+                    {questionInfo.mustCorrectQuestion ? "是" : "否"}
+                  </Card.Text>
+                </>
+              )}
 
               {questionInfo.answerContent.map(
                 (answerContent, answerContentIndex) => (

@@ -46,6 +46,16 @@ function InputVideoQAFunction({
     setVideoQA(update(`${index}.durationTime`, () => e.target.value, VideoQA));
   };
 
+  const handleCheckMessageType = (index, e) => {
+    setVideoQA(
+      update(
+        `${index}.messageType`,
+        () => (e.target.value === "1" ? 1 : 0),
+        VideoQA
+      )
+    );
+  };
+
   // if radio box is checked then the information of the Question mustCorrect will be true
   const handleGetQuestionMustCorrect = (index, e) => {
     setVideoQA(
@@ -108,6 +118,7 @@ function InputVideoQAFunction({
       {
         currentTime: 0,
         durationTime: 0,
+        messageType: 0,
         mustCorrectQuestion: false,
         questionContent: "",
         numofOptions: 0,
@@ -126,11 +137,12 @@ function InputVideoQAFunction({
     let ifAnyAnswerContentIsEmpty = false;
 
     const questionIsEmpty = VideoQA.some((info) => !info.questionContent);
-
     const ifAnyArrayOptionIndicesIsEmpty = VideoQA.reduce(
       (acc, curr, index) => {
         if (curr.answerContent.length === 0) {
-          acc.push(index);
+          if (curr.messageType === 1) {
+            acc.push(index);
+          }
         } else if (curr.answerContent.some((value) => value[1] === "")) {
           ifAnyAnswerContentIsEmpty = true;
         }
@@ -196,6 +208,7 @@ function InputVideoQAFunction({
             handleDelQAMessage={handleDelQAMessage}
             handleGetVideoTime={handleGetVideoTime}
             handleGetVideoDuration={handleGetVideoDuration}
+            handleCheckMessageType={handleCheckMessageType}
             handleGetQuestionMustCorrect={handleGetQuestionMustCorrect}
             handleGetQuestionContent={handleGetQuestionContent}
             handleOptionChange={handleOptionChange}
@@ -206,6 +219,7 @@ function InputVideoQAFunction({
         <Card.Footer>
           <BtnBootstrap
             btnPosition="me-2"
+            btnSize="normal"
             btnName={"formStep"}
             text={"上一步"}
             onClickEventName={GoPrevEvent}
@@ -214,6 +228,7 @@ function InputVideoQAFunction({
 
           <BtnBootstrap
             btnPosition="ms-2  float-end"
+            btnSize="normal"
             btnName={"formStep"}
             text={"預覽表單"}
             onClickEventName={GoNextEvent}
@@ -222,6 +237,7 @@ function InputVideoQAFunction({
           />
           <BtnBootstrap
             btnPosition="ms-2  float-end"
+            btnSize="normal"
             btnName={"formStep"}
             text={"驗證此頁面表單"}
             onClickEventName={validateQA}

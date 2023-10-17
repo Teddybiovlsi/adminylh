@@ -19,6 +19,7 @@ export default function CreateVideo({ VideoMode = false }) {
     {
       currentTime: 0,
       durationTime: 0,
+      messageType: 0,
       mustCorrectQuestion: false,
       questionContent: "",
       numofOptions: 0,
@@ -28,7 +29,7 @@ export default function CreateVideo({ VideoMode = false }) {
 
   const [formType, setFormType] = useState({
     VideoMode: VideoMode ? 1 : 0,
-    formStep: 1,
+    formStep: 5,
     videoFile: "",
     videoSource: "",
     videoFileName: "",

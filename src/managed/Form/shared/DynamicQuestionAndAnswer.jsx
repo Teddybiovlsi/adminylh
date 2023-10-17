@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CloseButton,
   Form,
   InputGroup,
   FloatingLabel,
+  ButtonGroup,
+  ToggleButton,
+  Container,
+  Row,
 } from "react-bootstrap";
 import BtnBootstrap from "../../../components/BtnBootstrap";
 import styles from "../../../styles/Form/FormStyles.module.scss";
@@ -15,6 +19,7 @@ function DynamicQuestionandAnswer({
   handleDelQAMessage,
   handleGetVideoTime,
   handleGetVideoDuration,
+  handleCheckMessageType,
   handleGetQuestionMustCorrect,
   handleGetQuestionContent,
   handleOptionChange,
@@ -22,6 +27,9 @@ function DynamicQuestionandAnswer({
   handleAnswerChange,
 }) {
   if (!VideoQA) return null;
+
+  const [radioValue, setRadioValue] = useState([]);
+
   return (
     <>
       {VideoQA.map((info, index) => (
@@ -67,7 +75,7 @@ function DynamicQuestionandAnswer({
               />
               <InputGroup.Text>秒</InputGroup.Text>
             </InputGroup>
-            {/* Get the duration of the video show question time */}
+            {/* 取得問題持續時間 */}
             <InputGroup className="mb-3">
               <Form.Control
                 // only can input number
@@ -85,7 +93,8 @@ function DynamicQuestionandAnswer({
             </InputGroup>
 
             {/* In this inputGroup is about Question and Answer Select */}
-            <InputGroup className="pb-2">
+            <InputGroup className="">
+              {/* 若是練習用則無必對問題 */}
               {FormMode && (
                 <InputGroup.Checkbox
                   aria-label="若此為必對問題請點選"
@@ -95,40 +104,94 @@ function DynamicQuestionandAnswer({
                   checked={info.mustCorrectQuestion}
                 />
               )}
-              <Form.Floating>
-                <Form.Control
-                  name="questionContent"
-                  id="floatingInput"
-                  type="text"
-                  placeholder={`請在這裡輸入問題${String.fromCharCode(
-                    65 + index
-                  )}`}
-                  value={info.questionContent}
-                  onChange={(e) => {
-                    handleGetQuestionContent(index, e);
-                  }}
-                />
-                <label htmlFor="floatingInput">{`請輸入問題${
-                  index + 1
-                }`}</label>
-              </Form.Floating>
-              <FloatingLabel
-                controlId="floatingSelectGrid"
-                label="請選擇問答題目數"
-              >
-                <Form.Select
-                  aria-label="Floating label select example"
-                  value={info.numofOptions}
-                  onChange={(e) => {
-                    handleOptionChange(index, e);
-                  }}
-                >
-                  <option value="">請點擊開啟選單</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                </Form.Select>
-              </FloatingLabel>
+              <Container>
+                <Row>
+                  {FormMode === false && (
+                    <ButtonGroup className="mb-3">
+                      <ToggleButton
+                        key={"alert"}
+                        id={`radio-alert-${index}`}
+                        type="radio"
+                        variant={0 % 2 ? "outline-success" : "outline-danger"}
+                        name={`radio-${index}`}
+                        value="0"
+                        checked={info.messageType === 0}
+                        onChange={(e) => handleCheckMessageType(index, e)}
+                      >
+                        警示訊息
+                      </ToggleButton>
+                      <ToggleButton
+                        key={"question"}
+                        id={`radio-question-${index}`}
+                        type="radio"
+                        variant={1 % 2 ? "outline-success" : "outline-primary"}
+                        name={`radio-${index}`}
+                        value="1"
+                        checked={info.messageType === 1}
+                        onChange={(e) => handleCheckMessageType(index, e)}
+                      >
+                        問題
+                      </ToggleButton>
+                    </ButtonGroup>
+                  )}
+                </Row>
+              </Container>
+              {info.messageType === 0 ? (
+                <Container>
+                  <Row>
+                    <Form.Group className="mb-3" controlId="formNewManageMail">
+                      <Form.Label>請輸入第{index + 1}個提示訊息：</Form.Label>
+                      <Form.Control
+                        autoComplete="nope"
+                        type="text"
+                        name="text"
+                        placeholder={`請於此輸入第${index + 1}個提示訊息`}
+                        onChange={(e) => {
+                          handleGetQuestionContent(index, e);
+                        }}
+                        value={info.questionContent}
+                      />
+                    </Form.Group>
+                  </Row>
+                </Container>
+              ) : (
+                <>
+                  <Form.Floating>
+                    <Form.Control
+                      name="questionContent"
+                      id="floatingInput"
+                      type="text"
+                      placeholder={`請在這裡輸入問題${String.fromCharCode(
+                        65 + index
+                      )}`}
+                      value={info.questionContent}
+                      onChange={(e) => {
+                        handleGetQuestionContent(index, e);
+                      }}
+                    />
+                    <label htmlFor="floatingInput">{`請輸入問題${
+                      index + 1
+                    }`}</label>
+                  </Form.Floating>
+                  <FloatingLabel
+                    controlId="floatingSelectGrid"
+                    label="請選擇問答題目數"
+                  >
+                    <Form.Select
+                      aria-label="Floating label select example"
+                      value={info.numofOptions}
+                      onChange={(e) => {
+                        handleOptionChange(index, e);
+                      }}
+                    >
+                      <option value="">請點擊開啟選單</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                    </Form.Select>
+                  </FloatingLabel>
+                </>
+              )}
             </InputGroup>
             {/* 以下是動態答案控制欄位 */}
             {info.answerContent.map((answerContent, answerContentIndex) => (
