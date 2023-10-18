@@ -19,6 +19,8 @@ const optionSelector = (option) => {
       return styles.defaultPageHeadingStyle7;
     case 8:
       return styles.defaultPageHeadingStyle8;
+    case 9:
+      return styles.PageHeadingStyleForCreateVideo;
     default:
       return styles.defaultPageHeadingStyle1;
   }
