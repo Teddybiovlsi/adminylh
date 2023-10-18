@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import InputVideoFileFunction from "./shared/InputVideoFileFunction";
 import InputVideoTitleFunction from "./shared/InputVideoTitleFunction";
-import InputVideoInfoFunction from "./shared/InputVideoInfoFunction";
+import InputVideoLanguageFunction from "./shared/InputVideoLanguageFunction";
 import InputVideoQAFunction from "./shared/InputVideoQAFunction";
 import InputFormPreviewFunction from "./shared/InputFormPreviewFunction";
 import InputVideoTypeFunction from "./shared/InputVideoTypeFunction";
@@ -159,7 +159,7 @@ export default function CreateVideo({ VideoMode = false }) {
         );
       case 2:
         return (
-          <InputVideoInfoFunction
+          <InputVideoLanguageFunction
             FormMode={VideoMode}
             ChangeEvent={(e) => {
               setFormType({
