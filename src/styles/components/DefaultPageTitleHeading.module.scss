@@ -145,5 +145,24 @@
     background-repeat: no-repeat;
     background-position: center bottom;
   }
+
+  .PageHeadingStyleForCreateVideo{
+    text-align: center;
+    padding-bottom: 29px;
+    margin-bottom: 2.5rem;
+    background-image: linear-gradient(
+        90deg,
+        whitesmoke 0%,
+        whitesmoke 20%,
+        #989dcc 43%,
+        #989dcc 55%,
+        whitesmoke 78%,
+        whitesmoke 100%
+      ),
+      url(none);
+    background-size: 100% 5px;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+  }
   
   
