@@ -102,14 +102,24 @@ export default function CreateVideo({ VideoMode = false }) {
   };
 
   const nextStep = (e) => {
-    setFormType((prevState) => ({
-      ...prevState,
-      activeStep: prevState.activeStep + 1,
-      completedSteps: prevState.completedSteps.map((step, index) =>
-        index === prevState.formStep ? true : step
-      ),
-      formStep: prevState.formStep + 1,
-    }));
+    if (formType.activeStep > formType.formStep) {
+      setFormType((prevState) => ({
+        ...prevState,
+        completedSteps: prevState.completedSteps.map((step, index) =>
+          index === prevState.formStep ? true : step
+        ),
+        formStep: prevState.formStep + 1,
+      }));
+    } else {
+      setFormType((prevState) => ({
+        ...prevState,
+        activeStep: prevState.activeStep + 1,
+        completedSteps: prevState.completedSteps.map((step, index) =>
+          index === prevState.formStep ? true : step
+        ),
+        formStep: prevState.formStep + 1,
+      }));
+    }
   };
 
   const submitAction = () => {
