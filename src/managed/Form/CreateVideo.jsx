@@ -11,6 +11,9 @@ import { useNavigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
+import PageTitle from "../../components/Title";
+import PageTitleHeading from "../../components/PageTitleHeading";
+import { Step, Stepper } from "react-form-stepper";
 
 export default function CreateVideo({ VideoMode = false }) {
   const navigate = useNavigate();
@@ -29,7 +32,8 @@ export default function CreateVideo({ VideoMode = false }) {
 
   const [formType, setFormType] = useState({
     VideoMode: VideoMode ? 1 : 0,
-    formStep: 5,
+    formStep: 0,
+    completedSteps: [false, false, false, false, false, false],
     videoFile: "",
     videoSource: "",
     videoFileName: "",
@@ -97,7 +101,13 @@ export default function CreateVideo({ VideoMode = false }) {
   };
 
   const nextStep = (e) => {
-    setFormType({ ...formType, [e.target.name]: formType.formStep + 1 });
+    setFormType((prevState) => ({
+      ...prevState,
+      completedSteps: prevState.completedSteps.map((step, index) =>
+        index === prevState.formStep ? true : step
+      ),
+      formStep: prevState.formStep + 1,
+    }));
   };
 
   const submitAction = () => {
@@ -116,9 +126,10 @@ export default function CreateVideo({ VideoMode = false }) {
     });
     sendVideoData(formData);
   };
+
   const FormStep = (step) => {
-    switch (formType.formStep) {
-      case 1:
+    switch (step) {
+      case 0:
         return (
           <InputVideoFileFunction
             FormMode={VideoMode}
@@ -127,7 +138,7 @@ export default function CreateVideo({ VideoMode = false }) {
             GoNextEvent={nextStep}
           />
         );
-      case 2:
+      case 1:
         return (
           <InputVideoTitleFunction
             FormMode={VideoMode}
@@ -144,7 +155,7 @@ export default function CreateVideo({ VideoMode = false }) {
             GoNextEvent={nextStep}
           />
         );
-      case 3:
+      case 2:
         return (
           <InputVideoInfoFunction
             FormMode={VideoMode}
@@ -161,7 +172,7 @@ export default function CreateVideo({ VideoMode = false }) {
             GoNextEvent={nextStep}
           />
         );
-      case 4:
+      case 3:
         return (
           <InputVideoTypeFunction
             FormMode={VideoMode}
@@ -176,7 +187,7 @@ export default function CreateVideo({ VideoMode = false }) {
             GoNextEvent={nextStep}
           />
         );
-      case 5:
+      case 4:
         return (
           <InputVideoQAFunction
             FormMode={VideoMode}
@@ -199,7 +210,7 @@ export default function CreateVideo({ VideoMode = false }) {
             GoNextEvent={nextStep}
           />
         );
-      case 6:
+      case 5:
         return (
           <InputFormPreviewFunction
             FormMode={VideoMode}
@@ -220,6 +231,70 @@ export default function CreateVideo({ VideoMode = false }) {
 
   return (
     <Container>
+      <PageTitle
+        title={`台大醫院雲林分院｜ ${VideoMode ? "測驗用表單" : "練習用表單"}`}
+      />
+      <PageTitleHeading
+        text={`${VideoMode ? "測驗用表單" : "練習用表單"}系統`}
+        styleOptions={9}
+      />
+      <Stepper
+        activeStep={formType.formStep}
+        connectorStateColors
+        connectorStyleConfig={{
+          activeColor: "#6A70AB",
+        }}
+        styleConfig={{
+          activeBgColor: "#2D3479",
+          activeTextColor: "#fff",
+          completedBgColor: "#A3427F",
+          completedTextColor: "#fff",
+        }}
+      >
+        <Step
+          label="匯入影片"
+          onClick={() => {
+            setFormType({ ...formType, formStep: 0 });
+          }}
+          completed={formType.completedSteps[0]}
+        />
+        <Step
+          label="填寫影片標題"
+          onClick={() => {
+            setFormType({ ...formType, formStep: 1 });
+          }}
+          completed={formType.completedSteps[1]}
+        />
+        <Step
+          label="選擇影片語言"
+          onClick={() => {
+            setFormType({ ...formType, formStep: 2 });
+          }}
+          completed={formType.completedSteps[2]}
+        />
+        <Step
+          label="選擇影片類別"
+          onClick={() => {
+            setFormType({ ...formType, formStep: 3 });
+          }}
+          completed={formType.completedSteps[3]}
+        />
+        <Step
+          label="填寫影片問題"
+          onClick={() => {
+            setFormType({ ...formType, formStep: 4 });
+          }}
+          completed={formType.completedSteps[4]}
+        />
+        <Step
+          label="表單預覽"
+          onClick={() => {
+            setFormType({ ...formType, formStep: 5 });
+          }}
+          completed={formType.completedSteps[5]}
+        />
+      </Stepper>
+
       {FormStep(formType.formStep)}
       <ToastAlert />
     </Container>
