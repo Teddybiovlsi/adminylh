@@ -184,7 +184,7 @@ function DynamicQuestionandAnswer({
                         handleOptionChange(index, e);
                       }}
                     >
-                      <option value="">請點擊開啟選單</option>
+                      <option value="0">請點擊開啟選單</option>
                       <option value="2">2</option>
                       <option value="3">3</option>
                       <option value="4">4</option>
@@ -197,7 +197,7 @@ function DynamicQuestionandAnswer({
             {info.answerContent.map((answerContent, answerContentIndex) => (
               <InputGroup
                 key={`${index}-${answerContentIndex}`}
-                className="mb-2"
+                className="mt-3"
               >
                 <InputGroup.Checkbox
                   aria-label="若此為該問題答案請點選○"
