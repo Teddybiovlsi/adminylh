@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Card, Stack } from "react-bootstrap";
+import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import PageTitle from "../../../components/Title";
 import { CardTitleFunction } from "./CardTitleFunction";
 import { update } from "lodash/fp";
@@ -163,27 +163,21 @@ function InputVideoQAFunction({
   };
 
   return (
-    <div className="FormStyle d-flex align-items-center justify-content-center">
-      <PageTitle
-        title={`台大分院雲林分院｜ ${FormMode ? "測驗用表單" : "練習用表單"}`}
-      />
-      <Card className={`${styles.ExamQusetionCard}`}>
-        <Card.Title className={styles.FormTitle} style={{ margin: 0 }}>
-          <CardTitleFunction TitleName={`台大醫院雲林分院`} />
-          <CardTitleFunction
-            TitleName={`${FormMode ? "測驗用" : "練習用"}表單系統`}
-          />
-        </Card.Title>
-
-        <Card.Body className="pt-0 ps-0 pe-0">
-          <video
-            ref={videoRef}
-            src={VideoFile}
-            className={`${styles.VideoPriview}`}
-            width="100%"
-            controls
-            onLoadedMetadata={handleLoadedMetadata}
-          />
+    <Container>
+      <Row>
+        <Col className="d-flex justify-content-center" lg={6}>
+          <div className="w-65">
+            <video
+              ref={videoRef}
+              src={VideoFile}
+              className={`${styles.videoPreview}`}
+              width="100%"
+              controls
+              onLoadedMetadata={handleLoadedMetadata}
+            />
+          </div>
+        </Col>
+        <Col>
           <Stack direction="horizontal" className="ms-2 mt-3 mb-3 me-2">
             <div>
               <h2>
@@ -215,37 +209,58 @@ function InputVideoQAFunction({
             handleIsCorrectOption={handleIsCorrectOption}
             handleAnswerChange={handleAnswerChange}
           />
-        </Card.Body>
-        <Card.Footer>
-          <BtnBootstrap
-            btnPosition="me-2"
-            btnSize="normal"
-            btnName={"formStep"}
-            text={"上一步"}
-            onClickEventName={GoPrevEvent}
-            variant="danger"
-          />
+        </Col>
+      </Row>
+      <Row>
+        <BtnBootstrap
+          btnPosition="me-2"
+          btnSize="normal"
+          btnName={"formStep"}
+          text={"上一步"}
+          onClickEventName={GoPrevEvent}
+          variant="danger"
+        />
 
-          <BtnBootstrap
-            btnPosition="ms-2  float-end"
-            btnSize="normal"
-            btnName={"formStep"}
-            text={"預覽表單"}
-            onClickEventName={GoNextEvent}
-            variant="primary"
-            disabled={ifBtnDisable}
-          />
-          <BtnBootstrap
-            btnPosition="ms-2  float-end"
-            btnSize="normal"
-            btnName={"formStep"}
-            text={"驗證此頁面表單"}
-            onClickEventName={validateQA}
-            variant="success"
-          />
-        </Card.Footer>
-      </Card>
-    </div>
+        <BtnBootstrap
+          btnPosition="ms-2  float-end"
+          btnSize="normal"
+          btnName={"formStep"}
+          text={"預覽表單"}
+          onClickEventName={GoNextEvent}
+          variant="primary"
+          disabled={ifBtnDisable}
+        />
+        <BtnBootstrap
+          btnPosition="ms-2  float-end"
+          btnSize="normal"
+          btnName={"formStep"}
+          text={"驗證此頁面表單"}
+          onClickEventName={validateQA}
+          variant="success"
+        />
+      </Row>
+    </Container>
+
+    // <div className="FormStyle d-flex align-items-center justify-content-center">
+    //   <PageTitle
+    //     title={`台大分院雲林分院｜ ${FormMode ? "測驗用表單" : "練習用表單"}`}
+    //   />
+    //   <Card className={`${styles.ExamQusetionCard}`}>
+    //     <Card.Title className={styles.FormTitle} style={{ margin: 0 }}>
+    //       <CardTitleFunction TitleName={`台大醫院雲林分院`} />
+    //       <CardTitleFunction
+    //         TitleName={`${FormMode ? "測驗用" : "練習用"}表單系統`}
+    //       />
+    //     </Card.Title>
+
+    //     <Card.Body className="pt-0 ps-0 pe-0">
+
+    //     </Card.Body>
+    //     <Card.Footer>
+
+    //     </Card.Footer>
+    //   </Card>
+    // </div>
   );
 }
 
