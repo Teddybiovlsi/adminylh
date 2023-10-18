@@ -8,13 +8,10 @@ export default function InputVideoTitleFunction({
   ChangeEvent = null,
 
   // 表單模式和下一步事件的相關變數
-  FormMode = false,
   GoPrevEvent = null,
   GoNextEvent = null,
 }) {
-  const VideoTitleAlertMessage = `請點選衛教${
-    FormMode ? "測驗用" : "練習用"
-  }影片標題名稱`;
+  const VideoTitleAlertMessage = `請填寫衛教影片標題名稱`;
 
   return (
     <Container>
