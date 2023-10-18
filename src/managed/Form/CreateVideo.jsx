@@ -143,7 +143,6 @@ export default function CreateVideo({ VideoMode = false }) {
       case 1:
         return (
           <InputVideoTitleFunction
-            FormMode={VideoMode}
             ChangeEvent={(e) => {
               setFormType({
                 ...formType,
