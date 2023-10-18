@@ -86,14 +86,22 @@ export default function CreateVideo({ VideoMode = false }) {
 
   const hadleVideoFileIsUpload = (e) => {
     if (e.target.files.length !== 0) {
-      setFormType({
-        ...formType,
-        videoFile: e.target.files[0],
-        videoFileName: e.target.files[0].name,
-        // remove the suffix of the video file name
-        videoTitleName: e.target.files[0].name.split(".")[0],
-        videoSource: URL.createObjectURL(e.target.files[0]),
-      });
+      const file = e.target.files[0];
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.onloadedmetadata = function () {
+        const duration = video.duration;
+        setFormType({
+          ...formType,
+          videoFile: e.target.files[0],
+          videoFileName: e.target.files[0].name,
+          // remove the suffix of the video file name
+          videoTitleName: e.target.files[0].name.split(".")[0],
+          videoSource: URL.createObjectURL(e.target.files[0]),
+          videoDuration: duration,
+        });
+      };
+      video.src = URL.createObjectURL(file);
     }
   };
 
@@ -205,16 +213,6 @@ export default function CreateVideo({ VideoMode = false }) {
             FormStep={formType.formStep}
             VideoFile={formType.videoSource}
             formType={formType}
-            setDuration={
-              formType.videoDuration === 0
-                ? (duration) => {
-                    setFormType({
-                      ...formType,
-                      videoDuration: duration,
-                    });
-                  }
-                : null
-            }
             VideoQA={videoInfo}
             setVideoQA={setVideoInfo}
             GoPrevEvent={prevStep}
