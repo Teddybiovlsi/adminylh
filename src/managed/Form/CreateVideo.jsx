@@ -33,6 +33,7 @@ export default function CreateVideo({ VideoMode = false }) {
   const [formType, setFormType] = useState({
     VideoMode: VideoMode ? 1 : 0,
     formStep: 0,
+    activeStep: 0,
     completedSteps: [false, false, false, false, false, false],
     videoFile: "",
     videoSource: "",
@@ -103,6 +104,7 @@ export default function CreateVideo({ VideoMode = false }) {
   const nextStep = (e) => {
     setFormType((prevState) => ({
       ...prevState,
+      activeStep: prevState.activeStep + 1,
       completedSteps: prevState.completedSteps.map((step, index) =>
         index === prevState.formStep ? true : step
       ),
@@ -239,7 +241,7 @@ export default function CreateVideo({ VideoMode = false }) {
         styleOptions={9}
       />
       <Stepper
-        activeStep={formType.formStep}
+        activeStep={formType.activeStep}
         connectorStateColors
         connectorStyleConfig={{
           activeColor: "#6A70AB",
