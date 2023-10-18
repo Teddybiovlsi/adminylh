@@ -66,7 +66,7 @@ function InputVideoTypeFunction({
             onClickEventName={GoPrevEvent}
           />
         </Col>
-        <Col xs={5}>
+        <Col>
           <BtnBootstrap
             btnPosition="float-end"
             btnSize="btn-md"
