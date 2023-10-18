@@ -21,12 +21,6 @@ function InputVideoQAFunction({
   // 影片時間參考欄位
   const videoRef = useRef(null);
 
-  const handleLoadedMetadata = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    setDuration(video.duration);
-  };
-
   // 以下是跟影片問題/選項/答案填寫有關的欄位
   // 若該欄位之index取得影片時間有所變動
   const handleGetVideoTime = (index, e) => {
@@ -54,6 +48,15 @@ function InputVideoQAFunction({
         VideoQA
       )
     );
+
+    setVideoQA((prevVideoQA) => {
+      const updatedVideoQA = [...prevVideoQA];
+      if (e.target.value === "0") {
+        updatedVideoQA[index].answerContent = [];
+        updatedVideoQA[index].numofOptions = 0;
+      }
+      return updatedVideoQA;
+    });
   };
 
   // if radio box is checked then the information of the Question mustCorrect will be true
@@ -166,14 +169,13 @@ function InputVideoQAFunction({
     <Container>
       <Row>
         <Col className="d-flex justify-content-center" lg={6}>
-          <div className="w-65">
+          <div>
             <video
               ref={videoRef}
               src={VideoFile}
               className={`${styles.videoPreview}`}
-              width="100%"
+              width="80%"
               controls
-              onLoadedMetadata={handleLoadedMetadata}
             />
           </div>
         </Col>
@@ -212,55 +214,37 @@ function InputVideoQAFunction({
         </Col>
       </Row>
       <Row>
-        <BtnBootstrap
-          btnPosition="me-2"
-          btnSize="normal"
-          btnName={"formStep"}
-          text={"上一步"}
-          onClickEventName={GoPrevEvent}
-          variant="danger"
-        />
-
-        <BtnBootstrap
-          btnPosition="ms-2  float-end"
-          btnSize="normal"
-          btnName={"formStep"}
-          text={"預覽表單"}
-          onClickEventName={GoNextEvent}
-          variant="primary"
-          disabled={ifBtnDisable}
-        />
-        <BtnBootstrap
-          btnPosition="ms-2  float-end"
-          btnSize="normal"
-          btnName={"formStep"}
-          text={"驗證此頁面表單"}
-          onClickEventName={validateQA}
-          variant="success"
-        />
+        <Col>
+          <BtnBootstrap
+            btnPosition=""
+            btnSize="lg"
+            btnName="formStep"
+            variant="outline-danger"
+            text={"上一步"}
+            onClickEventName={GoPrevEvent}
+          />
+        </Col>
+        <Col>
+          <BtnBootstrap
+            btnPosition="ms-2"
+            btnSize="lg"
+            btnName={"formStep"}
+            text={"驗證此頁面表單"}
+            onClickEventName={validateQA}
+            variant="outline-success"
+          />
+          <BtnBootstrap
+            btnPosition="ms-2  float-end"
+            btnSize="lg"
+            btnName="formStep"
+            variant="outline-primary"
+            text={"預覽表單"}
+            onClickEventName={GoNextEvent}
+            disabled={ifBtnDisable}
+          />
+        </Col>
       </Row>
     </Container>
-
-    // <div className="FormStyle d-flex align-items-center justify-content-center">
-    //   <PageTitle
-    //     title={`台大分院雲林分院｜ ${FormMode ? "測驗用表單" : "練習用表單"}`}
-    //   />
-    //   <Card className={`${styles.ExamQusetionCard}`}>
-    //     <Card.Title className={styles.FormTitle} style={{ margin: 0 }}>
-    //       <CardTitleFunction TitleName={`台大醫院雲林分院`} />
-    //       <CardTitleFunction
-    //         TitleName={`${FormMode ? "測驗用" : "練習用"}表單系統`}
-    //       />
-    //     </Card.Title>
-
-    //     <Card.Body className="pt-0 ps-0 pe-0">
-
-    //     </Card.Body>
-    //     <Card.Footer>
-
-    //     </Card.Footer>
-    //   </Card>
-    // </div>
   );
 }
 
