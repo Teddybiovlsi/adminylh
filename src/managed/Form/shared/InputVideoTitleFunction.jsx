@@ -3,9 +3,12 @@ import { Container, Form, Row, Col } from "react-bootstrap";
 import BtnBootstrap from "../../../components/BtnBootstrap";
 
 export default function InputVideoTitleFunction({
-  FormMode = false,
-  ChangeEvent = null,
+  // 輸入影片文件的相關變數
   VideoTitle = "",
+  ChangeEvent = null,
+
+  // 表單模式和下一步事件的相關變數
+  FormMode = false,
   GoPrevEvent = null,
   GoNextEvent = null,
 }) {
