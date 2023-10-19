@@ -29,12 +29,14 @@ function DynamicQuestionandAnswer({
   if (!VideoQA) return null;
 
   const [radioValue, setRadioValue] = useState([]);
+  // 計算當前有幾個問題/警告訊息需要被填寫
+  const totalInfo = VideoQA.length;
 
   return (
     <>
       {VideoQA.map((info, index) => (
         <Card key={index} style={{ position: "relative" }} className="mb-2">
-          {index > 0 && (
+          {totalInfo > 1 && (
             <CloseButton
               className={`${styles.deleteQAMessage}`}
               onClick={() => {
