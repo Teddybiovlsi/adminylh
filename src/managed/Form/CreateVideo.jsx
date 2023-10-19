@@ -295,13 +295,7 @@ export default function CreateVideo({ VideoMode = false }) {
           }}
           completed={formType.completedSteps[4]}
         />
-        <Step
-          label="表單預覽"
-          onClick={() => {
-            setFormType({ ...formType, formStep: 5 });
-          }}
-          completed={formType.completedSteps[5]}
-        />
+        <Step label="表單預覽" disabled={true} />
       </Stepper>
 
       {FormStep(formType.formStep)}
