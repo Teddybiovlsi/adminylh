@@ -8,14 +8,15 @@ import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 
 function InputVideoQAFunction({
+  // 輸入影片問題的相關變數
   FormMode = false,
   VideoFile = "",
   VideoQA,
   setVideoQA,
-  formType,
-  setDuration = null,
-  GoPrevEvent = null,
+
+  // 表單模式和下一步事件的相關變數
   GoNextEvent = null,
+  GoPrevEvent = null,
 }) {
   const [ifBtnDisable, setIfBtnDisable] = useState(true);
   // 影片時間參考欄位
@@ -180,7 +181,7 @@ function InputVideoQAFunction({
           </div>
         </Col>
         <Col>
-          <Stack direction="horizontal" className="ms-2 mt-3 mb-3 me-2">
+          <Stack gap={2}>
             <div>
               <h2>
                 <strong>{`請填寫衛教${
@@ -189,13 +190,13 @@ function InputVideoQAFunction({
               </h2>
             </div>
 
-            <div className="ms-auto">
-              <BtnBootstrap
-                text={"新增問題"}
-                onClickEventName={handleAddQuestion}
-                variant="secondary"
-              />
-            </div>
+            <BtnBootstrap
+              btnPosition="mb-1"
+              btnSize="md"
+              text={"新增問題"}
+              onClickEventName={handleAddQuestion}
+              variant="outline-secondary"
+            />
           </Stack>
 
           <DynamicQuestionandAnswer
