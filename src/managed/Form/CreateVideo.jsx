@@ -1,16 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Container, Modal, ModalFooter, Stack } from "react-bootstrap";
+import { post } from "../axios";
+import { toast } from "react-toastify";
+import useModal from "../../hooks/useModal";
 import InputVideoFileFunction from "./shared/InputVideoFileFunction";
 import InputVideoTitleFunction from "./shared/InputVideoTitleFunction";
 import InputVideoLanguageFunction from "./shared/InputVideoLanguageFunction";
 import InputVideoQAFunction from "./shared/InputVideoQAFunction";
 import InputFormPreviewFunction from "./shared/InputFormPreviewFunction";
 import InputVideoTypeFunction from "./shared/InputVideoTypeFunction";
-import StatusCode from "../../sys/StatusCode";
-import { post } from "../axios";
-import { useNavigate } from "react-router-dom";
-import { Container } from "react-bootstrap";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
-import { toast } from "react-toastify";
 import PageTitle from "../../components/Title";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import { Step, Stepper } from "react-form-stepper";
@@ -32,20 +33,27 @@ export default function CreateVideo({ VideoMode = false }) {
 
   const [formType, setFormType] = useState({
     VideoMode: VideoMode ? 1 : 0,
-    formStep: 0,
     activeStep: 0,
     completedSteps: [false, false, false, false, false, false],
-    videoFile: "",
-    videoSource: "",
-    videoFileName: "",
-    videoTitleName: "",
-    videoLanguage: "",
-    videoType: "",
-    videoDuration: 0,
+    formStep: 0,
+    isSkipped: false,
     questionNum: 1,
+    videoDuration: 0,
+    videoFile: "",
+    videoFileName: "",
+    videoLanguage: "",
+    videoSource: "",
+    videoTitleName: "",
+    videoType: "",
   });
 
   const [disabledSubmit, setDisabledSubmit] = useState(false);
+
+  const [
+    confirmSkipQuestion,
+    handleCloseConfirmSkipQuestion,
+    handleConfirmSkipQuestion,
+  ] = useModal();
 
   const sendVideoData = async (data) => {
     const videoFormID = toast.loading("上傳中...");
@@ -119,6 +127,30 @@ export default function CreateVideo({ VideoMode = false }) {
         formStep: prevState.formStep + 1,
       }));
     } else {
+      if (formType.formStep === 3) {
+        console.log(formType.formStep);
+        setFormType((prevState) => ({
+          ...prevState,
+          completedSteps: prevState.completedSteps.map((step, index) =>
+            index === prevState.formStep ? true : step
+          ),
+        }));
+        handleConfirmSkipQuestion();
+        return;
+      }
+
+      if (formType.formStep === 4) {
+        setFormType((prevState) => ({
+          ...prevState,
+          isSkipped: false,
+          completedSteps: prevState.completedSteps.map((step, index) =>
+            index === prevState.formStep ? true : step
+          ),
+          formStep: prevState.formStep + 1,
+        }));
+        return;
+      }
+
       setFormType((prevState) => ({
         ...prevState,
         activeStep: prevState.activeStep + 1,
@@ -223,6 +255,7 @@ export default function CreateVideo({ VideoMode = false }) {
         return (
           <InputFormPreviewFunction
             FormMode={VideoMode}
+            isSkip={formType.isSkipped}
             VideoName={formType.videoFileName}
             VideoTitle={formType.videoTitleName}
             VideoLanguage={formType.videoLanguage}
@@ -299,6 +332,51 @@ export default function CreateVideo({ VideoMode = false }) {
       </Stepper>
 
       {FormStep(formType.formStep)}
+      <Modal show={confirmSkipQuestion} onHide={handleCloseConfirmSkipQuestion}>
+        <Modal.Header closeButton>
+          <Modal.Title>請確認</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          請確認是否要跳過 <b className="text-danger">填寫問題步驟</b>
+          ，直接進入表單預覽畫面
+        </Modal.Body>
+        <ModalFooter>
+          <Stack gap={2}>
+            <BtnBootstrap
+              variant="outline-primary"
+              btnSize="md"
+              text={"確認"}
+              onClickEventName={() => {
+                setFormType({
+                  ...formType,
+                  isSkipped: true,
+                  completedSteps: formType.completedSteps.map((step, index) =>
+                    index === 4 ? true : step
+                  ),
+                  formStep: 5,
+                });
+                handleCloseConfirmSkipQuestion();
+              }}
+            />
+            <BtnBootstrap
+              variant="outline-secondary"
+              text={"取消"}
+              btnSize="md"
+              onClickEventName={() => {
+                setFormType({
+                  ...formType,
+                  completedSteps: formType.completedSteps.map((step, index) =>
+                    index === 4 ? false : step
+                  ),
+                  formStep: formType.formStep + 1,
+                });
+                handleCloseConfirmSkipQuestion();
+              }}
+            />
+          </Stack>
+        </ModalFooter>
+      </Modal>
+
       <ToastAlert />
     </Container>
   );
