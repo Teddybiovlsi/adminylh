@@ -6,6 +6,9 @@ import { update } from "lodash/fp";
 import BtnBootstrap from "../../../components/BtnBootstrap";
 import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
 import styles from "../../../styles/Form/FormStyles.module.scss";
+import ToastAlert from "../../../components/ToastAlert";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function InputVideoQAFunction({
   // 輸入影片問題的相關變數
@@ -13,11 +16,12 @@ function InputVideoQAFunction({
   VideoFile = "",
   VideoQA,
   setVideoQA,
-
   // 表單模式和下一步事件的相關變數
   GoNextEvent = null,
   GoPrevEvent = null,
 }) {
+  const [ifVaildateBtnDisable, setIfVaildateBtnDisable] = useState(false);
+
   const [ifBtnDisable, setIfBtnDisable] = useState(true);
   // 影片時間參考欄位
   const videoRef = useRef(null);
@@ -139,6 +143,7 @@ function InputVideoQAFunction({
   // 驗證問題/選項/答案是否為空
   const validateQA = () => {
     let ifAnyAnswerContentIsEmpty = false;
+    setIfVaildateBtnDisable(true);
 
     const questionIsEmpty = VideoQA.some((info) => !info.questionContent);
     const ifAnyArrayOptionIndicesIsEmpty = VideoQA.reduce(
@@ -161,6 +166,10 @@ function InputVideoQAFunction({
       ifAnyAnswerContentIsEmpty
     ) {
       setIfBtnDisable(true);
+      toast.error("問題或答案欄位選項不得為空");
+      setTimeout(() => {
+        setIfVaildateBtnDisable(false);
+      }, 4000);
     } else {
       setIfBtnDisable(false);
     }
@@ -232,6 +241,7 @@ function InputVideoQAFunction({
             btnName={"formStep"}
             text={"驗證此頁面表單"}
             onClickEventName={validateQA}
+            disabled={ifVaildateBtnDisable}
             variant="outline-success"
           />
           <BtnBootstrap
@@ -245,6 +255,7 @@ function InputVideoQAFunction({
           />
         </Col>
       </Row>
+      <ToastAlert />
     </Container>
   );
 }
