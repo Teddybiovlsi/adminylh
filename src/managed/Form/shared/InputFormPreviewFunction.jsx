@@ -7,11 +7,11 @@ import {
   SwitchNumToLanguage,
   SwitchNumToType,
 } from "./func/SwitchNumToLanguage";
-import styles from "../../../styles/Form/FormStyles.module.scss";
 
 function InputFormPreviewFunction({
   FormMode = false,
   isSkip = false,
+  isCheckValidationQA = false,
   VideoName = "",
   VideoTitle = "",
   VideoLanguage = "",
@@ -51,51 +51,45 @@ function InputFormPreviewFunction({
           <b>{isSkip ? "是" : "否"}</b>{" "}
         </Col>
       </Row>
-      {isSkip === false &&
-        VideoQA?.map((questionInfo, questionIndex) => (
-          <Card key={questionIndex} className="mb-2">
-            <Card.Title className="mb-2 ms-1">
-              問題 {questionIndex + 1}:
-            </Card.Title>
-            <Container>
-              <Row>
-                <Col className="h5 ps-0" md={4}>
-                  中斷時間:
-                </Col>
-                <Col md={6}>{questionInfo.currentTime}秒</Col>
-              </Row>
-
-              <Row>
-                <Col className="h5 ps-0" md={4}>
-                  {questionInfo.messageType === 0 ? "提示訊息:" : "問題內容:"}
-                </Col>
-                <Col md={6}>{questionInfo.questionContent}</Col>
-              </Row>
-            </Container>
-
-            {FormMode && (
-              <>
-                <Card.Title className="ms-2">是否為必定答對問題?</Card.Title>
-                <Card.Text className="ms-4">
-                  {questionInfo.mustCorrectQuestion ? "是" : "否"}
-                </Card.Text>
-              </>
-            )}
-
-            {questionInfo.answerContent.map(
-              (answerContent, answerContentIndex) => (
-                <div key={`${questionIndex}-${answerContentIndex}`}>
+      {!isSkip ||
+        (isCheckValidationQA &&
+          VideoQA?.map((q, i) => (
+            <Card key={i} className="mb-2">
+              <Card.Title className="mb-2 ms-1">問題 {i + 1}:</Card.Title>
+              <Container>
+                <Row>
+                  <Col className="h5 ps-0" md={4}>
+                    中斷時間:
+                  </Col>
+                  <Col md={6}>{q.currentTime}秒</Col>
+                </Row>
+                <Row>
+                  <Col className="h5 ps-0" md={4}>
+                    {q.messageType === 0 ? "提示訊息:" : "問題內容:"}
+                  </Col>
+                  <Col md={6}>{q.questionContent}</Col>
+                </Row>
+              </Container>
+              {FormMode && (
+                <>
+                  <Card.Title className="ms-2">是否為必定答對問題?</Card.Title>
+                  <Card.Text className="ms-4">
+                    {q.mustCorrectQuestion ? "是" : "否"}
+                  </Card.Text>
+                </>
+              )}
+              {q.answerContent.map((a, j) => (
+                <div key={`${i}-${j}`}>
                   <Card.Title className="ms-2">{`答案${String.fromCharCode(
-                    65 + answerContentIndex
+                    65 + j
                   )}:`}</Card.Title>
-                  <Card.Text className="ms-4">{`${answerContent[1]}-答案為${
-                    answerContent[0] ? "正確" : "錯誤"
+                  <Card.Text className="ms-4">{`${a[1]}-答案為${
+                    a[0] ? "正確" : "錯誤"
                   }`}</Card.Text>
                 </div>
-              )
-            )}
-          </Card>
-        ))}
+              ))}
+            </Card>
+          )))}
 
       <Stack gap={2} className="col-md-5 mx-auto">
         <BtnBootstrap
