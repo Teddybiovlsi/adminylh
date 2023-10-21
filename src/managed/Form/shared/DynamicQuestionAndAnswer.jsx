@@ -46,11 +46,6 @@ function DynamicQuestionandAnswer({
           )}
           <Card.Title className="pt-3 ps-3 pe-3 pb-0">
             <h3>問題 {index + 1}</h3>
-            {FormMode && (
-              <p className={`${styles.noticficationMessage}`}>
-                <strong>若下列填寫問題為必答問題請點選○</strong>
-              </p>
-            )}
             <p className={`${styles.noticficationMessage}`}>
               <strong>若此為該問題答案請點選○</strong>
             </p>
