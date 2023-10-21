@@ -34,6 +34,7 @@ export default function CreateVideo({ VideoMode = false }) {
   const [formType, setFormType] = useState({
     VideoMode: VideoMode ? 1 : 0,
     activeStep: 0,
+    checkFormQuestion: false,
     completedSteps: [false, false, false, false, false, false],
     formStep: 0,
     isSkipped: false,
@@ -143,6 +144,7 @@ export default function CreateVideo({ VideoMode = false }) {
         setFormType((prevState) => ({
           ...prevState,
           isSkipped: false,
+          checkFormQuestion: true,
           completedSteps: prevState.completedSteps.map((step, index) =>
             index === prevState.formStep ? true : step
           ),
@@ -242,7 +244,6 @@ export default function CreateVideo({ VideoMode = false }) {
         return (
           <InputVideoQAFunction
             FormMode={VideoMode}
-            FormStep={formType.formStep}
             VideoFile={formType.videoSource}
             formType={formType}
             VideoQA={videoInfo}
@@ -256,6 +257,7 @@ export default function CreateVideo({ VideoMode = false }) {
           <InputFormPreviewFunction
             FormMode={VideoMode}
             isSkip={formType.isSkipped}
+            isCheckValidationQA={formType.checkFormQuestion}
             VideoName={formType.videoFileName}
             VideoTitle={formType.videoTitleName}
             VideoLanguage={formType.videoLanguage}
