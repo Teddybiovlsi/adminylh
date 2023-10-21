@@ -98,12 +98,15 @@ function DynamicQuestionandAnswer({
             <InputGroup className="">
               {/* 若是練習用則無必對問題 */}
               {FormMode && (
-                <InputGroup.Checkbox
-                  aria-label="若此為必對問題請點選"
+                <Form.Check // prettier-ignore
+                  type={`checkbox`}
+                  id={`default-checkbox`}
+                  className="mb-2"
+                  checked={info.mustCorrectQuestion}
+                  label={`若此為必對問題請點選`}
                   onChange={() => {
                     handleGetQuestionMustCorrect(index);
                   }}
-                  checked={info.mustCorrectQuestion}
                 />
               )}
               <Container>
@@ -138,7 +141,8 @@ function DynamicQuestionandAnswer({
                   )}
                 </Row>
               </Container>
-              {info.messageType === 0 ? (
+
+              {info.messageType === 0 && FormMode === false ? (
                 <Container>
                   <Row>
                     <Form.Group className="mb-3" controlId="formNewManageMail">
