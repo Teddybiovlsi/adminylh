@@ -4,7 +4,7 @@ import PageTitle from "../../../components/Title";
 import { CardTitleFunction } from "./CardTitleFunction";
 import { update } from "lodash/fp";
 import BtnBootstrap from "../../../components/BtnBootstrap";
-import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
+import DynamicQuestionandAnswer from "./DynamicQuestionAndAnswer";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 import ToastAlert from "../../../components/ToastAlert";
 import { toast } from "react-toastify";
@@ -17,6 +17,7 @@ function InputVideoQAFunction({
   VideoQA,
   setVideoQA,
   // 表單模式和下一步事件的相關變數
+  isBasicVideo = false,
   GoNextEvent = null,
   GoPrevEvent = null,
 }) {

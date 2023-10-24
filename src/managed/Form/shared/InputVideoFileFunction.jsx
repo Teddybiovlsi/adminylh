@@ -3,16 +3,20 @@ import { Form, Container, Row } from "react-bootstrap";
 import BtnBootstrap from "../../../components/BtnBootstrap";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 
-function InputVideoFileFunction({
+export default function InputVideoFileFunction({
   // 輸入影片文件的相關變數
   VidoeName = "",
   ChangeEvent = null,
 
   // 表單模式和下一步事件的相關變數
+  isBasicVideo = false,
   FormMode = false,
   GoNextEvent = null,
 }) {
-  const title = `請匯入衛教${FormMode ? "測驗用" : "練習用"}影片`;
+  // BEGIN: ed8c6549bwf9 (shortened)
+  const title = `請匯入衛教${
+    isBasicVideo ? "基礎練習" : FormMode ? "測驗用" : "練習用"
+  }影片`;
 
   return (
     <Container>
@@ -55,5 +59,3 @@ function InputVideoFileFunction({
     </Container>
   );
 }
-
-export default InputVideoFileFunction;
