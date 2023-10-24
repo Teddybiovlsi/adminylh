@@ -1,14 +1,12 @@
 import React from "react";
-import PageTitle from "../../../components/Title";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
-import { CardTitleFunction } from "./CardTitleFunction";
 import BtnBootstrap from "../../../components/BtnBootstrap";
 import {
   SwitchNumToLanguage,
   SwitchNumToType,
 } from "./func/SwitchNumToLanguage";
 
-function InputFormPreviewFunction({
+export default function InputFormPreviewFunction({
   FormMode = false,
   isSkip = false,
   isCheckValidationQA = false,
@@ -113,5 +111,3 @@ function InputFormPreviewFunction({
     </Container>
   );
 }
-
-export default InputFormPreviewFunction;
