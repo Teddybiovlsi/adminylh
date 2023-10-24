@@ -1,15 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Card, Col, Container, Row, Stack } from "react-bootstrap";
-import PageTitle from "../../../components/Title";
-import { CardTitleFunction } from "./CardTitleFunction";
+import { Col, Container, Row, Stack } from "react-bootstrap";
 import { update } from "lodash/fp";
+import BasicDynamicQuestionAndAnswer from "./BasicDynamicQuestionAndAnswer";
 import BtnBootstrap from "../../../components/BtnBootstrap";
-import DynamicQuestionandAnswer from "./DynamicQuestionAndAnswer";
-import styles from "../../../styles/Form/FormStyles.module.scss";
 import ToastAlert from "../../../components/ToastAlert";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import BasicDynamicQuestionAndAnswer from "./BasicDynamicQuestionAndAnswer";
 
 export default function InputVideoBasicQAFunction({
   // 輸入影片問題的相關變數

@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Card, Col, Container, Row, Stack } from "react-bootstrap";
-import PageTitle from "../../../components/Title";
-import { CardTitleFunction } from "./CardTitleFunction";
+import { Col, Container, Row, Stack } from "react-bootstrap";
 import { update } from "lodash/fp";
 import BtnBootstrap from "../../../components/BtnBootstrap";
 import DynamicQuestionandAnswer from "./DynamicQuestionAndAnswer";
