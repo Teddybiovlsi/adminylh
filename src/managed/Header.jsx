@@ -87,7 +87,7 @@ export default function Header({ expand = "lg" }) {
               ) : null}
               {user !== null ? (
                 <NavDropdown title={videoDropdownTitle} id={videoDropdownId}>
-                  <LinkContainer to="/Pratice">
+                  <LinkContainer to="/Basic/Video">
                     <NavDropdown.Item>基本練習</NavDropdown.Item>
                   </LinkContainer>{" "}
                   <LinkContainer to="/Pratice">
