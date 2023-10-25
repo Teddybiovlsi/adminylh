@@ -37,14 +37,6 @@ export default function EditClientBasicVideoQA() {
 
   const { nextBtnDisable, SubmitEventDisabled } = formType;
 
-  const [initialVideoInfo, setInitialVideoInfo] = useState([
-    {
-      questionContent: "",
-      numofOptions: 0,
-      answerContent: [],
-    },
-  ]);
-
   const [videoInfo, setVideoInfo] = useState([]);
 
   const [tempVideoInfo, setTempVideoInfo] = useState([]);
@@ -54,6 +46,7 @@ export default function EditClientBasicVideoQA() {
   useEffect(() => {
     if (tempVideoInfo.length > 0) {
       handlePrevData();
+      setIsLoading(false);
     }
   }, [tempVideoInfo]);
 
@@ -147,21 +140,35 @@ export default function EditClientBasicVideoQA() {
   const handleAddQuestion = () => {
     // get the last question index
     const lastQuestionIndex = videoInfo.length - 1;
-    // get the last question duration time
-    const lastQuestionQuizIndex = videoInfo[lastQuestionIndex].id;
-    // add the new index
-    let newQuestionIndex = lastQuestionQuizIndex + 1;
 
-    setFormType({ ...formType, nextBtnDisable: true });
-    setVideoInfo([
-      ...videoInfo,
-      {
-        id: newQuestionIndex,
-        questionContent: "",
-        numofOptions: 0,
-        answerContent: [],
-      },
-    ]);
+    if (lastQuestionIndex === -1) {
+      setFormType({ ...formType, nextBtnDisable: true });
+      setVideoInfo([
+        ...videoInfo,
+        {
+          id: 0,
+          questionContent: "",
+          numofOptions: 0,
+          answerContent: [],
+        },
+      ]);
+    } else {
+      // get the last question duration time
+      const lastQuestionQuizIndex = videoInfo[lastQuestionIndex].id;
+      // add the new index
+      let newQuestionIndex = lastQuestionQuizIndex + 1;
+
+      setFormType({ ...formType, nextBtnDisable: true });
+      setVideoInfo([
+        ...videoInfo,
+        {
+          id: newQuestionIndex,
+          questionContent: "",
+          numofOptions: 0,
+          answerContent: [],
+        },
+      ]);
+    }
   };
 
   // 刪減輸入欄位
@@ -286,7 +293,6 @@ export default function EditClientBasicVideoQA() {
     const data = {
       info: videoInfo,
     };
-
     fetchEditVideoData(data);
     // console.log(tempVideoQA);
   };
@@ -315,7 +321,7 @@ export default function EditClientBasicVideoQA() {
                 </Stack>
 
                 <BasicDynamicQuestionAndAnswer
-                  VideoQA={videoInfo?.length > 0 ? videoInfo : initialVideoInfo}
+                  VideoQA={videoInfo?.length > 0 ? videoInfo : null}
                   handleDelQAMessage={handleDelQAMessage}
                   handleGetQuestionContent={handleGetQuestionContent}
                   handleOptionChange={handleOptionChange}
@@ -420,9 +426,14 @@ export default function EditClientBasicVideoQA() {
     }
   };
 
-  //   if (!isLoading) {
-  //     return <LoadingComponent title="台大分院雲林分院 編輯表單系統" />;
-  //   }
+  if (isLoading) {
+    return (
+      <LoadingComponent
+        title="台大分院雲林分院 編輯表單系統"
+        text="問題資訊載入中"
+      />
+    );
+  }
 
   return (
     <Container>
