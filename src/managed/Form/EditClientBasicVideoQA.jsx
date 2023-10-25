@@ -1,12 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import PageTitle from "../../components/Title";
-import { CardTitleFunction } from "./shared/CardTitleFunction";
 import { update } from "lodash/fp";
 import BtnBootstrap from "../../components/BtnBootstrap";
-import DynamicQuestionandAnswer from "./shared/DynamicQuestionandAnswer";
-import styles from "../../styles/Form/FormStyles.module.scss";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LoadingComponent from "../../components/LoadingComponent";
 import { get, put } from "../axios";
 import ToastAlert from "../../components/ToastAlert";
