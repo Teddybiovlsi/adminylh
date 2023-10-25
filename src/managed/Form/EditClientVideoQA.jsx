@@ -313,7 +313,12 @@ export default function EditClientVideoQA({ FormMode = true }) {
   }, [shouldRedirect]);
 
   if (isLoading) {
-    return <LoadingComponent title="台大分院雲林分院 編輯表單系統" />;
+    return (
+      <LoadingComponent
+        title="台大分院雲林分院 編輯表單系統"
+        text="問題資訊載入中"
+      />
+    );
   }
   switch (page) {
     case 1:
