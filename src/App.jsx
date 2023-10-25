@@ -27,6 +27,7 @@ import ManageAdminAccount from "./managed/Pages/ManageAdminAccount";
 import MultiAddAdmin from "./managed/Pages/MultiAddAdmin";
 import RestoreAdminAccount from "./managed/Pages/RestoreAdminAccount";
 import CreateBasicVideo from "./managed/Form/CreateBasicVideo";
+import EditClientBasicVideoQA from "./managed/Form/EditClientBasicVideoQA";
 
 function App() {
   const location = useLocation();
@@ -54,6 +55,10 @@ function App() {
             <Route path="/Home" element={<Home />} />
             <Route path="/Admin/Register" element={<BackendRegistration />} />
             <Route path="/Admin/Edit/Video" element={<EditClientVideoQA />} />
+            <Route
+              path="/Admin/Edit/BasicVideo"
+              element={<EditClientBasicVideoQA />}
+            />
             <Route path="/Client/Register" element={<FrontEndRegistration />} />
             <Route path="/Basic/Video" element={<CreateBasicVideo />} />
             <Route path="/Pratice" element={<Pratice />} />
