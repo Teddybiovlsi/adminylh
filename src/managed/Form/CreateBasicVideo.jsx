@@ -56,7 +56,8 @@ export default function CreateBasicVideo() {
     const videoFormID = toast.loading("上傳中...");
     setDisabledSubmit(true);
     try {
-      const response = await post("video", data);
+      const response = await post("video/basicQuiz", data);
+      console.log(response);
       toast.update(videoFormID, {
         render: "成功創建影片，3秒後將回到首頁",
         type: "success",
@@ -111,7 +112,19 @@ export default function CreateBasicVideo() {
   };
 
   const prevStep = (e) => {
-    setFormType({ ...formType, [e.target.name]: formType.formStep - 1 });
+    if (formType.formStep === 5) {
+      setFormType((prevState) => ({
+        ...prevState,
+        completedSteps: prevState.completedSteps.map((step, index) =>
+          index === prevState.formStep ? false : step
+        ),
+        isSkipped: true,
+        checkFormQuestion: false,
+        formStep: prevState.formStep - 1,
+      }));
+    } else {
+      setFormType({ ...formType, [e.target.name]: formType.formStep - 1 });
+    }
   };
 
   const nextStep = (e) => {
@@ -125,7 +138,7 @@ export default function CreateBasicVideo() {
       }));
     } else {
       if (formType.formStep === 3) {
-        console.log(formType.formStep);
+        // console.log(formType.formStep);
         setFormType((prevState) => ({
           ...prevState,
           completedSteps: prevState.completedSteps.map((step, index) =>
@@ -161,18 +174,29 @@ export default function CreateBasicVideo() {
   };
 
   const submitAction = () => {
+    const {
+      videoFile,
+      videoTitleName,
+      videoFileName,
+      videoLanguage,
+      videoType,
+      videoDuration,
+      isSkipped,
+    } = formType;
     const formData = new FormData();
-    formData.append("videoFile", formType.videoFile);
-    formData.append("videoTitleName", formType.videoTitleName);
-    formData.append("videoName", formType.videoFileName);
-    formData.append("videoLanguage", formType.videoLanguage);
-    formData.append("videoType", formType.videoType);
-    formData.append("videoDuration", formType.videoDuration);
-    videoInfo.forEach((element) => {
-      // console.log(element);
-      // store the videoInfo in formData  as a array
-      formData.append("info[]", JSON.stringify(element));
-    });
+    formData.append("videoFile", videoFile);
+    formData.append("videoTitleName", videoTitleName);
+    formData.append("videoName", videoFileName);
+    formData.append("videoLanguage", videoLanguage);
+    formData.append("videoType", videoType);
+    formData.append("videoDuration", videoDuration);
+    formData.append("videoIsBasic", true);
+    formData.append("isSkip", isSkipped);
+    if (!isSkipped) {
+      videoInfo.forEach((element) => {
+        formData.append("info[]", JSON.stringify(element));
+      });
+    }
     sendVideoData(formData);
   };
 
@@ -199,7 +223,7 @@ export default function CreateBasicVideo() {
             VideoTitle={
               formType.videoTitleName ? formType.videoTitleName : null
             }
-            GoPrevEvent={prevStep}
+            d={prevStep}
             GoNextEvent={nextStep}
           />
         );

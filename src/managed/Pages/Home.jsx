@@ -17,10 +17,13 @@ import ToastAlert from "../../components/ToastAlert";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import VideoNavbar from "../../components/VideoNavBar";
+import { RxCross2 } from "react-icons/rx";
+import { GoCheck } from "react-icons/go";
 
 import ClassList from "../JsonFile/SelectClassTypeList.json";
 import FilterType from "../JsonFile/FilterVideoType.json";
 import LanguageList from "../JsonFile/SelectLanguageList.json";
+import HaveQuestion from "../JsonFile/SelectHaveQuestion.json";
 import limitPage from "../JsonFile/FilterPageContentSize.json";
 
 import convertType from "../../functions/typeConverter";
@@ -46,8 +49,9 @@ export default function Home() {
       lastPage: 1,
       rowsPerPage: 5,
     },
+    selectVideoHaveQuestion: 0,
     selectVideoLanguage: 0,
-    selectVideoPratice: 2,
+    selectVideoPratice: 3,
     selectVideoType: 0,
     selectVideoindex: [],
     showData: [],
@@ -74,6 +78,7 @@ export default function Home() {
     errorMessage, // 錯誤訊息
     filterVideoData, // 篩選後的影片資料
     paginationSettings, // 分頁設定
+    selectVideoHaveQuestion, // 選擇的影片是否有問題
     selectVideoLanguage, // 選擇的影片語言
     selectVideoPratice, // 選擇的影片練習/測驗
     selectVideoType, // 選擇的影片類別
@@ -104,13 +109,25 @@ export default function Home() {
       const [video] = videoData.filter((item) =>
         selectVideoindex.includes(item.id)
       );
-      navigate("/Admin/Edit/Video", {
-        state: {
-          videoIndex: selectVideoindex[0],
-          videoLink: video.video_path,
-          videoID: video.video_id,
-        },
-      });
+
+      if (video.video_type === 0 || video.video_type === 1) {
+        navigate("/Admin/Edit/Video", {
+          state: {
+            videoIndex: selectVideoindex[0],
+            videoLink: video.video_path,
+            videoID: video.video_id,
+          },
+        });
+      } else if (video.video_type === 2) {
+        navigate("/Admin/Edit/BasicVideo", {
+          state: {
+            haveQuestion: video.video_have_question,
+            videoIndex: selectVideoindex[0],
+            videoLink: video.video_path,
+            videoID: video.video_id,
+          },
+        });
+      }
     }
   };
 
@@ -260,13 +277,21 @@ export default function Home() {
         );
       }
 
+      if (selectVideoHaveQuestion !== 0)
+        data = data.filter((item) => {
+          if (selectVideoHaveQuestion === 1)
+            return item.video_have_question === true;
+          else if (selectVideoHaveQuestion === 2)
+            return item.video_have_question === false;
+        });
+
       if (selectVideoType !== 0) {
         data = data.filter(
           (item) => item.video_class_index === selectVideoType
         );
       }
 
-      if (selectVideoPratice !== 2) {
+      if (selectVideoPratice !== 3) {
         data = data.filter((item) => item.video_type === selectVideoPratice);
       }
 
@@ -276,7 +301,13 @@ export default function Home() {
 
       return data;
     },
-    [selectVideoLanguage, selectVideoType, selectVideoPratice, searchTextVideo]
+    [
+      selectVideoLanguage,
+      selectVideoHaveQuestion,
+      selectVideoType,
+      selectVideoPratice,
+      searchTextVideo,
+    ]
   );
 
   const filteredData = useMemo(
@@ -405,6 +436,9 @@ export default function Home() {
           語言
         </th>
         <th className={styles.container_division_table_rowTable_headingName}>
+          狀態
+        </th>
+        <th className={styles.container_division_table_rowTable_headingName}>
           名稱
         </th>
       </tr>
@@ -420,6 +454,7 @@ export default function Home() {
       video_class,
       video_type,
       video_language,
+      video_have_question,
     }) => {
       return (
         <tr>
@@ -440,7 +475,15 @@ export default function Home() {
           >
             {video_class}
           </td>
-          <td className={video_type === 0 ? "text-primary" : "text-danger"}>
+          <td
+            className={
+              video_type === 2
+                ? "text-success"
+                : video_type === 1
+                ? "text-danger"
+                : "text-primary"
+            }
+          >
             {convertType(video_type)}
           </td>
           <td
@@ -448,13 +491,19 @@ export default function Home() {
           >
             {video_language}
           </td>
+          <td className={video_have_question ? "text-success" : "text-danger"}>
+            {video_have_question ? <GoCheck /> : <RxCross2 />}
+          </td>
           <td className={styles.container_division_table_rowTable_data}>
             <Link
               to={`/Video/`}
+              title={video_name}
               state={{ videoUUID: video_id, videoPath: video_path }}
               className="text-decoration-none"
             >
-              {video_name}
+              {video_name.length > 4
+                ? video_name.slice(0, 4) + "..."
+                : video_name}
             </Link>
           </td>
         </tr>
@@ -488,7 +537,7 @@ export default function Home() {
       <Container className="mt-2">
         <Row>
           <Row>
-            <Col md={4} className="p-0">
+            <Col md={3} className="p-0">
               <Form.Select
                 aria-label="請選擇影片類型"
                 onChange={(event) => {
@@ -507,7 +556,28 @@ export default function Home() {
                 })}
               </Form.Select>
             </Col>
-            <Col md={4} className="p-0">
+            <Col md={3} className="p-0">
+              <Form.Select
+                aria-label="請選擇影片練習/測驗"
+                onChange={(event) => {
+                  setState({
+                    ...state,
+                    selectVideoPratice: Number(event.target.value),
+                  });
+                }}
+                selected={selectVideoPratice}
+              >
+                <option value="3">全部</option>
+                {FilterType.map((item) => {
+                  return (
+                    <option key={item.id} value={item.value}>
+                      {item.label}
+                    </option>
+                  );
+                })}
+              </Form.Select>
+            </Col>
+            <Col md={3} className="p-0">
               <Form.Select
                 aria-label="請選擇影片語言"
                 onChange={(event) => {
@@ -527,19 +597,18 @@ export default function Home() {
                 })}
               </Form.Select>
             </Col>
-            <Col md={4} className="p-0">
+            <Col md={3} className="p-0">
               <Form.Select
-                aria-label="請選擇影片練習/測驗"
+                aria-label="請選擇問題狀態"
                 onChange={(event) => {
                   setState({
                     ...state,
-                    selectVideoPratice: Number(event.target.value),
+                    selectVideoHaveQuestion: Number(event.target.value),
                   });
                 }}
-                selected={selectVideoPratice}
+                value={selectVideoHaveQuestion}
               >
-                <option value="2">全部</option>
-                {FilterType.map((item) => {
+                {HaveQuestion.map((item) => {
                   return (
                     <option key={item.id} value={item.value}>
                       {item.label}
