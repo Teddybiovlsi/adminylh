@@ -1,13 +1,10 @@
 import BtnBootstrap from "../../components/BtnBootstrap";
-import Container from "react-bootstrap/Container";
 import InputFormPreviewFunction from "./shared/InputFormPreviewFunction";
 import InputVideoFileFunction from "./shared/InputVideoFileFunction";
 import InputVideoLanguageFunction from "./shared/InputVideoLanguageFunction";
 import InputVideoQAFunction from "./shared/InputVideoQAFunction";
 import InputVideoTitleFunction from "./shared/InputVideoTitleFunction";
 import InputVideoTypeFunction from "./shared/InputVideoTypeFunction";
-import Modal from "react-bootstrap/Modal";
-import ModalFooter from "react-bootstrap/ModalFooter";
 import PageTitle from "../../components/Title";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import React, { useState } from "react";
@@ -17,6 +14,8 @@ import { toast } from "react-toastify";
 import useModal from "../../hooks/useModal";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { Container, Modal, ModalFooter, Stack } from "react-bootstrap";
+import ToastAlert from "../../components/ToastAlert";
 
 export default function CreateVideo({ VideoMode = false }) {
   const navigate = useNavigate();
@@ -49,8 +48,6 @@ export default function CreateVideo({ VideoMode = false }) {
     videoTitleName: "",
     videoType: "",
   });
-
-  const [disabledSubmit, setDisabledSubmit] = useState(false);
 
   const [loadingBtn, setLoadingBtn] = useState(false);
 
