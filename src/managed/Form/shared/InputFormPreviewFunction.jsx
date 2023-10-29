@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import BtnBootstrap from "../../../components/BtnBootstrap";
+import BtnBootstrapwithSpinner from "../../../components/BtnBootstrapwithSpinner";
 import {
   SwitchNumToLanguage,
   SwitchNumToType,
@@ -107,13 +108,13 @@ export default function InputFormPreviewFunction({
         ))}
 
       <Stack gap={2} className="col-md-5 mx-auto">
-        <BtnBootstrap
-          btnPosition=""
+        <BtnBootstrapwithSpinner
           btnName="formStep"
           btnSize="md"
-          disabled={SubmitEventDisabled}
           text={"送出表單"}
+          loadingText="送出中..."
           onClickEventName={SubmitEvent}
+          ifIsLoading={SubmitEventDisabled}
           variant="outline-primary"
         />
         <BtnBootstrap

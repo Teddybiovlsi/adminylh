@@ -1,20 +1,22 @@
+import BtnBootstrap from "../../components/BtnBootstrap";
+import Container from "react-bootstrap/Container";
+import InputFormPreviewFunction from "./shared/InputFormPreviewFunction";
+import InputVideoFileFunction from "./shared/InputVideoFileFunction";
+import InputVideoLanguageFunction from "./shared/InputVideoLanguageFunction";
+import InputVideoQAFunction from "./shared/InputVideoQAFunction";
+import InputVideoTitleFunction from "./shared/InputVideoTitleFunction";
+import InputVideoTypeFunction from "./shared/InputVideoTypeFunction";
+import Modal from "react-bootstrap/Modal";
+import ModalFooter from "react-bootstrap/ModalFooter";
+import PageTitle from "../../components/Title";
+import PageTitleHeading from "../../components/PageTitleHeading";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Container, Modal, ModalFooter, Stack } from "react-bootstrap";
+import { Step, Stepper } from "react-form-stepper";
 import { post } from "../axios";
 import { toast } from "react-toastify";
 import useModal from "../../hooks/useModal";
-import InputVideoFileFunction from "./shared/InputVideoFileFunction";
-import InputVideoTitleFunction from "./shared/InputVideoTitleFunction";
-import InputVideoLanguageFunction from "./shared/InputVideoLanguageFunction";
-import InputVideoQAFunction from "./shared/InputVideoQAFunction";
-import InputFormPreviewFunction from "./shared/InputFormPreviewFunction";
-import InputVideoTypeFunction from "./shared/InputVideoTypeFunction";
-import BtnBootstrap from "../../components/BtnBootstrap";
-import ToastAlert from "../../components/ToastAlert";
-import PageTitle from "../../components/Title";
-import PageTitleHeading from "../../components/PageTitleHeading";
-import { Step, Stepper } from "react-form-stepper";
+import { useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function CreateVideo({ VideoMode = false }) {
   const navigate = useNavigate();
@@ -50,6 +52,8 @@ export default function CreateVideo({ VideoMode = false }) {
 
   const [disabledSubmit, setDisabledSubmit] = useState(false);
 
+  const [loadingBtn, setLoadingBtn] = useState(false);
+
   const [
     confirmSkipQuestion,
     handleCloseConfirmSkipQuestion,
@@ -57,38 +61,39 @@ export default function CreateVideo({ VideoMode = false }) {
   ] = useModal();
 
   const sendVideoData = async (data) => {
-    const videoFormID = toast.loading("上傳中...");
-    setDisabledSubmit(true);
     try {
-      const response = await post("video", data);
-      toast.update(videoFormID, {
-        render: "成功創建影片，3秒後將回到首頁",
+      await post("video", data);
+      toast.success("上傳成功", {
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
       setTimeout(() => {
-        setDisabledSubmit(false);
+        setLoadingBtn(false);
         navigate("/", { replace: true });
       }, 3000);
     } catch (error) {
+      console.log(error.response.data);
+
       if (error.code === "ECONNABORTED") {
-        toast.update(videoFormID, {
-          render: "上傳失敗，請稍後再試",
+        toast.error("上傳失敗，請稍後再試", {
           type: "error",
           isLoading: false,
           autoClose: 3000,
         });
-        setDisabledSubmit(false);
+        setTimeout(() => {
+          setLoadingBtn(false);
+        }, 4000);
       } else {
         console.log(error.response.data);
-        toast.update(videoFormID, {
-          render: "上傳失敗，請稍後再試",
+        toast.error("上傳失敗，請稍後再試", {
           type: "error",
           isLoading: false,
           autoClose: 3000,
         });
-        setDisabledSubmit(false);
+        setTimeout(() => {
+          setLoadingBtn(false);
+        }, 4000);
       }
     }
   };
@@ -178,6 +183,7 @@ export default function CreateVideo({ VideoMode = false }) {
       // store the videoInfo in formData  as a array
       formData.append("info[]", JSON.stringify(element));
     });
+    setLoadingBtn(true);
     sendVideoData(formData);
   };
 
@@ -265,7 +271,7 @@ export default function CreateVideo({ VideoMode = false }) {
             VideoQA={videoInfo}
             GoPrevEvent={prevStep}
             SubmitEvent={submitAction}
-            SubmitEventDisabled={disabledSubmit}
+            SubmitEventDisabled={loadingBtn}
           />
         );
       default:
@@ -274,112 +280,118 @@ export default function CreateVideo({ VideoMode = false }) {
   };
 
   return (
-    <Container>
-      <PageTitle
-        title={`台大醫院雲林分院｜ ${VideoMode ? "測驗用表單" : "練習用表單"}`}
-      />
-      <PageTitleHeading
-        text={`${VideoMode ? "測驗用表單" : "練習用表單"}系統`}
-        styleOptions={9}
-      />
-      <Stepper
-        activeStep={formType.activeStep}
-        connectorStateColors
-        connectorStyleConfig={{
-          activeColor: "#6A70AB",
-        }}
-        styleConfig={{
-          activeBgColor: "#2D3479",
-          activeTextColor: "#fff",
-          completedBgColor: "#A3427F",
-          completedTextColor: "#fff",
-        }}
-      >
-        <Step
-          label="匯入影片"
-          onClick={() => {
-            setFormType({ ...formType, formStep: 0 });
-          }}
-          completed={formType.completedSteps[0]}
+    <>
+      <Container>
+        <PageTitle
+          title={`台大醫院雲林分院｜ ${
+            VideoMode ? "測驗用表單" : "練習用表單"
+          }`}
         />
-        <Step
-          label="填寫影片標題"
-          onClick={() => {
-            setFormType({ ...formType, formStep: 1 });
-          }}
-          completed={formType.completedSteps[1]}
+        <PageTitleHeading
+          text={`${VideoMode ? "測驗用表單" : "練習用表單"}系統`}
+          styleOptions={9}
         />
-        <Step
-          label="選擇影片語言"
-          onClick={() => {
-            setFormType({ ...formType, formStep: 2 });
+        <Stepper
+          activeStep={formType.activeStep}
+          connectorStateColors
+          connectorStyleConfig={{
+            activeColor: "#6A70AB",
           }}
-          completed={formType.completedSteps[2]}
-        />
-        <Step
-          label="選擇影片類別"
-          onClick={() => {
-            setFormType({ ...formType, formStep: 3 });
+          styleConfig={{
+            activeBgColor: "#2D3479",
+            activeTextColor: "#fff",
+            completedBgColor: "#A3427F",
+            completedTextColor: "#fff",
           }}
-          completed={formType.completedSteps[3]}
-        />
-        <Step
-          label="填寫影片問題"
-          onClick={() => {
-            setFormType({ ...formType, formStep: 4 });
-          }}
-          completed={formType.completedSteps[4]}
-        />
-        <Step label="表單預覽" disabled={true} />
-      </Stepper>
+        >
+          <Step
+            label="匯入影片"
+            onClick={() => {
+              setFormType({ ...formType, formStep: 0 });
+            }}
+            completed={formType.completedSteps[0]}
+          />
+          <Step
+            label="填寫影片標題"
+            onClick={() => {
+              setFormType({ ...formType, formStep: 1 });
+            }}
+            completed={formType.completedSteps[1]}
+          />
+          <Step
+            label="選擇影片語言"
+            onClick={() => {
+              setFormType({ ...formType, formStep: 2 });
+            }}
+            completed={formType.completedSteps[2]}
+          />
+          <Step
+            label="選擇影片類別"
+            onClick={() => {
+              setFormType({ ...formType, formStep: 3 });
+            }}
+            completed={formType.completedSteps[3]}
+          />
+          <Step
+            label="填寫影片問題"
+            onClick={() => {
+              setFormType({ ...formType, formStep: 4 });
+            }}
+            completed={formType.completedSteps[4]}
+          />
+          <Step label="表單預覽" disabled={true} />
+        </Stepper>
 
-      {FormStep(formType.formStep)}
-      <Modal show={confirmSkipQuestion} onHide={handleCloseConfirmSkipQuestion}>
-        <Modal.Header closeButton>
-          <Modal.Title>請確認</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          請確認是否要跳過 <b className="text-danger">填寫問題步驟</b>
-          ，直接進入表單預覽畫面
-        </Modal.Body>
-        <ModalFooter>
-          <Stack gap={2}>
-            <BtnBootstrap
-              variant="outline-primary"
-              btnSize="md"
-              text={"確認"}
-              onClickEventName={() => {
-                setFormType({
-                  ...formType,
-                  isSkipped: true,
-                  completedSteps: formType.completedSteps.map((step, index) =>
-                    index === 4 ? true : step
-                  ),
-                  formStep: 5,
-                });
-                handleCloseConfirmSkipQuestion();
-              }}
-            />
-            <BtnBootstrap
-              variant="outline-secondary"
-              text={"取消"}
-              btnSize="md"
-              onClickEventName={() => {
-                setFormType({
-                  ...formType,
-                  completedSteps: formType.completedSteps.map((step, index) =>
-                    index === 4 ? false : step
-                  ),
-                  formStep: formType.formStep + 1,
-                });
-                handleCloseConfirmSkipQuestion();
-              }}
-            />
-          </Stack>
-        </ModalFooter>
-      </Modal>
-
+        {FormStep(formType.formStep)}
+        <Modal
+          show={confirmSkipQuestion}
+          onHide={handleCloseConfirmSkipQuestion}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>請確認</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            請確認是否要跳過 <b className="text-danger">填寫問題步驟</b>
+            ，直接進入表單預覽畫面
+          </Modal.Body>
+          <ModalFooter>
+            <Stack gap={2}>
+              <BtnBootstrap
+                variant="outline-primary"
+                btnSize="md"
+                text={"確認"}
+                onClickEventName={() => {
+                  setFormType({
+                    ...formType,
+                    isSkipped: true,
+                    completedSteps: formType.completedSteps.map((step, index) =>
+                      index === 4 ? true : step
+                    ),
+                    formStep: 5,
+                  });
+                  handleCloseConfirmSkipQuestion();
+                }}
+              />
+              <BtnBootstrap
+                variant="outline-secondary"
+                text={"取消"}
+                btnSize="md"
+                onClickEventName={() => {
+                  setFormType({
+                    ...formType,
+                    completedSteps: formType.completedSteps.map((step, index) =>
+                      index === 4 ? false : step
+                    ),
+                    formStep: formType.formStep + 1,
+                  });
+                  handleCloseConfirmSkipQuestion();
+                }}
+              />
+            </Stack>
+          </ModalFooter>
+        </Modal>
+      </Container>
       <ToastAlert />
-    </Container>
+    </>
   );
 }
