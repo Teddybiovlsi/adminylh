@@ -5,12 +5,13 @@ import BtnBootstrap from "./BtnBootstrap";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
+import { useLocation } from "react-router-dom";
 
 export const VideoJS = (props) => {
   const videoRef = useRef(null);
-  const [currentTime, setCurrentTime] = useState(null);
   const playerRef = useRef(null);
   const { options, info } = props;
+
   const [sendstate, setSendstate] = useState(false);
   const [optionChecked, setOptionChecked] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -115,12 +116,25 @@ export const VideoJS = (props) => {
       });
       player.on("play", () => {
         console.log("sendState", sendstate);
+
+        timer = setInterval(() => {
+          lastPlayerTime = player.currentTime();
+          console.log("lastPlayerTime", lastPlayerTime);
+          console.log("player.currentTime()", player.currentTime());
+
+          // store the current time of the video in the cookie
+          document.cookie = `lastPlayerTime=${lastPlayerTime}`;
+        }, 1000);
+
         // console.log("player is play");
       });
       player.on("pause", () => {
         // console.log("ArrayNum", arrayNum);
         // console.log("tempQuestionNum", tempQuestionNum);
         setTempQuestionNum(arrayNum);
+
+        // unset the interval
+        clearInterval(timer);
       });
 
       // Add event listener for loadedmetadata
