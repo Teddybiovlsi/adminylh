@@ -13,9 +13,9 @@ import { post } from "../axios";
 import { toast } from "react-toastify";
 import useModal from "../../hooks/useModal";
 import { useNavigate } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
 import { Container, Modal, ModalFooter, Stack } from "react-bootstrap";
 import ToastAlert from "../../components/ToastAlert";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function CreateVideo({ VideoMode = false }) {
   const navigate = useNavigate();
