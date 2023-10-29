@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import VideoJS from "../../components/VideoJS";
 import { useLocation } from "react-router-dom";
-import StatusCode from "../../sys/StatusCode";
 import { get } from "../axios";
 import "video.js/dist/video-js.css";
 import Loading from "../../components/Loading";
-import { Col, Container, Row } from "react-bootstrap";
 import "../../components/videoqa.css";
 
 export default function VideoPlayer() {
