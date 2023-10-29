@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Card, Stack } from "react-bootstrap";
+import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import PageTitle from "../../components/Title";
 import { CardTitleFunction } from "./shared/CardTitleFunction";
 import { update } from "lodash/fp";
@@ -11,8 +11,10 @@ import LoadingComponent from "../../components/LoadingComponent";
 import { get, put } from "../axios";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
+import PageTitleHeading from "../../components/PageTitleHeading";
+import { Step, Stepper } from "react-form-stepper";
 
-export default function EditClientVideoQA({ FormMode = true }) {
+export default function EditClientVideoQA() {
   const location = useLocation();
 
   const navigate = useNavigate();
@@ -20,9 +22,23 @@ export default function EditClientVideoQA({ FormMode = true }) {
   if (!location) {
     return <Navigate to="/" replace />;
   }
+
+  const [ifVaildateBtnDisable, setIfVaildateBtnDisable] = useState(false);
+
+  const [formType, setFormType] = useState({
+    activeStep: 0,
+    completedSteps: [false],
+    formStep: 0,
+    ifVaildateBtnDisable: false,
+    nextBtnDisable: true,
+    SubmitEventDisabled: false,
+  });
+
+  const { SubmitEventDisabled } = formType;
+
   const [page, setPage] = useState(1);
 
-  const videoLink = location?.state?.videoLink;
+  const { FormMode, videoLink, videoID } = location?.state;
 
   const videoRef = useRef(null);
 
@@ -34,18 +50,6 @@ export default function EditClientVideoQA({ FormMode = true }) {
 
   const [tempVideoInfo, setTempVideoInfo] = useState([]);
 
-  const [shouldRedirect, setShouldRedirect] = useState(false);
-
-  // 回到上一頁
-  const GoPrevPage = () => {
-    setPage(page - 1);
-  };
-
-  // 預覽表單頁面
-  const GoPriviewPage = () => {
-    setPage(page + 1);
-  };
-
   useEffect(() => {
     if (tempVideoInfo.length > 0) {
       handlePrevData();
@@ -55,58 +59,78 @@ export default function EditClientVideoQA({ FormMode = true }) {
   // 取得先前資料
   const handlePrevData = () => {
     tempVideoInfo.forEach((info) => {
-      if (info?.option_3 !== undefined && info?.option_4 !== undefined) {
-        const optionNum = 4;
-        setTempVideoQA((prevVideoQA) => [
-          ...prevVideoQA,
-          {
-            id: info?.quiz_id,
-            currentTime: info?.video_interrupt_time,
-            durationTime: info?.video_duration,
-            mustCorrectQuestion: info?.video_must_correct,
-            questionContent: info?.video_question,
-            numofOptions: optionNum,
-            answerContent: [
-              [info?.option_1[1], info?.option_1[0]],
-              [info?.option_2[1], info?.option_2[0]],
-              [info?.option_3[1], info?.option_3[0]],
-              [info?.option_4[1], info?.option_4[0]],
-            ],
-          },
-        ]);
-      } else if (info?.option_3 !== undefined && info?.option_4 === undefined) {
-        const optionNum = 3;
-        setTempVideoQA((prevVideoQA) => [
-          ...prevVideoQA,
-          {
-            id: info?.quiz_id,
-            currentTime: info?.video_interrupt_time,
-            durationTime: info?.video_duration,
-            mustCorrectQuestion: info?.video_must_correct,
-            questionContent: info?.video_question,
-            numofOptions: optionNum,
-            answerContent: [
-              [info?.option_1[1], info?.option_1[0]],
-              [info?.option_2[1], info?.option_2[0]],
-              [info?.option_3[1], info?.option_3[0]],
-            ],
-          },
-        ]);
+      if (info?.video_is_alert === 1) {
+        if (info?.option_3 !== undefined && info?.option_4 !== undefined) {
+          const optionNum = 4;
+          setTempVideoQA((prevVideoQA) => [
+            ...prevVideoQA,
+            {
+              id: info?.quiz_id,
+              currentTime: info?.video_interrupt_time,
+              durationTime: info?.video_duration,
+              messageType: info?.video_is_alert,
+              mustCorrectQuestion: info?.video_must_correct,
+              questionContent: info?.video_question,
+              numofOptions: optionNum,
+              answerContent: [
+                [info?.option_1[1], info?.option_1[0]],
+                [info?.option_2[1], info?.option_2[0]],
+                [info?.option_3[1], info?.option_3[0]],
+                [info?.option_4[1], info?.option_4[0]],
+              ],
+            },
+          ]);
+        } else if (
+          info?.option_3 !== undefined &&
+          info?.option_4 === undefined
+        ) {
+          const optionNum = 3;
+          setTempVideoQA((prevVideoQA) => [
+            ...prevVideoQA,
+            {
+              id: info?.quiz_id,
+              currentTime: info?.video_interrupt_time,
+              durationTime: info?.video_duration,
+              messageType: info?.video_is_alert,
+              mustCorrectQuestion: info?.video_must_correct,
+              questionContent: info?.video_question,
+              numofOptions: optionNum,
+              answerContent: [
+                [info?.option_1[1], info?.option_1[0]],
+                [info?.option_2[1], info?.option_2[0]],
+                [info?.option_3[1], info?.option_3[0]],
+              ],
+            },
+          ]);
+        } else {
+          const optionNum = 2;
+          setTempVideoQA((prevVideoQA) => [
+            ...prevVideoQA,
+            {
+              id: info?.quiz_id,
+              currentTime: info?.video_interrupt_time,
+              durationTime: info?.video_duration,
+              messageType: info?.video_is_alert,
+              mustCorrectQuestion: info?.video_must_correct,
+              questionContent: info?.video_question,
+              numofOptions: optionNum,
+              answerContent: [
+                [info?.option_1[1], info?.option_1[0]],
+                [info?.option_2[1], info?.option_2[0]],
+              ],
+            },
+          ]);
+        }
       } else {
-        const optionNum = 2;
         setTempVideoQA((prevVideoQA) => [
           ...prevVideoQA,
           {
             id: info?.quiz_id,
             currentTime: info?.video_interrupt_time,
             durationTime: info?.video_duration,
-            mustCorrectQuestion: info?.video_must_correct,
+            messageType: info?.video_is_alert,
             questionContent: info?.video_question,
-            numofOptions: optionNum,
-            answerContent: [
-              [info?.option_1[1], info?.option_1[0]],
-              [info?.option_2[1], info?.option_2[0]],
-            ],
+            answerContent: [],
           },
         ]);
       }
@@ -128,7 +152,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
     let ignore = false;
 
     const fetchVideoDataAsync = async () => {
-      await fetchVideoData({ api: `videoQA/${location?.state?.videoID}` });
+      await fetchVideoData({ api: `videoQA/${videoID}` });
     };
 
     if (!ignore) {
@@ -141,6 +165,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
   }, []);
 
   const handleGetVideoTime = (index, e) => {
+    setIfBtnDisable(true);
     if (videoRef.current) {
       setTempVideoQA(
         update(
@@ -153,6 +178,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
   };
   // 若該欄位的持續時間有所變動
   const handleGetVideoDuration = (index, e) => {
+    setIfBtnDisable(true);
     // if user have any change in the video duration then the setTempVideoQA will be update
     setTempVideoQA(
       update(`${index}.durationTime`, () => e.target.value, tempVideoQA)
@@ -161,6 +187,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
 
   // if radio box is checked then the information of the Question mustCorrect will be true
   const handleGetQuestionMustCorrect = (index, e) => {
+    setIfBtnDisable(true);
     setTempVideoQA(
       update(
         `${index}.mustCorrectQuestion`,
@@ -172,12 +199,14 @@ export default function EditClientVideoQA({ FormMode = true }) {
 
   //取得問題填寫內容變動
   const handleGetQuestionContent = (index, e) => {
+    setIfBtnDisable(true);
     setTempVideoQA(
       update(`${index}.questionContent`, () => e.target.value, tempVideoQA)
     );
   };
   // 取得答題選項數目變動
   const handleOptionChange = (index, e) => {
+    setIfBtnDisable(true);
     const numOfChoice = parseInt(e.target.value);
     setTempVideoQA(
       update(
@@ -193,6 +222,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
   };
 
   const handleIsCorrectOption = (questionindex, answerOptionIndex) => {
+    setIfBtnDisable(true);
     const newVideoQA = [...tempVideoQA];
     const currentOption = newVideoQA[questionindex].answerContent;
 
@@ -208,14 +238,36 @@ export default function EditClientVideoQA({ FormMode = true }) {
   };
 
   const handleAnswerChange = (index, answerContentIndex, e) => {
+    setIfBtnDisable(true);
     const newVideoQA = [...tempVideoQA];
     newVideoQA[index].answerContent[answerContentIndex][1] = e.target.value;
     setTempVideoQA(newVideoQA);
   };
 
+  const handleCheckMessageType = (index, e) => {
+    setIfBtnDisable(true);
+    setTempVideoQA(
+      update(
+        `${index}.messageType`,
+        () => (e.target.value === "1" ? 1 : 0),
+        tempVideoQA
+      )
+    );
+
+    setTempVideoQA((prevVideoQA) => {
+      const updatedVideoQA = [...prevVideoQA];
+      if (e.target.value === "0") {
+        updatedVideoQA[index].answerContent = [];
+        updatedVideoQA[index].numofOptions = 0;
+      }
+      return updatedVideoQA;
+    });
+  };
+
   // 增加/刪減 影片問題輸入框...
   // 增加輸入欄位
   const handleAddQuestion = () => {
+    setIfBtnDisable(true);
     // get the last question index
     const lastQuestionIndex = tempVideoQA.length - 1;
     // get the last question duration time
@@ -229,6 +281,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
         id: newQuestionIndex,
         currentTime: 0,
         durationTime: 0,
+        messageType: FormMode === 0 ? 0 : 1,
         mustCorrectQuestion: false,
         questionContent: "",
         numofOptions: 0,
@@ -239,6 +292,7 @@ export default function EditClientVideoQA({ FormMode = true }) {
 
   // 刪減輸入欄位
   const handleDelQAMessage = (index) => {
+    setIfBtnDisable(true);
     setTempVideoQA((prevVideoQA) => prevVideoQA.filter((_, i) => i !== index));
   };
 
@@ -246,38 +300,52 @@ export default function EditClientVideoQA({ FormMode = true }) {
   const validateQA = () => {
     let ifAnyAnswerContentIsEmpty = false;
 
+    const durationTimeIsEmptyOrZero = tempVideoQA.some(
+      (info) => info.durationTime === 0 || info.durationTime === ""
+    );
+
     const questionIsEmpty = tempVideoQA.some((info) => !info.questionContent);
 
     const ifAnyArrayOptionIndicesIsEmpty = tempVideoQA.reduce(
       (acc, curr, index) => {
-        if (curr.answerContent.length === 0) {
-          acc.push(index);
-        } else if (curr.answerContent.some((value) => value[1] === "")) {
-          ifAnyAnswerContentIsEmpty = true;
+        if (curr.messageType === 1) {
+          if (curr.answerContent.length === 0) {
+            acc.push(index);
+          } else if (curr.answerContent.some((value) => value[1] === "")) {
+            ifAnyAnswerContentIsEmpty = true;
+          }
         }
         return acc;
       },
       []
     );
-
+    setIfBtnDisable(true);
+    setIfVaildateBtnDisable(true);
     if (
+      durationTimeIsEmptyOrZero ||
       questionIsEmpty ||
       ifAnyArrayOptionIndicesIsEmpty.length > 0 ||
       ifAnyAnswerContentIsEmpty
     ) {
+      if (durationTimeIsEmptyOrZero) {
+        toast.error("請確認影片問題中斷時間是否為空或為0");
+      } else {
+        toast.error("問題或答案欄位選項不得為空");
+      }
       setIfBtnDisable(true);
+      setTimeout(() => {
+        setIfVaildateBtnDisable(false);
+      }, 4000);
     } else {
       setIfBtnDisable(false);
+      setIfVaildateBtnDisable(false);
     }
   };
 
   const SubmitEvent = () => {
-    // /v1/PUT/video/{videoID}
-    const videoID = location?.state?.videoID;
     async function fetchEditVideoData(data) {
       let quizSubmit = toast.loading("資料上傳中...");
       try {
-        console.log(data);
         const response = await put(`video/${videoID}`, data);
         const VideoInfo = await response.data;
         toast.update(quizSubmit, {
@@ -287,9 +355,10 @@ export default function EditClientVideoQA({ FormMode = true }) {
           autoClose: 3000,
         });
         setTimeout(() => {
-          setShouldRedirect(true);
+          navigate("/Home", { replace: true });
         }, 3000);
       } catch (error) {
+        console.log(error);
         toast.update(quizSubmit, {
           render: "資料更新失敗",
           type: "error",
@@ -301,16 +370,166 @@ export default function EditClientVideoQA({ FormMode = true }) {
     const data = {
       info: tempVideoQA,
     };
-
+    // console.log(data);
     fetchEditVideoData(data);
-    // console.log(tempVideoQA);
   };
 
-  useEffect(() => {
-    if (shouldRedirect) {
-      navigate("/", { replace: true });
+  const FormStep = (step) => {
+    switch (step) {
+      case 0:
+        return (
+          <Container>
+            <Row>
+              <Col className="d-flex justify-content-center" lg={6}>
+                <div>
+                  <video
+                    ref={videoRef}
+                    src={videoLink}
+                    className={`${styles.videoPreview}`}
+                    width="80%"
+                    controls
+                  />
+                </div>
+              </Col>
+              <Col>
+                <Stack gap={2}>
+                  <div>
+                    <h2>
+                      <strong>{`請填寫衛教${
+                        FormMode ? "測驗用" : "練習用"
+                      }影片問題`}</strong>
+                    </h2>
+                  </div>
+
+                  <BtnBootstrap
+                    btnPosition="mb-1"
+                    btnSize="md"
+                    text={"新增問題"}
+                    onClickEventName={handleAddQuestion}
+                    variant="outline-secondary"
+                  />
+                </Stack>
+
+                <DynamicQuestionandAnswer
+                  FormMode={FormMode === 0 ? false : true}
+                  VideoQA={tempVideoQA}
+                  handleDelQAMessage={handleDelQAMessage}
+                  handleGetVideoTime={handleGetVideoTime}
+                  handleGetVideoDuration={handleGetVideoDuration}
+                  handleCheckMessageType={handleCheckMessageType}
+                  handleGetQuestionMustCorrect={handleGetQuestionMustCorrect}
+                  handleGetQuestionContent={handleGetQuestionContent}
+                  handleOptionChange={handleOptionChange}
+                  handleIsCorrectOption={handleIsCorrectOption}
+                  handleAnswerChange={handleAnswerChange}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <BtnBootstrap
+                  btnPosition="ms-2"
+                  btnSize="lg"
+                  btnName={"formStep"}
+                  text={"驗證此頁面表單"}
+                  onClickEventName={validateQA}
+                  disabled={ifVaildateBtnDisable}
+                  variant="outline-success"
+                />
+                <BtnBootstrap
+                  btnPosition="ms-2  float-end"
+                  btnSize="lg"
+                  btnName="formStep"
+                  variant="outline-primary"
+                  text={"預覽表單"}
+                  onClickEventName={() => {
+                    setFormType((prevState) => ({
+                      ...prevState,
+                      formStep: prevState.formStep + 1,
+                      nextBtnDisable: true,
+                    }));
+                  }}
+                  disabled={ifBtnDisable}
+                />
+              </Col>
+            </Row>
+            <ToastAlert />
+          </Container>
+        );
+      case 1:
+        return (
+          <Container>
+            {tempVideoQA?.map((q, i) => (
+              <Card key={i} className="mb-2">
+                <Card.Title className="mb-2 ms-1">問題 {i + 1}:</Card.Title>
+                <Container>
+                  {q.mustCorrectQuestion === 1 && (
+                    <Row className="text-danger">
+                      <Col className="h5 ps-0" md={4}>
+                        &#9956;此為必定答對問題&#9956;
+                      </Col>
+                    </Row>
+                  )}
+
+                  <Row>
+                    <Col
+                      className={`h5 ps-0 ${
+                        q.messageType === 1 ? "text-success" : "text-danger"
+                      }`}
+                      md={4}
+                    >
+                      {q.messageType === 0 ? "提示訊息:" : "問題內容:"}
+                    </Col>
+                    <Col md={6}>{q.questionContent}</Col>
+                  </Row>
+                </Container>
+                {q.messageType === 1 &&
+                  q.answerContent.map((a, j) => (
+                    <div key={`${i}-${j}`}>
+                      <Card.Title className="ms-2">{`答案${String.fromCharCode(
+                        65 + j
+                      )}:`}</Card.Title>
+                      <Card.Text
+                        className={`ms-4 ${
+                          a[0] ? "text-success" : "text-danger"
+                        }`}
+                      >{`${a[1]}-答案為${a[0] ? "正確" : "錯誤"}`}</Card.Text>
+                    </div>
+                  ))}
+              </Card>
+            ))}
+
+            <Stack gap={2} className="col-md-5 mx-auto">
+              <BtnBootstrap
+                btnPosition=""
+                btnName="formStep"
+                btnSize="md"
+                disabled={SubmitEventDisabled}
+                text={"送出表單"}
+                onClickEventName={SubmitEvent}
+                variant="outline-primary"
+              />
+              <BtnBootstrap
+                btnPosition=""
+                btnName={"formStep"}
+                btnSize="md"
+                text={"上一步"}
+                onClickEventName={() => {
+                  setFormType((prevState) => ({
+                    ...prevState,
+                    formStep: prevState.formStep - 1,
+                    nextBtnDisable: true,
+                  }));
+                }}
+                variant={"outline-danger"}
+              />
+            </Stack>
+          </Container>
+        );
+      default:
+        return;
     }
-  }, [shouldRedirect]);
+  };
 
   if (isLoading) {
     return (
@@ -320,138 +539,37 @@ export default function EditClientVideoQA({ FormMode = true }) {
       />
     );
   }
-  switch (page) {
-    case 1:
-      return (
-        <div className="FormStyle d-flex align-items-center justify-content-center">
-          <PageTitle title={`台大分院雲林分院｜ 編輯表單系統`} />
-          <Card className={`${styles.ExamQusetionCard}`}>
-            <Card.Title className={styles.FormTitle} style={{ margin: 0 }}>
-              <CardTitleFunction TitleName={`台大醫院雲林分院`} />
-              <CardTitleFunction TitleName={`編輯表單系統`} />
-            </Card.Title>
-
-            <Card.Body className="pt-0 ps-0 pe-0">
-              <video ref={videoRef} src={videoLink} width="100%" controls />
-              <Stack direction="horizontal" className="ms-2 mt-3 mb-3 me-2">
-                <div>
-                  <h2>
-                    <strong>{`請填寫衛教${
-                      FormMode ? "測驗用" : "練習用"
-                    }影片問題`}</strong>
-                  </h2>
-                </div>
-
-                <div className="ms-auto">
-                  <BtnBootstrap
-                    text={"新增問題"}
-                    onClickEventName={handleAddQuestion}
-                    variant="secondary"
-                  />
-                </div>
-              </Stack>
-
-              <DynamicQuestionandAnswer
-                FormMode={FormMode}
-                VideoQA={tempVideoQA}
-                handleDelQAMessage={handleDelQAMessage}
-                handleGetVideoTime={handleGetVideoTime}
-                handleGetVideoDuration={handleGetVideoDuration}
-                handleGetQuestionMustCorrect={handleGetQuestionMustCorrect}
-                handleGetQuestionContent={handleGetQuestionContent}
-                handleOptionChange={handleOptionChange}
-                handleIsCorrectOption={handleIsCorrectOption}
-                handleAnswerChange={handleAnswerChange}
-              />
-            </Card.Body>
-            <Card.Footer>
-              <BtnBootstrap
-                btnPosition="ms-2  float-end"
-                btnName={"formStep"}
-                text={"預覽表單"}
-                onClickEventName={GoPriviewPage}
-                variant="primary"
-                disabled={ifBtnDisable}
-              />
-              <BtnBootstrap
-                btnPosition="ms-2  float-end"
-                btnName={"formStep"}
-                text={"驗證此頁面表單"}
-                onClickEventName={validateQA}
-                variant="success"
-              />
-            </Card.Footer>
-          </Card>
-        </div>
-      );
-    case 2:
-      return (
-        <div className="FormStyle d-flex align-items-center justify-content-center">
-          <PageTitle title={`台大分院雲林分院｜ 編輯表單系統`} />
-          <Card className={`${styles.ExamQusetionCard}`}>
-            <Card.Title className={styles.FormTitle} style={{ margin: 0 }}>
-              <CardTitleFunction TitleName={`台大醫院雲林分院`} />
-              <CardTitleFunction TitleName={`預覽表單`} />
-            </Card.Title>
-
-            <Card.Body className="pt-0 ps-0 pe-0">
-              {tempVideoQA?.map((questionInfo, questionIndex) => (
-                <Card key={questionIndex} className="mb-2">
-                  <Card.Title className="mb-2 ms-1">
-                    問題 {questionIndex + 1}:
-                  </Card.Title>
-
-                  <Card.Title className="ms-2">中斷時間:</Card.Title>
-                  <Card.Text className="ms-4">
-                    {questionInfo.currentTime}秒
-                  </Card.Text>
-
-                  <Card.Title className="ms-2">問題內容:</Card.Title>
-                  <Card.Text className="ms-4">
-                    {questionInfo.questionContent}
-                  </Card.Text>
-
-                  <Card.Title className="ms-2">是否為必定答對問題?</Card.Title>
-                  <Card.Text className="ms-4">
-                    {questionInfo.mustCorrectQuestion ? "是" : "否"}
-                  </Card.Text>
-
-                  {questionInfo.answerContent.map(
-                    (answerContent, answerContentIndex) => (
-                      <div key={`${questionIndex}-${answerContentIndex}`}>
-                        <Card.Title className="ms-2">{`答案${String.fromCharCode(
-                          65 + answerContentIndex
-                        )}:`}</Card.Title>
-                        <Card.Text className="ms-4">{`${
-                          answerContent[1]
-                        }-答案為${
-                          answerContent[0] ? "正確" : "錯誤"
-                        }`}</Card.Text>
-                      </div>
-                    )
-                  )}
-                </Card>
-              ))}
-            </Card.Body>
-            <Card.Footer>
-              <BtnBootstrap
-                btnName={"formStep"}
-                text={"送出表單"}
-                onClickEventName={SubmitEvent}
-                variant={"primary"}
-              />
-              <BtnBootstrap
-                btnName={"formStep"}
-                text={"上一步"}
-                onClickEventName={GoPrevPage}
-                variant={"danger"}
-              />
-            </Card.Footer>
-          </Card>
-          <ToastAlert />
-        </div>
-      );
-    default:
-      return <Navigate to="/" replace />;
-  }
+  return (
+    <Container>
+      <PageTitle title={`台大醫院雲林分院｜基礎練習用表單`} />
+      <PageTitleHeading
+        text={`${FormMode === 1 ? "測驗用" : "練習用"}表單系統`}
+        styleOptions={9}
+      />
+      <Stepper
+        activeStep={formType.activeStep}
+        connectorStateColors
+        connectorStyleConfig={{
+          activeColor: "#6A70AB",
+        }}
+        styleConfig={{
+          activeBgColor: "#2D3479",
+          activeTextColor: "#fff",
+          completedBgColor: "#A3427F",
+          completedTextColor: "#fff",
+        }}
+      >
+        <Step
+          label="填寫影片問題"
+          onClick={() => {
+            setFormType({ ...formType, formStep: 0 });
+          }}
+          completed={formType.completedSteps[0]}
+        />
+        <Step label="表單預覽" disabled={true} />
+      </Stepper>
+      {FormStep(formType.formStep)}
+      <ToastAlert />
+    </Container>
+  );
 }
