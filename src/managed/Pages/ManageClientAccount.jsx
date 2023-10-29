@@ -1008,7 +1008,11 @@ export default function ManageClientAccount() {
                         <ListGroup.Item as="li" key={index}>
                           <b
                             className={
-                              video_type === 1 ? "text-danger" : "text-primary"
+                              video_type === 2
+                                ? "text-success"
+                                : video_type === 1
+                                ? "text-danger"
+                                : "text-primary"
                             }
                           >
                             ({convertType(video_type)})
@@ -1147,9 +1151,11 @@ export default function ManageClientAccount() {
                                   影片名稱：{item.video_name}
                                   <b
                                     className={
-                                      item.video_type == 0
-                                        ? "text-primary"
-                                        : "text-danger"
+                                      item.video_type === 2
+                                        ? "text-success"
+                                        : item.video_type === 1
+                                        ? "text-danger"
+                                        : "text-primary"
                                     }
                                   >
                                     ({convertType(item.video_type)})
