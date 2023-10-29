@@ -113,6 +113,7 @@ export default function Home() {
       if (video.video_type === 0 || video.video_type === 1) {
         navigate("/Admin/Edit/Video", {
           state: {
+            FormMode: video.video_type,
             videoIndex: selectVideoindex[0],
             videoLink: video.video_path,
             videoID: video.video_id,
