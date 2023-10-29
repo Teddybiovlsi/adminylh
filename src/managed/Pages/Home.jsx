@@ -7,7 +7,15 @@ import React, {
   useState,
 } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Col, Container, Form, Modal, Row, Table } from "react-bootstrap";
+import {
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+  Stack,
+  Table,
+} from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { get, del } from "../axios";
 import ReactPaginate from "react-paginate";
@@ -720,7 +728,16 @@ export default function Home() {
           <Modal.Title>請選擇新增類型</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className={`d-flex flex-column justify-content-center`}>
+          <Stack gap={3}>
+            <Link
+              to={{
+                pathname: "/Basic/Video",
+              }}
+              className={styles.linkContainer_link}
+            >
+              <h3 className="mt-1 mb-1">基礎練習用表單</h3>
+            </Link>
+
             <Link
               to={{
                 pathname: "/Pratice",
@@ -738,7 +755,7 @@ export default function Home() {
             >
               <h3 className="mt-1 mb-1">測驗用表單</h3>
             </Link>
-          </div>
+          </Stack>
         </Modal.Body>
       </Modal>
       {/* 刪除影片懸浮視窗 */}
