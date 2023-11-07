@@ -3,8 +3,8 @@ import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import PageTitle from "../../components/Title";
 import { CardTitleFunction } from "./shared/CardTitleFunction";
 import { update } from "lodash/fp";
+import DynamicQuestionandAnswer from "./shared/DynamicQuestionAndAnswer";
 import BtnBootstrap from "../../components/BtnBootstrap";
-import DynamicQuestionandAnswer from "./shared/DynamicQuestionandAnswer";
 import styles from "../../styles/Form/FormStyles.module.scss";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import LoadingComponent from "../../components/LoadingComponent";
@@ -59,7 +59,7 @@ export default function EditClientVideoQA() {
   // 取得先前資料
   const handlePrevData = () => {
     tempVideoInfo.forEach((info) => {
-      if (info?.video_is_alert === 1) {
+      if (info?.video_is_question === 1) {
         if (info?.option_3 !== undefined && info?.option_4 !== undefined) {
           const optionNum = 4;
           setTempVideoQA((prevVideoQA) => [
@@ -68,7 +68,7 @@ export default function EditClientVideoQA() {
               id: info?.quiz_id,
               currentTime: info?.video_interrupt_time,
               durationTime: info?.video_duration,
-              messageType: info?.video_is_alert,
+              messageType: info?.video_is_question,
               mustCorrectQuestion: info?.video_must_correct,
               questionContent: info?.video_question,
               numofOptions: optionNum,
@@ -91,7 +91,7 @@ export default function EditClientVideoQA() {
               id: info?.quiz_id,
               currentTime: info?.video_interrupt_time,
               durationTime: info?.video_duration,
-              messageType: info?.video_is_alert,
+              messageType: info?.video_is_question,
               mustCorrectQuestion: info?.video_must_correct,
               questionContent: info?.video_question,
               numofOptions: optionNum,
@@ -110,7 +110,7 @@ export default function EditClientVideoQA() {
               id: info?.quiz_id,
               currentTime: info?.video_interrupt_time,
               durationTime: info?.video_duration,
-              messageType: info?.video_is_alert,
+              messageType: info?.video_is_question,
               mustCorrectQuestion: info?.video_must_correct,
               questionContent: info?.video_question,
               numofOptions: optionNum,
@@ -128,7 +128,7 @@ export default function EditClientVideoQA() {
             id: info?.quiz_id,
             currentTime: info?.video_interrupt_time,
             durationTime: info?.video_duration,
-            messageType: info?.video_is_alert,
+            messageType: info?.video_is_question,
             questionContent: info?.video_question,
             answerContent: [],
           },
