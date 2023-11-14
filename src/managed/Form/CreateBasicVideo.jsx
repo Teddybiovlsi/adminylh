@@ -23,7 +23,9 @@ export default function CreateBasicVideo() {
   const [videoInfo, setVideoInfo] = useState([
     {
       questionContent: "",
+      questionPoint: 100,
       numofOptions: 0,
+      answerFile: [],
       answerContent: [],
     },
   ]);
@@ -52,12 +54,12 @@ export default function CreateBasicVideo() {
     handleConfirmSkipQuestion,
   ] = useModal();
 
+  // 傳送影片資料到後端
   const sendVideoData = async (data) => {
     const videoFormID = toast.loading("上傳中...");
     setDisabledSubmit(true);
     try {
       const response = await post("video/basicQuiz", data);
-      console.log(response);
       toast.update(videoFormID, {
         render: "成功創建影片，3秒後將回到首頁",
         type: "success",
@@ -78,7 +80,6 @@ export default function CreateBasicVideo() {
         });
         setDisabledSubmit(false);
       } else {
-        console.log(error.response.data);
         toast.update(videoFormID, {
           render: "上傳失敗，請稍後再試",
           type: "error",
@@ -90,6 +91,7 @@ export default function CreateBasicVideo() {
     }
   };
 
+  // 處理影片資料上傳
   const hadleVideoFileIsUpload = (e) => {
     if (e.target.files.length !== 0) {
       const file = e.target.files[0];
@@ -111,6 +113,7 @@ export default function CreateBasicVideo() {
     }
   };
 
+  // 上一步
   const prevStep = (e) => {
     if (formType.formStep === 5) {
       setFormType((prevState) => ({
@@ -127,6 +130,7 @@ export default function CreateBasicVideo() {
     }
   };
 
+  // 下一步
   const nextStep = (e) => {
     if (formType.activeStep > formType.formStep) {
       setFormType((prevState) => ({
@@ -173,6 +177,7 @@ export default function CreateBasicVideo() {
     }
   };
 
+  // 送出表單事件
   const submitAction = () => {
     const {
       videoFile,
@@ -194,12 +199,25 @@ export default function CreateBasicVideo() {
     formData.append("isSkip", isSkipped);
     if (!isSkipped) {
       videoInfo.forEach((element) => {
+        console.log(element);
         formData.append("info[]", JSON.stringify(element));
+
+        element.answerFile.forEach((file) => {
+          // 如果有圖片檔案，就加入到 formData
+          formData.append("answerFile[]", file);
+
+          if (file !== null) formData.append("answerHavePic[]", "true");
+          else formData.append("answerHavePic[]", "false");
+        });
       });
     }
+
+    // console.log(formData.getAll("info[]"));
+    console.log(formData.getAll("answerFile[]"));
     sendVideoData(formData);
   };
 
+  // 表單步驟
   const FormStep = (step) => {
     switch (step) {
       case 0:
@@ -287,6 +305,7 @@ export default function CreateBasicVideo() {
     }
   };
 
+  // 建立基礎練習用表單元件
   return (
     <Container>
       <PageTitle title={`台大醫院雲林分院｜基礎練習用表單`} />

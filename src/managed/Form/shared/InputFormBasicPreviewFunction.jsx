@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Col, Container, Row, Stack } from "react-bootstrap";
+import { Card, Col, Container, Image, Row, Stack } from "react-bootstrap";
 import BtnBootstrap from "../../../components/BtnBootstrap";
 import {
   SwitchNumToLanguage,
@@ -61,6 +61,11 @@ export default function InputFormBasicPreviewFunction({
                 <Col md={6}>{q.questionContent}</Col>
               </Row>
             </Container>
+            {/* {q.answerFile[i] !== null &&
+              q.answerFile.map((file, j) => (
+
+              ))} */}
+
             {q.answerContent.map((a, j) => (
               <div key={`${i}-${j}`}>
                 <Card.Title className="ms-2">{`答案${String.fromCharCode(
@@ -69,6 +74,14 @@ export default function InputFormBasicPreviewFunction({
                 <Card.Text
                   className={`ms-4 ${a[0] ? "text-success" : "text-danger"}`}
                 >{`${a[1]}-答案為${a[0] ? "正確" : "錯誤"}`}</Card.Text>
+                {q.answerFile[j] !== null && (
+                  <Card.Img
+                    variant="top"
+                    src={URL.createObjectURL(q.answerFile[j])}
+                    alt={`optionImage${j}`}
+                    style={{ width: "100px" }}
+                  />
+                )}
               </div>
             ))}
           </Card>

@@ -20,6 +20,63 @@ export default function InputVideoBasicQAFunction({
 
   const [ifBtnDisable, setIfBtnDisable] = useState(true);
 
+  const [updateIndex, setUpdateIndex] = useState(null);
+  // 計算分數比重
+  const calculatePoint = (length) => Math.round((100 / length) * 10) / 10;
+  // 計算剩餘分數比重
+  const calculateElseIndexAndPoint = () => {
+    const elseIndex = updateIndex === 0 ? 1 : 0;
+    const elsePoint = 100 - VideoQA[updateIndex].questionPoint;
+    return { elseIndex, elsePoint };
+  };
+
+  useEffect(() => {
+    if (updateIndex === null) return;
+
+    const totalInfo = VideoQA.length;
+
+    if (totalInfo === 2) {
+      const { elseIndex, elsePoint } = calculateElseIndexAndPoint();
+
+      setVideoQA(
+        update(`${elseIndex}.questionPoint`, () => elsePoint, VideoQA)
+      );
+
+      setUpdateIndex(null);
+    }
+  }, [VideoQA]);
+
+  // 取得問題分數比重變動
+  const handleGetQuestionPointChange = (index, e) => {
+    if (
+      parseFloat(e.target.value) > 100 ||
+      parseFloat(e.target.value) < 0 ||
+      e.target.value === ""
+    ) {
+      setUpdateIndex(index);
+      setVideoQA(update(`${index}.questionPoint`, () => 1, VideoQA));
+    } else {
+      // 取得資料總長度
+      const totalInfo = VideoQA.length;
+
+      // 取得目前點擊的分數比重
+      const point = parseFloat(e.target.value);
+
+      setIfBtnDisable(true);
+      setUpdateIndex(index);
+      setVideoQA(update(`${index}.questionPoint`, () => point, VideoQA));
+    }
+  };
+
+  // 取得圖片上傳變動
+  const handleGetQuestionImage = (index, answerContentIndex, e) => {
+    console.log(index);
+    setIfBtnDisable(true);
+    const newVideoQA = [...VideoQA];
+    newVideoQA[index].answerFile[answerContentIndex] = e.target.files[0];
+    setVideoQA(newVideoQA);
+  };
+
   //取得問題填寫內容變動
   const handleGetQuestionContent = (index, e) => {
     setIfBtnDisable(true);
@@ -27,6 +84,7 @@ export default function InputVideoBasicQAFunction({
       update(`${index}.questionContent`, () => e.target.value, VideoQA)
     );
   };
+
   // 取得答題選項數目變動
   const handleOptionChange = (index, e) => {
     setIfBtnDisable(true);
@@ -37,6 +95,7 @@ export default function InputVideoBasicQAFunction({
         (question) => ({
           ...question,
           answerContent: Array.from({ length: numOfChoice }, () => [false, ""]),
+          answerFile: Array.from({ length: numOfChoice }, () => null),
           numofOptions: numOfChoice,
         }),
         VideoQA
@@ -71,10 +130,18 @@ export default function InputVideoBasicQAFunction({
   // 增加輸入欄位
   const handleAddQuestion = () => {
     setIfBtnDisable(true);
-    setVideoQA([
-      ...VideoQA,
+
+    const videoQuestionLength = VideoQA.length + 1;
+    const point = calculatePoint(videoQuestionLength);
+
+    setVideoQA((prevVideoQA) => [
+      ...prevVideoQA.map((info) => ({
+        ...info,
+        questionPoint: point,
+      })),
       {
         questionContent: "",
+        questionPoint: point,
         numofOptions: 0,
         answerContent: [],
       },
@@ -83,7 +150,17 @@ export default function InputVideoBasicQAFunction({
 
   // 刪減輸入欄位
   const handleDelQAMessage = (index) => {
-    setVideoQA((prevVideoQA) => prevVideoQA.filter((_, i) => i !== index));
+    setIfBtnDisable(true);
+
+    setVideoQA((prevVideoQA) => {
+      const newVideoQA = prevVideoQA.filter((_, i) => i !== index);
+      const point = calculatePoint(newVideoQA.length);
+
+      return newVideoQA.map((info) => ({
+        ...info,
+        questionPoint: point,
+      }));
+    });
   };
 
   // 驗證問題/選項/答案是否為空
@@ -143,6 +220,8 @@ export default function InputVideoBasicQAFunction({
           <BasicDynamicQuestionAndAnswer
             VideoQA={VideoQA}
             handleDelQAMessage={handleDelQAMessage}
+            handleGetQuestionPointChange={handleGetQuestionPointChange}
+            handleGetQuestionImage={handleGetQuestionImage}
             handleGetQuestionContent={handleGetQuestionContent}
             handleOptionChange={handleOptionChange}
             handleIsCorrectOption={handleIsCorrectOption}
