@@ -40,12 +40,68 @@ export default function EditClientBasicVideoQA() {
 
   const [isLoading, setIsLoading] = useState(true);
 
+  const [updateIndex, setUpdateIndex] = useState(null);
+
+  // 計算分數比重
+  const calculatePoint = (length) => Math.round((100 / length) * 10) / 10;
+  // 計算剩餘分數比重
+  const calculateElseIndexAndPoint = () => {
+    const elseIndex = updateIndex === 0 ? 1 : 0;
+    const elsePoint = 100 - VideoQA[updateIndex].questionPoint;
+    return { elseIndex, elsePoint };
+  };
+
+  useEffect(() => {
+    if (updateIndex === null) return;
+
+    const totalInfo = videoInfo.length;
+
+    if (totalInfo === 2) {
+      const { elseIndex, elsePoint } = calculateElseIndexAndPoint();
+
+      setVideoQA(
+        update(`${elseIndex}.questionPoint`, () => elsePoint, videoInfo)
+      );
+
+      setUpdateIndex(null);
+    }
+  }, [videoInfo]);
+
   useEffect(() => {
     if (tempVideoInfo.length > 0) {
       handlePrevData();
       setIsLoading(false);
     }
   }, [tempVideoInfo]);
+
+  // 取得問題分數比重變動
+  const handleGetQuestionPointChange = (index, e) => {
+    if (
+      parseFloat(e.target.value) > 100 ||
+      parseFloat(e.target.value) < 0 ||
+      e.target.value === ""
+    ) {
+      setUpdateIndex(index);
+      setVideoInfo(update(`${index}.questionPoint`, () => 1, videoInfo));
+    } else {
+      // 取得資料總長度
+      const totalInfo = videoInfo.length;
+
+      // 取得目前點擊的分數比重
+      const point = parseFloat(e.target.value);
+
+      setUpdateIndex(index);
+      setVideoInfo(update(`${index}.questionPoint`, () => point, videoInfo));
+    }
+  };
+
+  // 取得圖片上傳變動
+  const handleGetQuestionImage = (index, answerContentIndex, e) => {
+    console.log(index);
+    const newVideoQA = [...videoInfo];
+    newVideoQA[index].answerFile[answerContentIndex] = e.target.files[0];
+    setVideoInfo(newVideoQA);
+  };
 
   const handlePrevData = () => {
     tempVideoInfo.forEach((info) => {
@@ -56,7 +112,14 @@ export default function EditClientBasicVideoQA() {
           {
             id: info?.id,
             questionContent: info?.video_question,
+            questionPoint: info?.video_question_point,
             numofOptions: optionNum,
+            answerFile: [
+              info?.option_1_pic_path,
+              info?.option_2_pic_path,
+              info?.option_3_pic_path,
+              info?.option_4_pic_path,
+            ],
             answerContent: [
               [info?.option_1[1], info?.option_1[0]],
               [info?.option_2[1], info?.option_2[0]],
@@ -72,7 +135,13 @@ export default function EditClientBasicVideoQA() {
           {
             id: info?.id,
             questionContent: info?.video_question,
+            questionPoint: info?.video_question_point,
             numofOptions: optionNum,
+            answerFile: [
+              info?.option_1_pic_path,
+              info?.option_2_pic_path,
+              info?.option_3_pic_path,
+            ],
             answerContent: [
               [info?.option_1[1], info?.option_1[0]],
               [info?.option_2[1], info?.option_2[0]],
@@ -87,7 +156,9 @@ export default function EditClientBasicVideoQA() {
           {
             id: info?.id,
             questionContent: info?.video_question,
+            questionPoint: info?.video_question_point,
             numofOptions: optionNum,
+            answerFile: [info?.option_1_pic_path, info?.option_2_pic_path],
             answerContent: [
               [info?.option_1[1], info?.option_1[0]],
               [info?.option_2[1], info?.option_2[0]],
@@ -320,6 +391,8 @@ export default function EditClientBasicVideoQA() {
                 <BasicDynamicQuestionAndAnswer
                   VideoQA={videoInfo?.length > 0 ? videoInfo : null}
                   handleDelQAMessage={handleDelQAMessage}
+                  handleGetQuestionPointChange={handleGetQuestionPointChange}
+                  handleGetQuestionImage={handleGetQuestionImage}
                   handleGetQuestionContent={handleGetQuestionContent}
                   handleOptionChange={handleOptionChange}
                   handleIsCorrectOption={handleIsCorrectOption}
