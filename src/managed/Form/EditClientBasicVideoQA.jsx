@@ -47,7 +47,7 @@ export default function EditClientBasicVideoQA() {
   // 計算剩餘分數比重
   const calculateElseIndexAndPoint = () => {
     const elseIndex = updateIndex === 0 ? 1 : 0;
-    const elsePoint = 100 - VideoQA[updateIndex].questionPoint;
+    const elsePoint = 100 - videoInfo[updateIndex].questionPoint;
     return { elseIndex, elsePoint };
   };
 
@@ -84,9 +84,6 @@ export default function EditClientBasicVideoQA() {
       setUpdateIndex(index);
       setVideoInfo(update(`${index}.questionPoint`, () => 1, videoInfo));
     } else {
-      // 取得資料總長度
-      const totalInfo = videoInfo.length;
-
       // 取得目前點擊的分數比重
       const point = parseFloat(e.target.value);
 
@@ -216,6 +213,7 @@ export default function EditClientBasicVideoQA() {
         {
           id: 0,
           questionContent: "",
+          questionPoint: 100,
           numofOptions: 0,
           answerContent: [],
         },
@@ -237,6 +235,7 @@ export default function EditClientBasicVideoQA() {
           questionPoint: point,
         })),
         {
+          id: newQuestionIndex,
           questionContent: "",
           questionPoint: point,
           numofOptions: 0,
@@ -249,7 +248,15 @@ export default function EditClientBasicVideoQA() {
   // 刪減輸入欄位
   const handleDelQAMessage = (index) => {
     setFormType({ ...formType, nextBtnDisable: true });
-    setVideoInfo((prevVideoQA) => prevVideoQA.filter((_, i) => i !== index));
+    setVideoInfo((prevVideoQA) => {
+      const newVideoQA = prevVideoQA.filter((_, i) => i !== index);
+      const point = calculatePoint(newVideoQA.length);
+
+      return newVideoQA.map((info) => ({
+        ...info,
+        questionPoint: point,
+      }));
+    });
   };
 
   //取得問題填寫內容變動
@@ -270,6 +277,7 @@ export default function EditClientBasicVideoQA() {
         (question) => ({
           ...question,
           answerContent: Array.from({ length: numOfChoice }, () => [false, ""]),
+          answerFile: Array.from({ length: numOfChoice }, () => null),
           numofOptions: numOfChoice,
         }),
         videoInfo
@@ -356,6 +364,7 @@ export default function EditClientBasicVideoQA() {
           navigate("/", { replace: true });
         }, 3000);
       } catch (error) {
+        console.log(error);
         console.log(error.response.data);
         toast.update(editNewQA, {
           render: "資料更新失敗",
@@ -369,7 +378,6 @@ export default function EditClientBasicVideoQA() {
       info: videoInfo,
     };
     fetchEditVideoData(data);
-    // console.log(tempVideoQA);
   };
 
   const FormStep = (step) => {
@@ -454,6 +462,14 @@ export default function EditClientBasicVideoQA() {
                       問題內容:
                     </Col>
                     <Col md={6}>{q.questionContent}</Col>
+                  </Row>
+                  <Row>
+                    <Col className="h5 ps-0 ms-2" md={4}>
+                      問題對應分數:
+                    </Col>
+                    <Col md={6}>
+                      <b>{q.questionPoint}</b>分
+                    </Col>
                   </Row>
                 </Container>
                 {q.answerContent.map((a, j) => (
