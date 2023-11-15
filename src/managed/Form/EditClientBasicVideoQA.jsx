@@ -102,7 +102,7 @@ export default function EditClientBasicVideoQA() {
     newVideoQA[index].answerFile[answerContentIndex] = e.target.files[0];
     setVideoInfo(newVideoQA);
   };
-
+  // 處理先前資料
   const handlePrevData = () => {
     tempVideoInfo.forEach((info) => {
       if (info?.option_3 !== undefined && info?.option_4 !== undefined) {
@@ -172,7 +172,7 @@ export default function EditClientBasicVideoQA() {
   async function fetchBasicVideoData({ api }) {
     try {
       const response = await get(api);
-      const videoInfo = await response.data.data;
+      const videoInfo = response.data.data;
 
       setTempVideoInfo((prevVideoQA) => [...prevVideoQA, ...videoInfo]);
       setIsLoading(false);
@@ -226,12 +226,19 @@ export default function EditClientBasicVideoQA() {
       // add the new index
       let newQuestionIndex = lastQuestionQuizIndex + 1;
 
+      const videoQuestionLength = videoInfo.length + 1;
+      // 重新計算每一題分數比重
+      const point = calculatePoint(videoQuestionLength);
+
       setFormType({ ...formType, nextBtnDisable: true });
-      setVideoInfo([
-        ...videoInfo,
+      setVideoInfo((prevVideoQA) => [
+        ...prevVideoQA.map((info) => ({
+          ...info,
+          questionPoint: point,
+        })),
         {
-          id: newQuestionIndex,
           questionContent: "",
+          questionPoint: point,
           numofOptions: 0,
           answerContent: [],
         },
