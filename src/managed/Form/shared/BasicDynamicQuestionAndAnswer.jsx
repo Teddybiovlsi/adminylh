@@ -150,7 +150,11 @@ export default function BasicDynamicQuestionAndAnswer({
                       <Col xs={4} md={4} lg={4} key={answerContentIndex}>
                         <Image
                           src={
-                            info.answerFile[answerContentIndex] !== null
+                            typeof info.answerFile[answerContentIndex] ===
+                              "string" &&
+                            info.answerFile[answerContentIndex].startsWith(
+                              "http"
+                            )
                               ? info.answerFile[answerContentIndex]
                               : URL.createObjectURL(
                                   info.answerFile[answerContentIndex]
