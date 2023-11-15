@@ -33,7 +33,11 @@ export default function BasicDynamicQuestionAndAnswer({
   return (
     <>
       {VideoQA.map((info, index) => (
-        <Card key={index} style={{ position: "relative" }} className="mb-2">
+        <Card
+          key={`Card${index}`}
+          style={{ position: "relative" }}
+          className="mb-2"
+        >
           {totalInfo > 1 && (
             <CloseButton
               className={`${styles.deleteQAMessage}`}
@@ -42,15 +46,18 @@ export default function BasicDynamicQuestionAndAnswer({
               }}
             />
           )}
-          <Card.Title className="pt-3 ps-3 pe-3 pb-0">
+          <Card.Title
+            key={`option_question${index}`}
+            className="pt-3 ps-3 pe-3 pb-0"
+          >
             <h3>問題 {index + 1}</h3>
             <p className={`${styles.noticficationMessage}`}>
               <strong>若此為該問題答案請點選○</strong>
             </p>
           </Card.Title>
-          <Card.Body>
+          <Card.Body key={`cardBody${index}`}>
             {/* In this inputGroup is about Question and Answer Select */}
-            <InputGroup className="mb-3">
+            <InputGroup key={`optionPoint${index}`} className="mb-3">
               <InputGroup.Text>分數比重</InputGroup.Text>
               <Form.Control
                 type="number"
@@ -64,7 +71,7 @@ export default function BasicDynamicQuestionAndAnswer({
                 }}
               />
             </InputGroup>
-            <InputGroup className="">
+            <InputGroup key={`questionBlock${index}`}>
               <>
                 <Form.Floating>
                   <Form.Control
@@ -107,7 +114,7 @@ export default function BasicDynamicQuestionAndAnswer({
             {info.answerContent.map((answerContent, answerContentIndex) => (
               <>
                 <InputGroup
-                  key={`${index}-${answerContentIndex}`}
+                  key={`${index}answerGroup-${answerContentIndex}`}
                   className="mt-3"
                 >
                   <InputGroup.Checkbox
@@ -124,6 +131,9 @@ export default function BasicDynamicQuestionAndAnswer({
                       placeholder={`請在這裡輸入答案${String.fromCharCode(
                         65 + answerContentIndex
                       )}`}
+                      key={`${index}option_${String.fromCharCode(
+                        65 + answerContentIndex
+                      )}`}
                       value={answerContent[1]}
                       onChange={(e) => {
                         handleAnswerChange(index, answerContentIndex, e);
@@ -134,7 +144,13 @@ export default function BasicDynamicQuestionAndAnswer({
                     )}`}</label>
                   </Form.Floating>
                 </InputGroup>
-                <Form.Group controlId="formFileMultiple" className="mt-3 mb-3">
+                <Form.Group
+                  key={`${index}option${String.fromCharCode(
+                    65 + answerContentIndex
+                  )}_image`}
+                  controlId="formFileMultiple"
+                  className="mt-3 mb-3"
+                >
                   <Form.Label>請在這裡點選欲上傳之圖片</Form.Label>
                   <Form.Control
                     type="file"
@@ -147,7 +163,12 @@ export default function BasicDynamicQuestionAndAnswer({
                 {info.answerFile[answerContentIndex] !== null && (
                   <Container>
                     <Row>
-                      <Col xs={4} md={4} lg={4} key={answerContentIndex}>
+                      <Col
+                        xs={4}
+                        md={4}
+                        lg={4}
+                        key={`${index}option_${answerContentIndex}_image`}
+                      >
                         <Image
                           src={
                             typeof info.answerFile[answerContentIndex] ===
