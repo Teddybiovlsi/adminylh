@@ -26,6 +26,7 @@
     "bcrypt": "^5.1.0",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.5",
+    "chart.js": "^4.4.0",
     "draft-js": "^0.11.7",
     "draft-js-export-html": "^1.4.1",
     "formik": "^2.2.9",
