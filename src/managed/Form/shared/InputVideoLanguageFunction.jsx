@@ -8,11 +8,7 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import {
-  CardTitleFunction,
-  CardSecondTitleFunction,
-} from "./CardTitleFunction";
-import BtnBootstrap from "../../../components/BtnBootstrap";
+import BtnBootstrap from "../../../components/BtnBootStrap";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 
 function InputVideoLanguageFunction({
