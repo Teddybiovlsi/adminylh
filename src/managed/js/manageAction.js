@@ -4,10 +4,13 @@
  * @returns {Object} 管理員的個人資料。
  * 如果管理員已登入，則會從瀏覽器的本地儲存或會話儲存中取得用戶的個人資料。
  * 如果管理員未登入，則會回傳 null。
+ * @example
+ * const adminProfile = getAdminSession();
  * @version 1.0.0
  */
 export const getAdminSession = () => {
-  const user = sessionStorage.getItem("manage") || localStorage.getItem("manage");
+  const user =
+    sessionStorage.getItem("manage") || localStorage.getItem("manage");
   if (user) {
     try {
       return JSON.parse(user);
@@ -27,6 +30,14 @@ export const getAdminSession = () => {
  * @returns {Object} 用戶的個人資料。
  * @throws {Error} 如果 adminProfile 不是一個物件或是 null，則會拋出例外。
  * @throws {Error} 如果儲存失敗，則會拋出例外。
+ * @example
+ * const adminProfile = setAdminSession({
+ *  id: 1,
+ * name: "John Doe",
+ * email: "123456@mail.com",
+ * }, true);
+ *
+ *
  * @version 1.0.0
  */
 export const setAdminSession = (adminProfile, isRemember = false) => {
@@ -52,6 +63,8 @@ export const setAdminSession = (adminProfile, isRemember = false) => {
  * 會從兩個地方清除用戶資料，分別是：
  * 1. 本地儲存 (localStorage)
  * 2. 會話儲存 (sessionStorage)
+ * @example
+ * clearAdminSession();
  * @version 1.0.0
  */
 export const clearAdminSession = () => {
