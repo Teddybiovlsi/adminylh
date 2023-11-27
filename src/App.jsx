@@ -47,7 +47,7 @@ function App() {
     //   reCaptchaKey={import.meta.env.VITE_REACT_APP_SITE_KEY}
     // >
     <div className="app">
-      <Header />
+      <Header admin={admin} />
       <main className="app_main">
         <Routes>
           <Route index path="/" element={<LogIn />} />
