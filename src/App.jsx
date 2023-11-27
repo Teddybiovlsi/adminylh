@@ -28,7 +28,7 @@ import MultiAddAdmin from "./managed/Pages/MultiAddAdmin";
 import RestoreAdminAccount from "./managed/Pages/RestoreAdminAccount";
 import CreateBasicVideo from "./managed/Form/CreateBasicVideo";
 import EditClientBasicVideoQA from "./managed/Form/EditClientBasicVideoQA";
-import { getAdminSession } from "./js/manageAction";
+import { getAdminSession } from "./managed/js/manageAction";
 
 function App() {
   const location = useLocation();
@@ -67,7 +67,7 @@ function App() {
             {/* 使用者管理 */}
             <Route
               path="/ManageClientAccount"
-              element={<ManageClientAccount />}
+              element={<ManageClientAccount admin={admin} />}
             />
             <Route
               path="/ManagePraticeRecord"
@@ -82,12 +82,12 @@ function App() {
             {/* 管理端管理 */}
             <Route
               path="/ManageAdminAccount"
-              element={<ManageAdminAccount />}
+              element={<ManageAdminAccount admin={admin} />}
             />
             <Route path="/MultiAddAdmin" element={<MultiAddAdmin />} />
             <Route
               path="/RestoreAdminAccount"
-              element={<RestoreAdminAccount />}
+              element={<RestoreAdminAccount admin={admin} />}
             />
 
             <Route path="*" element={<NotFoundPage />} />
