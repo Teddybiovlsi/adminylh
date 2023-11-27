@@ -29,6 +29,7 @@ import RestoreAdminAccount from "./managed/Pages/RestoreAdminAccount";
 import CreateBasicVideo from "./managed/Form/CreateBasicVideo";
 import EditClientBasicVideoQA from "./managed/Form/EditClientBasicVideoQA";
 import { getAdminSession } from "./managed/js/manageAction";
+import VideoRecord from "./managed/Pages/VideoRecord";
 
 function App() {
   const location = useLocation();
@@ -63,6 +64,8 @@ function App() {
             <Route path="/Basic/Video" element={<CreateBasicVideo />} />
             <Route path="/Pratice" element={<Pratice />} />
             <Route path="/Exam" element={<Exam />} />
+            <Route path="/Record/:type" element={<VideoRecord />} />
+
             <Route path="/Video" element={<VideoPlayer />} />
             {/* 使用者管理 */}
             <Route

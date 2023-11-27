@@ -102,13 +102,13 @@ export default function Header({ expand = "lg", admin }) {
                   title={manageVideoDropdownTitle}
                   id={manageVideoDropdownId}
                 >
-                  <LinkContainer to="/Record/Basic/Video">
+                  <LinkContainer to="/Record/基礎練習">
                     <NavDropdown.Item>基本練習</NavDropdown.Item>
                   </LinkContainer>{" "}
-                  <LinkContainer to="/Record/Pratice">
+                  <LinkContainer to="/Record/練習">
                     <NavDropdown.Item>練習用</NavDropdown.Item>
                   </LinkContainer>{" "}
-                  <LinkContainer to="/Record/Exam">
+                  <LinkContainer to="/Record/測驗">
                     <NavDropdown.Item>測驗用</NavDropdown.Item>
                   </LinkContainer>{" "}
                 </NavDropdown>
