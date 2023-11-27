@@ -12,10 +12,8 @@ import { useNavigate } from "react-router-dom";
 import useModal from "../../hooks/useModal";
 import BtnBootstrap from "../../components/BtnBootstrap";
 
-export default function RestoreAdminAccount() {
-  const { token } = JSON.parse(
-    localStorage?.getItem("manage") || sessionStorage?.getItem("manage") || "{}"
-  );
+export default function RestoreAdminAccount({ admin }) {
+  const { token } = admin;
 
   const navigate = useNavigate();
 

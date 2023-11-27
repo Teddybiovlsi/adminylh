@@ -29,7 +29,7 @@ const convertUserPower = (power) => {
   return powerList[power];
 };
 
-export default function ManageAdminAccount() {
+export default function ManageAdminAccount({ admin }) {
   // 用來儲存修改姓名的資料
   const userName = useRef(null);
   // 用來儲存修改聯絡信箱的資料
@@ -39,9 +39,7 @@ export default function ManageAdminAccount() {
   // 用來儲存管理者權限設置的資料
   const userPower = useRef(null);
 
-  const { name, token, email, powerDiscription } = JSON.parse(
-    localStorage?.getItem("manage") || sessionStorage?.getItem("manage") || "{}"
-  );
+  const { name, token, email, powerDiscription } = admin;
 
   const navigate = useNavigate();
 

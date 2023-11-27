@@ -36,7 +36,7 @@ import FilterType from "../JsonFile/FilterVideoType.json";
 import convertType from "../../functions/typeConverter";
 import styles from "../../styles/pages/ManageClientAccount.module.scss";
 
-export default function ManageClientAccount() {
+export default function ManageClientAccount({ admin }) {
   // 用來儲存修改姓名的資料
   const userName = useRef(null);
   // 用來儲存修改聯絡信箱的資料
@@ -44,9 +44,7 @@ export default function ManageClientAccount() {
   // 用來儲存修改密碼的資料
   const userPwd = useRef(null);
 
-  const { token, email, powerDiscription } = JSON.parse(
-    localStorage?.getItem("manage") || sessionStorage?.getItem("manage") || "{}"
-  );
+  const { token, email, powerDiscription } = admin;
 
   const [accountInfo, setAccountInfo] = useState([]);
   // 用來儲存搜尋欄位的資料

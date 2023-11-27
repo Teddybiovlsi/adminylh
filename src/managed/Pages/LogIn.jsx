@@ -5,7 +5,7 @@ import { post } from "../axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
-import { setAdminSession } from "../../js/manageAction";
+import { setAdminSession } from "../js/manageAction";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function LogIn() {
