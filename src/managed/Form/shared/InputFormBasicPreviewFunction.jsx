@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card, Col, Container, Image, Row, Stack } from "react-bootstrap";
-import BtnBootstrap from "../../../components/BtnBootstrap";
+import BtnBootstrap from "../../../components/BtnBootStrap";
 import {
   SwitchNumToLanguage,
   SwitchNumToType,

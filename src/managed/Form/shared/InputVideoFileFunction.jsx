@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Container, Row } from "react-bootstrap";
-import BtnBootstrap from "../../../components/BtnBootstrap";
+import BtnBootstrap from "../../../components/BtnBootStrap";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 
 export default function InputVideoFileFunction({

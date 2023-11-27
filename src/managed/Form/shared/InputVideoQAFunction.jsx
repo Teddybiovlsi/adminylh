@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Col, Container, Row, Stack } from "react-bootstrap";
 import { update } from "lodash/fp";
-import BtnBootstrap from "../../../components/BtnBootstrap";
-import DynamicQuestionandAnswer from "./DynamicQuestionandAnswer";
+import BtnBootstrap from "../../../components/BtnBootStrap";
+import DynamicQuestionandAnswer from "./DynamicQuestionAndAnswer";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 import ToastAlert from "../../../components/ToastAlert";
 import { toast } from "react-toastify";

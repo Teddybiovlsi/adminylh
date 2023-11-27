@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
-import BtnBootstrap from "../../../components/BtnBootstrap";
+import BtnBootstrap from "../../../components/BtnBootStrap";
 import BtnBootstrapwithSpinner from "../../../components/BtnBootstrapwithSpinner";
 import {
   SwitchNumToLanguage,
