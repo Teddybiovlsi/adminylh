@@ -5,12 +5,8 @@ import { post } from "../axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
+import { setAdminSession } from "../../js/manageAction";
 import "react-toastify/dist/ReactToastify.css";
-
-function setUserInfo(userInfo, isRemember) {
-  const storage = isRemember ? localStorage : sessionStorage;
-  storage.setItem("manage", JSON.stringify(userInfo));
-}
 
 export default function LogIn() {
   const isUserLoggedIn =
@@ -67,6 +63,7 @@ export default function LogIn() {
       setInitialState({ ...initialState, tempuser: userInfo });
 
       setTimeout(() => {
+        setAdminSession(userInfo);
         setUserInfo(userInfo, data.isRemember);
         navigate("/Home", { replace: true });
       }, 2000);
