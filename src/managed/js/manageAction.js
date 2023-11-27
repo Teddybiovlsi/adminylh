@@ -54,7 +54,7 @@ export const setAdminSession = (adminProfile, isRemember = false) => {
  * 2. 會話儲存 (sessionStorage)
  * @version 1.0.0
  */
-export const clearUserSession = () => {
+export const clearAdminSession = () => {
   if (localStorage.getItem("manage")) {
     localStorage.removeItem("manage");
   }
