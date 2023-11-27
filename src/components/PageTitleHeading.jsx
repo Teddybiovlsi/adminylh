@@ -1,43 +1,47 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styles from "../styles/components/DefaultPageTitleHeading.module.scss";
 
-const optionSelector = (option) => {
-  switch (option) {
-    case 1:
-      return styles.defaultPageHeadingStyle1;
-    case 2:
-      return styles.defaultPageHeadingStyle2;
-    case 3:
-      return styles.defaultPageHeadingStyle3;
-    case 4:
-      return styles.defaultPageHeadingStyle4;
-    case 5:
-      return styles.defaultPageHeadingStyle5;
-    case 6:
-      return styles.defaultPageHeadingStyle6;
-    case 7:
-      return styles.defaultPageHeadingStyle7;
-    case 8:
-      return styles.defaultPageHeadingStyle8;
-    case 9:
-      return styles.PageHeadingStyleForCreateVideo;
-    default:
-      return styles.defaultPageHeadingStyle1;
-  }
+const styleOptionsMap = {
+  1: styles.defaultPageHeadingStyle1,
+  2: styles.defaultPageHeadingStyle2,
+  3: styles.defaultPageHeadingStyle3,
+  4: styles.defaultPageHeadingStyle4,
+  5: styles.defaultPageHeadingStyle5,
+  6: styles.defaultPageHeadingStyle6,
+  7: styles.defaultPageHeadingStyle7,
+  8: styles.defaultPageHeadingStyle8,
+  9: styles.PageHeadingStyleForCreateVideo,
 };
+
+/**
+ * 這個 component 用於顯示頁面的標題。
+ *
+ * @param {string} nameForClass - 用於自定義 class name
+ * @param {string} text - 顯示的文字
+ * @param {number} styleOptions - 用於已定義樣式
+ *
+ * @returns {JSX.Element} 一個顯示具有樣式標題的 component。
+ * @version 1.0.0
+ */
 
 export default function PageTitleHeading({
   nameForClass,
   text,
   styleOptions = 1,
 }) {
+  const className =
+    nameForClass || styleOptionsMap[styleOptions] || styleOptionsMap[1];
+
   return (
     <div>
-      <h1
-        className={nameForClass ? nameForClass : optionSelector(styleOptions)}
-      >
-        {text}
-      </h1>
+      <h1 className={className}>{text}</h1>
     </div>
   );
 }
+
+PageTitleHeading.propTypes = {
+  nameForClass: PropTypes.string,
+  text: PropTypes.string.isRequired,
+  styleOptions: PropTypes.number,
+};

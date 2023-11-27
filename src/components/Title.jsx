@@ -1,10 +1,13 @@
-// 這個套件主要使用於分頁上的標題文字
-// 傳入的參數為：Title
-// Title內不限任何文字皆可以進行填入
 import React from "react";
 import PropTypes from "prop-types";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
+/**
+ *
+ * @param {string} title - 分頁上的標籤文字
+ * @returns {JSX.Element} 一個顯示分頁上的標籤文字的 component。
+ * @version 1.0.0
+ */
 const PageTitle = ({ title }) => {
   return (
     <HelmetProvider>

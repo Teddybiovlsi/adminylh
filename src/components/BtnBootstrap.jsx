@@ -1,15 +1,24 @@
-// 這個component主要使用於React版本的Bootstrap當中的button
-// 參數一共有8個：btnID, btnName, btnPosition, btnType, onClickEventName, text, disabled, variant
-// btnID: 該按鍵的ID名稱
-// btnName: 該按鍵的name名稱 通常使用於表單中識別
-// btnPosition: 可不填寫，在此定義為按鍵的class名稱並搭配React-BootStrap的spacing參數進行調整按鍵位置，可參考：https://mdbootstrap.com/docs/react/layout/float/
-// onClickEventName: 該按鍵的點擊事件
-// text: 該按鍵要顯示於畫面上的文字
-// disabled：預設為false，可配合一些條件運算讓按鍵無法被按下
-// variant: 在此有八種樣式primary, secondary, success, warning, danger, info, light, dark，可參考：https://react-bootstrap.github.io/components/buttons/
-
 import React from "react";
 import Button from "react-bootstrap/Button";
+
+/**
+ * 這個 component 主要使用於 React 版本的 Bootstrap 中的 button。
+ *
+ * @param {Object} props - 組件的 props。
+ * @param {string} props.btnID - 該按鍵的 ID 名稱。
+ * @param {string} props.btnName - 該按鍵的 name 名稱，通常使用於表單中識別。
+ * @param {string} [props.btnPosition] - 可不填寫，在此定義為按鍵的 class 名稱並搭配 React-BootStrap 的 spacing 參數進行調整按鍵位置。
+ * @param {('submit'|'button')} [props.btnType] - 可不填寫，在此定義為按鍵類型。
+ * @param {('lg'|'md'|'sm'|'xl'|'xs')} [props.btnSize] - 可不填寫，在此定義為按鍵的大小。
+ * @param {string} [props.btnTitle] - 可不填寫，在此定義為按鍵的 title 屬性。
+ * @param {Function} props.onClickEventName - 該按鍵的點擊事件。
+ * @param {string} props.text - 該按鍵要顯示於畫面上的文字。
+ * @param {boolean} [props.disabled=false] - 可配合一些條件運算讓按鍵無法被按下。
+ * @param {('primary'|'secondary'|'success'|'warning'|'danger'|'info'|'light'|'dark')} props.variant - 在此有八種樣式，可參考：https://react-bootstrap.github.io/components/buttons/
+ *
+ * @returns {JSX.Element} 一個 Bootstrap button 組件。
+ * @version 1.0.0
+ */
 
 const BtnBootstrap = ({
   btnID,
