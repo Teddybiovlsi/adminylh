@@ -20,7 +20,7 @@ import {
 } from "react-bootstrap";
 import ReactPaginate from "react-paginate";
 import useModal from "../../hooks/useModal";
-import BtnBootstrap from "../../components/BtnBootstrap";
+import BtnBootstrap from "../../components/BtnBootStrap";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import ShowLockIcon from "../../components/ShowLockIcon";
 import ShowInfoIcon from "../../components/ShowInfoIcon";

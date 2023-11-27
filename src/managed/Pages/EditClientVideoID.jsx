@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import BtnBootstrap from "../../components/BtnBootstrap";
+import BtnBootstrap from "../../components/BtnBootStrap";
 import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
 import FilterType from "../JsonFile/FilterVideoType.json";
 import ReactPaginate from "react-paginate";

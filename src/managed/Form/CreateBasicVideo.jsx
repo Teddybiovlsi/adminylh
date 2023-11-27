@@ -8,7 +8,7 @@ import InputVideoFileFunction from "./shared/InputVideoFileFunction";
 import InputVideoTitleFunction from "./shared/InputVideoTitleFunction";
 import InputVideoLanguageFunction from "./shared/InputVideoLanguageFunction";
 import InputVideoTypeFunction from "./shared/InputVideoTypeFunction";
-import BtnBootstrap from "../../components/BtnBootstrap";
+import BtnBootstrap from "../../components/BtnBootStrap";
 import ToastAlert from "../../components/ToastAlert";
 import PageTitle from "../../components/Title";
 import PageTitleHeading from "../../components/PageTitleHeading";
