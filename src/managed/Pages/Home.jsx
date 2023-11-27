@@ -38,13 +38,11 @@ import convertType from "../../functions/typeConverter";
 import styles from "../../styles/pages/HomePage.module.scss";
 import useModal from "../../hooks/useModal";
 
-export default function Home() {
+export default function Home({ admin }) {
   const navigate = useNavigate();
 
   // 請求瀏覽器資料
-  const { token, email, powerDiscription } = JSON.parse(
-    localStorage?.getItem("manage") || sessionStorage?.getItem("manage") || "{}"
-  );
+  const { token, email, powerDiscription } = admin;
 
   // 影片資料狀態
   const initialState = {

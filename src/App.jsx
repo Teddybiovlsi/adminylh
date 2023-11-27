@@ -28,15 +28,15 @@ import MultiAddAdmin from "./managed/Pages/MultiAddAdmin";
 import RestoreAdminAccount from "./managed/Pages/RestoreAdminAccount";
 import CreateBasicVideo from "./managed/Form/CreateBasicVideo";
 import EditClientBasicVideoQA from "./managed/Form/EditClientBasicVideoQA";
+import { getAdminSession } from "./js/manageAction";
 
 function App() {
   const location = useLocation();
-  const user = JSON.parse(
-    localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
-  );
+
+  const admin = getAdminSession();
 
   useEffect(() => {
-    if (user) {
+    if (admin) {
     }
   }, [location]);
 
@@ -51,8 +51,8 @@ function App() {
       <main className="app_main">
         <Routes>
           <Route index path="/" element={<LogIn />} />
-          <Route element={<AuthProtected user={user} />}>
-            <Route path="/Home" element={<Home />} />
+          <Route element={<AuthProtected user={admin} />}>
+            <Route path="/Home" element={<Home admin={admin} />} />
             <Route path="/Admin/Register" element={<BackendRegistration />} />
             <Route path="/Admin/Edit/Video" element={<EditClientVideoQA />} />
             <Route
@@ -74,7 +74,10 @@ function App() {
               element={<ManageClientRecord />}
             />
             <Route path="/MultiAddUser" element={<MultiAddUser />} />
-            <Route path="/MultiAddVideo" element={<EditClientVideoID />} />
+            <Route
+              path="/MultiAddVideo"
+              element={<EditClientVideoID admin={admin} />}
+            />
             <Route path="/RestoreAccount" element={<RestoreAccount />} />
             {/* 管理端管理 */}
             <Route

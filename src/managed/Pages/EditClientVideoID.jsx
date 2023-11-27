@@ -19,15 +19,12 @@ import ToastAlert from "../../components/ToastAlert";
 import convertType from "../../functions/typeConverter";
 import useModal from "../../hooks/useModal";
 
-export default function EditClientVideoID() {
+export default function EditClientVideoID({ admin }) {
   const { state } = useLocation();
   if (!state) {
     window.location.href = "/";
   }
 
-  const user = JSON.parse(
-    localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
-  );
   // 將已勾選的帳號存入checkedAccount當中
   const [checkedAccount, setCheckedAccount] = useState(state?.ClientAcc);
 
@@ -169,13 +166,16 @@ export default function EditClientVideoID() {
     let ignore = false;
 
     const fetchDataAsync = async () => {
+      const token = admin.token;
+      const email = admin.email;
+
       await fetchData({
         api: "account",
         setData: setAccountInfo,
         setSearchResult,
       });
       await fetchData({
-        api: `videos/${user.token}/${user.email}`,
+        api: `videos/${token}/${email}`,
         setData: setVideoData,
         setSearchResult: setSearchVideoResult,
       });
