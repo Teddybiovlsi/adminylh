@@ -29,7 +29,7 @@ export const getAdminSession = () => {
  * @throws {Error} 如果儲存失敗，則會拋出例外。
  * @version 1.0.0
  */
-export const setAdminSession = (adminProfile, isRember = false) => {
+export const setAdminSession = (adminProfile, isRemember = false) => {
   if (typeof adminProfile !== "object" || adminProfile === null) {
     throw new Error("adminProfile must be a non-null object");
   }
@@ -37,11 +37,8 @@ export const setAdminSession = (adminProfile, isRember = false) => {
   const adminProfileString = JSON.stringify(userProfile);
 
   try {
-    if (isRember) {
-      localStorage.setItem("manage", adminProfileString);
-    } else {
-      sessionStorage.setItem("manage", adminProfileString);
-    }
+    const storage = isRemember ? localStorage : sessionStorage;
+    storage.setItem("manage", adminProfileString);
   } catch (error) {
     throw new Error("Failed to store user profile: " + error.message);
   }
