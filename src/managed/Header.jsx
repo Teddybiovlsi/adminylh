@@ -9,18 +9,14 @@ import {
 } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { clearAdminSession } from "./js/manageAction";
 import styles from "../styles/components/NavStyle.module.scss";
 
-export default function Header({ expand = "lg" }) {
+export default function Header({ expand = "lg", admin }) {
   const navigate = useNavigate();
 
-  const user = JSON.parse(
-    localStorage?.getItem("manage") || sessionStorage?.getItem("manage")
-  );
-
   const handleLogout = () => {
-    localStorage.getItem("manage") && localStorage.removeItem("manage");
-    sessionStorage.getItem("manage") && sessionStorage.removeItem("manage");
+    clearAdminSession();
     navigate("/");
   };
 
@@ -30,6 +26,9 @@ export default function Header({ expand = "lg" }) {
   const adminDropdownId = "admin-dropdown";
   const videoDropdownTitle = "建立影片表單";
   const videoDropdownId = "video-dropdown";
+  const manageVideoDropdownTitle = "影片記錄管理";
+  const manageVideoDropdownId = "manage-video-dropdown";
+
   const settingDropdownTitle = (
     <>
       設定
@@ -65,7 +64,7 @@ export default function Header({ expand = "lg" }) {
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="me-auto">
-              {user !== null ? (
+              {admin !== null ? (
                 <NavDropdown title={userDropdownTitle} id={userDropdownId}>
                   <LinkContainer to="/ManageClientAccount">
                     <NavDropdown.Item>帳號管理</NavDropdown.Item>
@@ -75,7 +74,7 @@ export default function Header({ expand = "lg" }) {
                   </LinkContainer>{" "}
                 </NavDropdown>
               ) : null}
-              {user !== null ? (
+              {admin !== null ? (
                 <NavDropdown title={adminDropdownTitle} id={adminDropdownId}>
                   <LinkContainer to="/ManageAdminAccount">
                     <NavDropdown.Item>帳號管理</NavDropdown.Item>
@@ -85,7 +84,7 @@ export default function Header({ expand = "lg" }) {
                   </LinkContainer>{" "}
                 </NavDropdown>
               ) : null}
-              {user !== null ? (
+              {admin !== null ? (
                 <NavDropdown title={videoDropdownTitle} id={videoDropdownId}>
                   <LinkContainer to="/Basic/Video">
                     <NavDropdown.Item>基本練習</NavDropdown.Item>
@@ -98,6 +97,22 @@ export default function Header({ expand = "lg" }) {
                   </LinkContainer>{" "}
                 </NavDropdown>
               ) : null}
+              {admin !== null ? (
+                <NavDropdown
+                  title={manageVideoDropdownTitle}
+                  id={manageVideoDropdownId}
+                >
+                  <LinkContainer to="/Record/Basic/Video">
+                    <NavDropdown.Item>基本練習</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                  <LinkContainer to="/Record/Pratice">
+                    <NavDropdown.Item>練習用</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                  <LinkContainer to="/Record/Exam">
+                    <NavDropdown.Item>測驗用</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                </NavDropdown>
+              ) : null}
             </Nav>
 
             <Nav>
@@ -106,7 +121,7 @@ export default function Header({ expand = "lg" }) {
                 id={settingDropdownId}
                 align={{ lg: "end" }}
               >
-                {user !== null ? (
+                {admin !== null ? (
                   <NavDropdown.Item as={"button"} onClick={handleLogout}>
                     登出
                   </NavDropdown.Item>
