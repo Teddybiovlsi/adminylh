@@ -45,7 +45,7 @@ export const setAdminSession = (adminProfile, isRemember = false) => {
     throw new Error("adminProfile must be a non-null object");
   }
 
-  const adminProfileString = JSON.stringify(userProfile);
+  const adminProfileString = JSON.stringify(adminProfile);
 
   try {
     const storage = isRemember ? localStorage : sessionStorage;
