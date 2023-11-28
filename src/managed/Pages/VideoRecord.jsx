@@ -47,9 +47,11 @@ export const options = {
   // aspectRatio: 1,
 };
 
-export default function VideoRecord() {
+export default function VideoRecord({ admin }) {
   // 透過 useParams() 取得網址上的參數
   const { type } = useParams();
+  // 透過解構賦值取得admin裡的token
+  const { token } = admin;
 
   const pageTitle = `${type}觀看紀錄`;
 
@@ -79,7 +81,7 @@ export default function VideoRecord() {
 
     const fetchVideoRecordAsync = async () => {
       await fetchVideoRecord({
-        api: `record/videos`,
+        api: `record/videos/${token}`,
       });
     };
 
