@@ -142,7 +142,7 @@ export default function ManageClientRecord() {
 
       <Container>
         <Row>
-          <Col md={12} className="p-2">
+          <Col xs={12} sm={12} md={12} lg={12} className="p-2">
             <Form>
               <InputGroup>
                 <InputGroup.Text>
@@ -160,7 +160,12 @@ export default function ManageClientRecord() {
               </InputGroup>
             </Form>
           </Col>
-          <Col md={{ span: 4, offset: 8 }}>
+          <Col
+            xs={12}
+            sm={12}
+            md={{ span: 4, offset: 8 }}
+            lg={{ span: 4, offset: 8 }}
+          >
             <Form.Select
               className="mt-1"
               aria-label="請選擇每頁顯示筆數"
@@ -201,73 +206,133 @@ export default function ManageClientRecord() {
                       <div>使用者目前尚未有勾選之影片</div>
                     ) : (
                       <Accordion>
-                        {user.record.map((record) => (
-                          <Accordion.Item
-                            eventKey={record.videoName}
-                            key={record.videoName}
-                          >
-                            <Accordion.Header>
-                              <p>
-                                <b
-                                  className={
-                                    record.videoType === 1
-                                      ? "text-danger"
-                                      : "text-primary"
-                                  }
-                                >
-                                  ({convertType(record.videoType)})
-                                </b>
-                                {record.videoName}
-                              </p>
-                            </Accordion.Header>
-                            <Accordion.Body>
-                              {record.record_result ===
-                              "使用者目前尚未有任何紀錄" ? (
-                                <p className="text-center fs-4 m-0">
-                                  {record.videoName}尚未有任何紀錄
-                                </p>
-                              ) : (
-                                <Container>
-                                  <Row>
-                                    <Col md={6} xs={10}>
-                                      總{convertType(record.videoType)}
-                                      次數：
-                                      <b>{record.totalPraticeTimes}</b>
-                                    </Col>
-                                    <Col md={6} xs={10}>
-                                      總{convertType(record.videoType)}
-                                      準確率：
-                                      <b>{record.record_result}%</b>
-                                    </Col>
-                                  </Row>
-                                  {record.totalQuiz.map((quiz, index) => (
-                                    <Row key={index} className="mt-2">
-                                      <p className="fs-5">第{index + 1}章節</p>
-                                      <Col md={4} xs={8}>
-                                        是否為必答題：
-                                        <b className="text-danger">
-                                          {quiz.video_must_correct === 1
-                                            ? "是"
-                                            : "否"}
+                        {user.record
+                          .sort((a, b) => a.videoType - b.videoType)
+                          .map((record) =>
+                            record.videoType === 0 || record.videoType === 1 ? (
+                              <Accordion.Item
+                                eventKey={record.videoName}
+                                key={record.videoName}
+                              >
+                                <Accordion.Header>
+                                  <p>
+                                    <b
+                                      className={
+                                        record.videoType === 2
+                                          ? "text-success"
+                                          : record.videoType === 1
+                                          ? "text-danger"
+                                          : "text-primary"
+                                      }
+                                    >
+                                      ({convertType(record.videoType)})
+                                    </b>
+                                    {record.videoName}
+                                  </p>
+                                </Accordion.Header>
+                                <Accordion.Body>
+                                  {record.record_result ===
+                                  "使用者目前尚未有任何紀錄" ? (
+                                    <p className="text-center fs-4 m-0">
+                                      {record.videoName}尚未有任何紀錄
+                                    </p>
+                                  ) : (
+                                    <Container>
+                                      <Row>
+                                        <Col xs={12} sm={12} md={6}>
+                                          總{convertType(record.videoType)}
+                                          次數：
+                                          <b>{record.totalPraticeTimes}</b>
+                                        </Col>
+                                        <Col xs={12} sm={12} md={6}>
+                                          總{convertType(record.videoType)}
+                                          準確率：
+                                          <b>{record.record_result}%</b>
+                                        </Col>
+                                      </Row>
+                                      {record.totalQuiz.map((quiz, index) => (
+                                        <Row key={index} className="mt-2">
+                                          <p className="fs-5">
+                                            第{index + 1}章節
+                                          </p>
+                                          <Col xs={12} sm={6} md={4}>
+                                            是否為必答題：
+                                            <b className="text-danger">
+                                              {quiz.video_must_correct === 1
+                                                ? "是"
+                                                : "否"}
+                                            </b>
+                                          </Col>
+                                          <Col xs={12} sm={6} md={4}>
+                                            {convertType(record.videoType)}
+                                            次數：
+                                            <b>
+                                              {quiz.eachQuestionPraticeTimes}
+                                            </b>
+                                          </Col>
+                                          <Col md={4} sm={6} xs={8}>
+                                            {convertType(record.videoType)}
+                                            準確率：
+                                            <b>
+                                              {quiz.eachQuizAccuracy * 100}%
+                                            </b>
+                                          </Col>
+                                        </Row>
+                                      ))}
+                                    </Container>
+                                  )}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            ) : (
+                              <Accordion.Item
+                                eventKey={record.videoName}
+                                key={record.videoName}
+                              >
+                                <Accordion.Header>
+                                  <p>
+                                    <b
+                                      className={
+                                        record.videoType === 2
+                                          ? "text-success"
+                                          : record.videoType === 1
+                                          ? "text-danger"
+                                          : "text-primary"
+                                      }
+                                    >
+                                      ({convertType(record.videoType)})
+                                    </b>
+                                    {record.videoName}
+                                  </p>
+                                </Accordion.Header>
+                                <Accordion.Body>
+                                  <Container>
+                                    <Row>
+                                      <Col xs={12} sm={12} md={6}>
+                                        總練習次數：
+                                        <b>{record.totalPraticeTimes}次</b>
+                                      </Col>
+                                      <Col xs={12} sm={12} md={6}>
+                                        目前最高分數：
+                                        <b
+                                          className={
+                                            record.record_result !== 100 ||
+                                            record.record_result === null
+                                              ? "text-danger"
+                                              : "text-success"
+                                          }
+                                        >
+                                          {record.record_result
+                                            ? record.record_result
+                                            : 0}
+                                          分
                                         </b>
                                       </Col>
-                                      <Col md={4} xs={8}>
-                                        {convertType(record.videoType)}
-                                        次數：
-                                        <b>{quiz.eachQuestionPraticeTimes}</b>
-                                      </Col>
-                                      <Col md={4} xs={8}>
-                                        {convertType(record.videoType)}
-                                        準確率：
-                                        <b>{quiz.eachQuizAccuracy * 100}%</b>
-                                      </Col>
                                     </Row>
-                                  ))}
-                                </Container>
-                              )}
-                            </Accordion.Body>
-                          </Accordion.Item>
-                        ))}
+                                  </Container>
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            )
+                          )}
                       </Accordion>
                     )}
                   </Accordion.Body>
