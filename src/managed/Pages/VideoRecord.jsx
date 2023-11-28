@@ -223,7 +223,7 @@ export default function VideoRecord() {
       </div>
       <Container>
         <Row className="mb-3">
-          <Col md={4}>
+          <Col xs={12} sm={12} md={4} lg={3}>
             <Form.Select
               aria-label={healthCareTypeAriaLabel}
               value={healthCareTypeValue}
@@ -238,7 +238,7 @@ export default function VideoRecord() {
               ))}
             </Form.Select>
           </Col>
-          <Col md={4}>
+          <Col xs={12} sm={12} md={4} lg={3}>
             <Form.Select
               aria-label={healthCareLanguageAriaLabel}
               value={healthCareLanguageValue}
@@ -253,7 +253,7 @@ export default function VideoRecord() {
               ))}
             </Form.Select>
           </Col>
-          <Col md={4}>
+          <Col xs={12} sm={12} md={4} lg={6}>
             <div className="d-grid">
               <BtnBootStrap
                 btnPosition=""
