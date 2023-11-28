@@ -64,7 +64,10 @@ function App() {
             <Route path="/Basic/Video" element={<CreateBasicVideo />} />
             <Route path="/Pratice" element={<Pratice />} />
             <Route path="/Exam" element={<Exam />} />
-            <Route path="/Record/:type" element={<VideoRecord />} />
+            <Route
+              path="/Record/:type"
+              element={<VideoRecord admin={admin} />}
+            />
 
             <Route path="/Video" element={<VideoPlayer />} />
             {/* 使用者管理 */}
