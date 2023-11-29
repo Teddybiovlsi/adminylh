@@ -6,6 +6,7 @@ import {
   Form,
   InputGroup,
   Row,
+  Stack,
 } from "react-bootstrap";
 import ReactPaginate from "react-paginate";
 import LoadingComponent from "../../components/LoadingComponent";
@@ -14,8 +15,12 @@ import PageTitleHeading from "../../components/PageTitleHeading";
 import { get } from "../axios";
 import convertType from "../../functions/typeConverter";
 import limitPage from "../JsonFile/FilterPageContentSize.json";
+import BtnBootstrap from "../../components/BtnBootStrap";
+import { useNavigate } from "react-router-dom";
 
 export default function ManageClientRecord() {
+  const navigate = useNavigate();
+
   const [state, setState] = useState({
     loading: true,
     eachUserRecord: [],
@@ -84,6 +89,29 @@ export default function ManageClientRecord() {
         loading: false,
       });
     }
+  };
+
+  /**
+   * 路由至特定使用者的基礎練習紀錄頁面。
+   *
+   * 此函數依據使用者名稱和影片名稱建構一條到使用者基礎練習紀錄頁面的路徑，
+   * 然後使用 `navigate` 函數導航至此路徑。它還將一些狀態傳遞到新的位置，
+   * 包括導航的起源和使用者的紀錄。
+   *
+   * @param {string} name - 使用者的名稱。
+   * @param {string} videoName - 影片的名稱。
+   * @param {Object} record - 使用者對該影片的紀錄。
+   * @returns {void} - 此函數不返回任何內容；它執行一個副作用（路由）。
+   * @version 1.0.0
+   */
+  const navigateTo = (name, videoName, record) => {
+    const path = `/ClientRecord/${name}/${videoName}`;
+    navigate(path, {
+      state: {
+        from: "ManageClientRecord",
+        userRecord: record.clientRecord,
+      },
+    });
   };
 
   useEffect(() => {
@@ -306,7 +334,7 @@ export default function ManageClientRecord() {
                                 </Accordion.Header>
                                 <Accordion.Body>
                                   <Container>
-                                    <Row>
+                                    <Row className="mb-2">
                                       <Col xs={12} sm={12} md={6}>
                                         總練習次數：
                                         <b>{record.totalPraticeTimes}次</b>
@@ -328,6 +356,23 @@ export default function ManageClientRecord() {
                                         </b>
                                       </Col>
                                     </Row>
+                                    {record.record_result !== null && (
+                                      <Stack gap={1}>
+                                        <BtnBootstrap
+                                          text="查看詳細紀錄"
+                                          btnType="button"
+                                          btnSize="md"
+                                          variant="outline-secondary"
+                                          onClickEventName={() => {
+                                            navigateTo(
+                                              user.name,
+                                              record.videoName,
+                                              record
+                                            );
+                                          }}
+                                        />
+                                      </Stack>
+                                    )}
                                   </Container>
                                 </Accordion.Body>
                               </Accordion.Item>
