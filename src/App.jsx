@@ -30,6 +30,7 @@ import CreateBasicVideo from "./managed/Form/CreateBasicVideo";
 import EditClientBasicVideoQA from "./managed/Form/EditClientBasicVideoQA";
 import { getAdminSession } from "./managed/js/manageAction";
 import VideoRecord from "./managed/Pages/VideoRecord";
+import DetailBasicRecord from "./managed/Pages/ClientRecordDetail.jsx/DetailBasicRecord";
 
 function App() {
   const location = useLocation();
@@ -67,6 +68,10 @@ function App() {
             <Route
               path="/Record/:type"
               element={<VideoRecord admin={admin} />}
+            />
+            <Route
+              path="/ClientRecord/:name/:videoName"
+              element={<DetailBasicRecord />}
             />
 
             <Route path="/Video" element={<VideoPlayer />} />
