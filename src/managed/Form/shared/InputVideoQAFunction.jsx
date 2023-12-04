@@ -15,7 +15,6 @@ function InputVideoQAFunction({
   VideoQA,
   setVideoQA,
   // 表單模式和下一步事件的相關變數
-  isBasicVideo = false,
   GoNextEvent = null,
   GoPrevEvent = null,
 }) {
