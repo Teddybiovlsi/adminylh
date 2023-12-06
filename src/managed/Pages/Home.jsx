@@ -442,8 +442,15 @@ export default function Home({ admin }) {
         >
           語言
         </th>
-        <th className={styles.container_division_table_rowTable_headingName}>
-          狀態
+        <th
+          className={`text-center ${styles.container_division_table_rowTable_headingName}`}
+        >
+          縮圖
+        </th>
+        <th
+          className={`text-center ${styles.container_division_table_rowTable_headingName}`}
+        >
+          問題存在
         </th>
         <th className={styles.container_division_table_rowTable_headingName}>
           名稱
@@ -458,6 +465,7 @@ export default function Home({ admin }) {
       video_id,
       video_name,
       video_path,
+      video_thumbnail_path,
       video_class,
       video_type,
       video_language,
@@ -498,7 +506,30 @@ export default function Home({ admin }) {
           >
             {video_language}
           </td>
-          <td className={video_have_question ? "text-success" : "text-danger"}>
+          <td
+            className={`text-center ${
+              video_thumbnail_path ? "text-success" : "text-danger"
+            }`}
+          >
+            <Link
+              to={`/Admin/Edit/Tumbnail`}
+              className={`text-center ${
+                video_thumbnail_path ? "text-success" : "text-danger"
+              }`}
+              state={{
+                videoUUID: video_id,
+                videoUrl: video_path,
+                videoType: video_type,
+              }}
+            >
+              {video_thumbnail_path ? <GoCheck /> : <RxCross2 />}
+            </Link>
+          </td>
+          <td
+            className={`text-center ${
+              video_have_question ? "text-success" : "text-danger"
+            }`}
+          >
             {video_have_question ? <GoCheck /> : <RxCross2 />}
           </td>
           <td className={styles.container_division_table_rowTable_data}>

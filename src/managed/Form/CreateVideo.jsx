@@ -6,7 +6,7 @@ import InputVideoTitleFunction from "./shared/InputVideoTitleFunction";
 import InputVideoTypeFunction from "./shared/InputVideoTypeFunction";
 import PageTitle from "../../components/Title";
 import PageTitleHeading from "../../components/PageTitleHeading";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Step, Stepper } from "react-form-stepper";
 import { post } from "../axios";
 import { toast } from "react-toastify";
@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { Container, Modal, ModalFooter, Stack } from "react-bootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import "react-toastify/dist/ReactToastify.css";
+import BtnBootstrap from "../../components/BtnBootStrap";
+import InputVideoScreenShot from "./shared/InputVideoScreenShot";
 
 export default function CreateVideo({ VideoMode = false }) {
   const navigate = useNavigate();
@@ -46,10 +48,14 @@ export default function CreateVideo({ VideoMode = false }) {
     videoSource: "",
     videoTitleName: "",
     videoType: "",
+    imageFile: "",
+    imageFileName: "",
+    imageSource: "",
   });
 
   const [loadingBtn, setLoadingBtn] = useState(false);
 
+  // Modal
   const [
     confirmSkipQuestion,
     handleCloseConfirmSkipQuestion,
@@ -114,9 +120,52 @@ export default function CreateVideo({ VideoMode = false }) {
       video.src = URL.createObjectURL(file);
     }
   };
+  // 上傳圖片事件
+  const handleImageFileIsUpload = (e) => {
+    if (e.target.files.length !== 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        let base64 = reader.result;
+        // Check if the base64 string contains the "data:image/png;base64," prefix
+        if (!base64.startsWith("data:image/png;base64,")) {
+          // If not, replace the existing prefix with "data:image/png;base64,"
+          base64 = "data:image/png;base64," + base64.split(",")[1];
+        }
+        setFormType({
+          ...formType,
+          imageFile: file,
+          imageFileName: file.name,
+          imageSource: base64,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  // 儲存縮圖事件
+  const handleThumbnail = (thumbnail) => {
+    setFormType({
+      ...formType,
+      imageFileName: `${formType.videoFileName}縮圖`,
+      imageSource: thumbnail,
+    });
+  };
+
+  const handleImageFileIsRemove = () => {
+    setFormType({
+      ...formType,
+      imageFile: "",
+      imageFileName: "",
+      imageSource: "",
+    });
+  };
 
   const prevStep = (e) => {
-    setFormType({ ...formType, [e.target.name]: formType.formStep - 1 });
+    setFormType((prevState) => ({
+      ...prevState,
+      formStep: prevState.formStep - 1,
+    }));
   };
 
   const nextStep = (e) => {
@@ -129,7 +178,7 @@ export default function CreateVideo({ VideoMode = false }) {
         formStep: prevState.formStep + 1,
       }));
     } else {
-      if (formType.formStep === 3) {
+      if (formType.formStep === 4) {
         console.log(formType.formStep);
         setFormType((prevState) => ({
           ...prevState,
@@ -141,7 +190,7 @@ export default function CreateVideo({ VideoMode = false }) {
         return;
       }
 
-      if (formType.formStep === 4) {
+      if (formType.formStep === 5) {
         setFormType((prevState) => ({
           ...prevState,
           isSkipped: false,
@@ -174,6 +223,8 @@ export default function CreateVideo({ VideoMode = false }) {
     formData.append("videoLanguage", formType.videoLanguage);
     formData.append("videoType", formType.videoType);
     formData.append("videoDuration", formType.videoDuration);
+    formData.append("imageSrc", formType.imageSource);
+    formData.append("isSkip", formType.isSkipped);
     videoInfo.forEach((element) => {
       // console.log(element);
       // store the videoInfo in formData  as a array
@@ -191,10 +242,24 @@ export default function CreateVideo({ VideoMode = false }) {
             FormMode={VideoMode}
             ChangeEvent={hadleVideoFileIsUpload}
             VidoeName={formType.videoFileName}
+            VideoSource={formType.videoSource}
             GoNextEvent={nextStep}
           />
         );
       case 1:
+        return (
+          <InputVideoScreenShot
+            FormMode={VideoMode}
+            VideoSrc={formType.videoSource}
+            ThumbnailSrc={formType.imageSource}
+            ThumbnailChangeEvent={handleThumbnail}
+            ChangeEvent={handleImageFileIsUpload}
+            ResetEvent={handleImageFileIsRemove}
+            GoNextEvent={nextStep}
+            GoPrevEvent={prevStep}
+          />
+        );
+      case 2:
         return (
           <InputVideoTitleFunction
             ChangeEvent={(e) => {
@@ -210,7 +275,7 @@ export default function CreateVideo({ VideoMode = false }) {
             GoNextEvent={nextStep}
           />
         );
-      case 2:
+      case 3:
         return (
           <InputVideoLanguageFunction
             FormMode={VideoMode}
@@ -227,7 +292,7 @@ export default function CreateVideo({ VideoMode = false }) {
             GoNextEvent={nextStep}
           />
         );
-      case 3:
+      case 4:
         return (
           <InputVideoTypeFunction
             FormMode={VideoMode}
@@ -242,7 +307,7 @@ export default function CreateVideo({ VideoMode = false }) {
             GoNextEvent={nextStep}
           />
         );
-      case 4:
+      case 5:
         return (
           <InputVideoQAFunction
             FormMode={VideoMode}
@@ -254,7 +319,7 @@ export default function CreateVideo({ VideoMode = false }) {
             GoNextEvent={nextStep}
           />
         );
-      case 5:
+      case 6:
         return (
           <InputFormPreviewFunction
             FormMode={VideoMode}
@@ -308,32 +373,39 @@ export default function CreateVideo({ VideoMode = false }) {
             completed={formType.completedSteps[0]}
           />
           <Step
-            label="填寫影片標題"
+            label="選擇縮圖"
             onClick={() => {
               setFormType({ ...formType, formStep: 1 });
             }}
             completed={formType.completedSteps[1]}
           />
           <Step
-            label="選擇影片語言"
+            label="填寫影片標題"
             onClick={() => {
               setFormType({ ...formType, formStep: 2 });
             }}
             completed={formType.completedSteps[2]}
           />
           <Step
-            label="選擇影片類別"
+            label="選擇影片語言"
             onClick={() => {
               setFormType({ ...formType, formStep: 3 });
             }}
             completed={formType.completedSteps[3]}
           />
           <Step
-            label="填寫影片問題"
+            label="選擇影片類別"
             onClick={() => {
               setFormType({ ...formType, formStep: 4 });
             }}
             completed={formType.completedSteps[4]}
+          />
+          <Step
+            label="填寫影片問題"
+            onClick={() => {
+              setFormType({ ...formType, formStep: 5 });
+            }}
+            completed={formType.completedSteps[5]}
           />
           <Step label="表單預覽" disabled={true} />
         </Stepper>
@@ -361,9 +433,9 @@ export default function CreateVideo({ VideoMode = false }) {
                     ...formType,
                     isSkipped: true,
                     completedSteps: formType.completedSteps.map((step, index) =>
-                      index === 4 ? true : step
+                      index === 5 ? true : step
                     ),
-                    formStep: 5,
+                    formStep: 6,
                   });
                   handleCloseConfirmSkipQuestion();
                 }}

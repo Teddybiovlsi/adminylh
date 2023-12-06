@@ -31,6 +31,7 @@ import EditClientBasicVideoQA from "./managed/Form/EditClientBasicVideoQA";
 import { getAdminSession } from "./managed/js/manageAction";
 import VideoRecord from "./managed/Pages/VideoRecord";
 import DetailBasicRecord from "./managed/Pages/ClientRecordDetail.jsx/DetailBasicRecord";
+import EditVideoThumbnail from "./managed/Pages/EditVideoThumbnail";
 
 function App() {
   const location = useLocation();
@@ -57,6 +58,10 @@ function App() {
             <Route path="/Home" element={<Home admin={admin} />} />
             <Route path="/Admin/Register" element={<BackendRegistration />} />
             <Route path="/Admin/Edit/Video" element={<EditClientVideoQA />} />
+            <Route
+              path="/Admin/Edit/Tumbnail"
+              element={<EditVideoThumbnail />}
+            />
             <Route
               path="/Admin/Edit/BasicVideo"
               element={<EditClientBasicVideoQA />}
