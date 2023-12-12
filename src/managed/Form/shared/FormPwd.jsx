@@ -8,7 +8,6 @@ function FormPwd({
   ControlGroupID = "passwordHelpBlock",
   SetStrengthMeter = false,
   StrengthMeterPwdScore = 0,
-  PwdMaxLength = 20,
   GroupClassName = "mb-2",
   InputGroupClassName = "mb-1",
   ControlName = "password",
@@ -34,7 +33,6 @@ function FormPwd({
           autoComplete="nope"
           type={ShowPwdCondition ? "Text" : "Password"}
           name={ControlName}
-          maxLength={PwdMaxLength}
           aria-describedby="passwordHelpBlock"
           placeholder={FormControlPlaceHolder}
           onChange={ChangeEvent}
