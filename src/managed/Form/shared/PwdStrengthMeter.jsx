@@ -4,7 +4,7 @@ const PwdStrengthMeter = ({ pwdScore }) => {
   const passwordLevels = {
     0: { label: "非常弱:無法通過", color: "#828282" },
     1: { label: "弱:無法通過", color: "red" },
-    2: { label: "中等", color: "orange" },
+    2: { label: "中等：無法通過", color: "orange" },
     3: { label: "強", color: "blue" },
     4: { label: "非常強", color: "green" },
   };
