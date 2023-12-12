@@ -3,7 +3,7 @@ import { Form, FloatingLabel } from "react-bootstrap";
 
 function FormEmail({
   GroupClassName = "mb-2",
-  LabelClassName = "fs-3",
+  LabelClassName = "fs-5",
   FeedBackClassName = "fs-5",
   ControlName = "email",
   ChangeEvent,
@@ -15,6 +15,7 @@ function FormEmail({
   LabelMessage = "請輸入Email:",
   CorrectMessage = "信箱格式輸入正確",
   ErrorMessage = "",
+  componentLableText = "請輸入用戶信箱",
 }) {
   return (
     <Form.Group className={GroupClassName} controlId="floatingEmail">
@@ -23,7 +24,7 @@ function FormEmail({
       </Form.Label>
       <FloatingLabel
         controlId="floatingEmail"
-        label="Email address"
+        label={componentLableText}
         className="mb-3"
       >
         <Form.Control
