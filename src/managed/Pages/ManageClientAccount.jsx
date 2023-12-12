@@ -134,25 +134,23 @@ export default function ManageClientAccount({ admin }) {
   const handleEditAccount = (Clientid) => {
     const name = userName.current.value;
     const email = userEmail.current.value;
+    const pwd = userPwd.current.value;
 
-    if (email == "" || name == "") {
-      if (email == "") {
-        const data = {
-          clientName: name,
-        };
-        console.log(data);
-        fetchUpdateUserProfile({ api: `client/${Clientid}`, data });
-      } else {
-        const data = {
-          clientEmail: email,
-        };
-        fetchUpdateUserProfile({ api: `client/${Clientid}`, data });
-      }
-    } else if (email != "" && name != "") {
-      const data = {
-        clientName: name,
-        clientEmail: email,
-      };
+    let data = {};
+
+    if (email !== "") {
+      data.clientEmail = email;
+    }
+
+    if (name !== "") {
+      data.clientName = name;
+    }
+
+    if (pwd !== "") {
+      data.clientPWD = pwd;
+    }
+
+    if (Object.keys(data).length > 0) {
       fetchUpdateUserProfile({ api: `client/${Clientid}`, data });
     }
   };
@@ -590,7 +588,7 @@ export default function ManageClientAccount({ admin }) {
             value={client_unique_id}
           />
         </td>
-        <td>{handleIdAccount(client_account)}</td>
+        <td>{client_account}</td>
         <td>{handleNameAccount(client_name)}</td>
         <td>
           <ShowLockIcon
