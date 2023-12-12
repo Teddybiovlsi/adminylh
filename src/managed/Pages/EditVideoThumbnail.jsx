@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Button,
   Card,
@@ -8,12 +9,11 @@ import {
   Row,
   Stack,
 } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import BtnBootstrap from "../../components/BtnBootStrap";
-import { put } from "../axios";
 import ToastAlert from "../../components/ToastAlert";
-import { toast } from "react-toastify";
+import { put } from "../axios";
 
 export default function EditVideoThumbnail() {
   const location = useLocation();
