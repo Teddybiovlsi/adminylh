@@ -3,7 +3,7 @@ import { Form, FloatingLabel } from "react-bootstrap";
 
 export default function FormIdentity({
   GroupClassName = "mb-2",
-  LabelClassName = "fs-3",
+  LabelClassName = "fs-5",
   FeedBackClassName = "fs-5",
   ControlName = "",
   ChangeEvent,
@@ -12,12 +12,12 @@ export default function FormIdentity({
   maxLens = 10,
   ValidCheck,
   InValidCheck,
-  FormControlPlaceHolder = "A123456789",
-  LabelMessage = "請輸入身分證字號:",
-  CorrectMessage = "格式正確",
+  FormControlPlaceHolder = "ya12345",
+  LabelMessage = "請輸入病歷號:",
+  CorrectMessage = "病歷號格式正確",
   ErrorMessage = "",
   componentID = "IdentityInput",
-  componentLableText = "User Identity number",
+  componentLableText = "請輸入用戶病歷號",
 }) {
   return (
     <Form.Group className={GroupClassName} controlId={componentID}>

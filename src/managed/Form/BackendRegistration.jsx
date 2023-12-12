@@ -81,13 +81,16 @@ export default function BackendRegistration() {
   };
 
   const schema = yup.object({
-    account: yup.string().required("帳號欄位不得為空"),
+    account: yup
+      .string()
+      .required("帳號欄位不得為空")
+      .matches(/^[a-zA-Z][0-9]{5}$/, "帳號必須是開頭一個英文字母加上五個數字"),
     email: yup.string().email("請輸入合法的信箱").required("信箱欄位不得為空"),
     password: yup
       .string()
       .required("密碼欄位不得為空")
-      .test("是否為中等強度密碼", "密碼強度不足，請試著多加特殊符號", () => {
-        return pwdScore > 0;
+      .test("是否為高等強度密碼", "密碼強度不足，請試著加上特殊符號", () => {
+        return pwdScore > 2;
       }),
     confirmPassword: yup
       .string()
@@ -122,7 +125,9 @@ export default function BackendRegistration() {
           }) => (
             <Form noValidate onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="formNewManageMail">
-                <Form.Label>請輸入電子郵件(email)：</Form.Label>
+                <Form.Label style={{ cursor: "pointer" }}>
+                  請輸入電子郵件(email)：
+                </Form.Label>
                 <Form.Control
                   autoComplete="nope"
                   type="email"
@@ -138,7 +143,10 @@ export default function BackendRegistration() {
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-2" controlId="formNewManageAccount">
-                <Form.Label>請輸入帳號：</Form.Label>
+                <Form.Label style={{ cursor: "pointer" }}>
+                  請輸入員工編號
+                  <b className="text-primary">(此為往後後台帳號)</b>：
+                </Form.Label>
                 <Form.Control
                   autoComplete="nope"
                   name="account"

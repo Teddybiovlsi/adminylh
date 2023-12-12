@@ -168,12 +168,17 @@ export default function FrontEndRegistration() {
     name: yup.string().required("請輸入姓名"),
     user_account: yup
       .string()
-      .required("請輸入身分證字號")
-      .matches(/^[A-Za-z][A-D0-9]\d{8}$/, {
-        message: "身分證字號格式錯誤，請重新嘗試",
+      .required("請輸入病歷號")
+      .matches(/^[A-Za-z][A-Za-z0-9]\d{5}$/, {
+        message: "病歷號格式錯誤，請重新嘗試",
         excludeEmptyString: true,
       }),
-    user_password: yup.string().required("請輸入密碼"),
+    user_password: yup
+      .string()
+      .required("密碼欄位不得為空")
+      .test("是否為高等強度密碼", "密碼強度不足，請試著加上特殊符號", () => {
+        return pwdScore > 2;
+      }),
   });
   const [userInfo, setUserInfo] = useState({
     name: "",
@@ -351,9 +356,13 @@ export default function FrontEndRegistration() {
                     ValidCheck={touched.name && !errors.name}
                     InValidCheck={touched.name && errors.name}
                     ErrorMessage={errors.name}
-                    LabelMessage="請輸入您的姓名(必填)"
+                    LabelMessage={
+                      <>
+                        請輸入用戶的姓名<b className="text-danger">(必填)</b>
+                      </>
+                    }
                     componentID="name"
-                    componentLableText="User Name"
+                    componentLableText="請輸入用戶名稱"
                   />
 
                   <FormEmail
@@ -363,7 +372,11 @@ export default function FrontEndRegistration() {
                     ValidCheck={touched.email && !errors.email}
                     InValidCheck={touched.email && errors.email}
                     ErrorMessage={errors.email}
-                    LabelMessage="請輸入您的信箱(必填)"
+                    LabelMessage={
+                      <>
+                        請輸入用戶的信箱<b className="text-danger">(必填)</b>
+                      </>
+                    }
                   />
                   <FormIdentity
                     ControlName="user_account"
@@ -374,12 +387,17 @@ export default function FrontEndRegistration() {
                         ? values.user_account
                         : userInfo.user_account
                     }
-                    maxLens={10}
+                    maxLens={7}
                     IdentityValue={values.user_account}
                     ValidCheck={touched.user_account && !errors.user_account}
                     InValidCheck={touched.user_account && errors.user_account}
                     ErrorMessage={errors.user_account}
-                    LabelMessage="請輸入您的身分證字號(必填)"
+                    LabelMessage={
+                      <>
+                        請輸入病歷號
+                        <b className="text-primary">(此為往後用戶登入帳號)</b>
+                      </>
+                    }
                     componentID="user_account"
                   />
 
