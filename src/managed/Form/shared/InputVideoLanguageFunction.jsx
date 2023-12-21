@@ -8,7 +8,7 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import BtnBootstrap from "../../../components/BtnBootStrap";
+import BtnBootstrap from "../../../components/BtnBootstrap";
 import styles from "../../../styles/Form/FormStyles.module.scss";
 
 function InputVideoLanguageFunction({

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Col, Container, Row, Stack } from "react-bootstrap";
 import { update } from "lodash/fp";
 import BasicDynamicQuestionAndAnswer from "./BasicDynamicQuestionAndAnswer";
-import BtnBootstrap from "../../../components/BtnBootStrap";
+import BtnBootstrap from "../../../components/BtnBootstrap";
 import ToastAlert from "../../../components/ToastAlert";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

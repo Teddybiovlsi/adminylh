@@ -8,7 +8,7 @@ import {
   Row,
   Stack,
 } from "react-bootstrap";
-import BtnBootstrap from "../../../components/BtnBootStrap";
+import BtnBootstrap from "../../../components/BtnBootstrap";
 
 export default function InputVideoScreenShot({
   // 輸入影片問題的相關變數

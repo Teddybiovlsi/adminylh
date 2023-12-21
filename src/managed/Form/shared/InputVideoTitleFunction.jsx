@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Form, Row, Col } from "react-bootstrap";
-import BtnBootstrap from "../../../components/BtnBootStrap";
+import BtnBootstrap from "../../../components/BtnBootstrap";
 
 export default function InputVideoTitleFunction({
   // 輸入影片文件的相關變數
