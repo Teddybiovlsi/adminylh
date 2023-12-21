@@ -160,7 +160,7 @@ export default function BasicDynamicQuestionAndAnswer({
                     accept="image/*"
                   />
                 </Form.Group>
-                {info.answerFile[answerContentIndex] !== null && (
+                {info.answerFile[answerContentIndex] && (
                   <Container>
                     <Row>
                       <Col
