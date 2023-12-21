@@ -10,7 +10,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import Card from "react-bootstrap/Card";
 import PageTitle from "../../components/Title";
-import BtnBootstrap from "../../components/BtnBootStrap";
+import BtnBootstrap from "../../components/BtnBootstrap.jsx";
 import useBoolean from "./shared/useBoolean";
 import FormEmail from "./shared/FormEmail";
 import FormPwd from "./shared/FormPwd";
