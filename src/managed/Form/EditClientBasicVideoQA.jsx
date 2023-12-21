@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import PageTitle from "../../components/Title";
 import { update } from "lodash/fp";
-import BtnBootstrap from "../../components/BtnBootStrap";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingComponent from "../../components/LoadingComponent";
 import { get, put } from "../axios";
