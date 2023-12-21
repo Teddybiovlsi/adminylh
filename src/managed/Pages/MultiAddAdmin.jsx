@@ -1,5 +1,5 @@
 import * as XLSX from "xlsx";
-import BtnBootstrap from "../../components/BtnBootStrap";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import { Form, Modal, Table } from "react-bootstrap";
 import { post } from "../axios";
 import React, { useEffect, useRef, useState } from "react";

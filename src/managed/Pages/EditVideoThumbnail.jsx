@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import { toast } from "react-toastify";
 
-import BtnBootstrap from "../../components/BtnBootStrap";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import { put } from "../axios";
 

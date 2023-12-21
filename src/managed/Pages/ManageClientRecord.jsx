@@ -15,7 +15,7 @@ import PageTitleHeading from "../../components/PageTitleHeading";
 import { get } from "../axios";
 import convertType from "../../functions/typeConverter";
 import limitPage from "../JsonFile/FilterPageContentSize.json";
-import BtnBootstrap from "../../components/BtnBootStrap";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import { useNavigate } from "react-router-dom";
 
 export default function ManageClientRecord() {

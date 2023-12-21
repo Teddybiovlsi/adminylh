@@ -17,7 +17,7 @@ import LoadingComponent from "../../components/LoadingComponent";
 import styles from "../../styles/pages/VideoRecordPage.module.scss";
 import healthCareType from "../JsonFile/SelectClassTypeList.json";
 import healthCareLanguage from "../JsonFile/SelectLanguageList.json";
-import BtnBootStrap from "../../components/BtnBootStrap";
+import BtnBootStrap from "../../components/BtnBootstrap";
 
 ChartJS.register(
   CategoryScale,

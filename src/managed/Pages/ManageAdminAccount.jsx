@@ -15,7 +15,7 @@ import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
 import ShowInfoIcon from "../../components/ShowInfoIcon";
 import { del, get, post } from "../axios";
-import BtnBootstrap from "../../components/BtnBootStrap";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import useModal from "../../hooks/useModal";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";

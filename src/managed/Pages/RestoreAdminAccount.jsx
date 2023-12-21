@@ -10,7 +10,7 @@ import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import useModal from "../../hooks/useModal";
-import BtnBootstrap from "../../components/BtnBootStrap";
+import BtnBootstrap from "../../components/BtnBootstrap";
 
 export default function RestoreAdminAccount({ admin }) {
   const { token } = admin;

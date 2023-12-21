@@ -4,7 +4,7 @@ import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import { post } from "../axios";
-import BtnBootstrap from "../../components/BtnBootStrap";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import styles from "../../styles/pages/HomePage.module.scss";
 import useModal from "../../hooks/useModal";
