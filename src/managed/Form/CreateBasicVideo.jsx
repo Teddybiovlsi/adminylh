@@ -56,14 +56,10 @@ export default function CreateBasicVideo() {
 
   // 傳送影片資料到後端
   const sendVideoData = async (data) => {
-    const videoFormID = toast.loading("上傳中...");
     setDisabledSubmit(true);
     try {
       const response = await post("video/basicQuiz", data);
-      toast.update(videoFormID, {
-        render: "成功創建影片，3秒後將回到首頁",
-        type: "success",
-        isLoading: false,
+      toast.success("成功創建影片，3秒後將回到首頁", {
         autoClose: 3000,
       });
       setTimeout(() => {
@@ -73,18 +69,12 @@ export default function CreateBasicVideo() {
     } catch (error) {
       console.log(error.response);
       if (error.code === "ECONNABORTED") {
-        toast.update(videoFormID, {
-          render: "上傳失敗，請稍後再試",
-          type: "error",
-          isLoading: false,
+        toast.error("上傳失敗，請稍後再試", {
           autoClose: 3000,
         });
         setDisabledSubmit(false);
       } else {
-        toast.update(videoFormID, {
-          render: "上傳失敗，請稍後再試",
-          type: "error",
-          isLoading: false,
+        toast.error("上傳失敗，請稍後再試", {
           autoClose: 3000,
         });
         setDisabledSubmit(false);
