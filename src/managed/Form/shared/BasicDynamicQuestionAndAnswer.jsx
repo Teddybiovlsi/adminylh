@@ -173,19 +173,19 @@ export default function BasicDynamicQuestionAndAnswer({
                           src={
                             info.answerFile &&
                             info.answerFile[answerContentIndex] &&
-                            (info.answerFile[answerContentIndex] instanceof
-                              Blob ||
-                              info.answerFile[answerContentIndex] instanceof
-                                File)
-                              ? typeof info.answerFile[answerContentIndex] ===
-                                  "string" &&
-                                info.answerFile[answerContentIndex].startsWith(
-                                  "http"
+                            typeof info.answerFile[answerContentIndex] ===
+                              "string" &&
+                            info.answerFile[answerContentIndex].startsWith(
+                              "http"
+                            )
+                              ? info.answerFile[answerContentIndex]
+                              : info.answerFile[answerContentIndex] instanceof
+                                  Blob ||
+                                info.answerFile[answerContentIndex] instanceof
+                                  File
+                              ? URL.createObjectURL(
+                                  info.answerFile[answerContentIndex]
                                 )
-                                ? info.answerFile[answerContentIndex]
-                                : URL.createObjectURL(
-                                    info.answerFile[answerContentIndex]
-                                  )
                               : null
                           }
                           alt={`optionImage${answerContentIndex}`}
