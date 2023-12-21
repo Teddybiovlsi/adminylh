@@ -32,7 +32,7 @@ export const post = (path, data) => axios().post(`api/v1/POST/${path}`, data);
  */
 export const put = (path, data) =>
   axios(
-    "http://140.125.35.8:8079/ntuh_laravel_API/public/",
+    "https://ilchp01.yuntech.edu.tw/ntuh_api/public/index.php/",
     "application/x-www-form-urlencoded"
   ).put(`api/v1/PUT/${path}`, data);
 // make axios delete request api from the baseURL and /api/v1/DELETE/ + path
