@@ -171,15 +171,18 @@ export default function BasicDynamicQuestionAndAnswer({
                       >
                         <Image
                           src={
-                            typeof info.answerFile[answerContentIndex] ===
-                              "string" &&
-                            info.answerFile[answerContentIndex].startsWith(
-                              "http"
-                            )
-                              ? info.answerFile[answerContentIndex]
-                              : URL.createObjectURL(
-                                  info.answerFile[answerContentIndex]
+                            info.answerFile &&
+                            info.answerFile[answerContentIndex]
+                              ? typeof info.answerFile[answerContentIndex] ===
+                                  "string" &&
+                                info.answerFile[answerContentIndex].startsWith(
+                                  "http"
                                 )
+                                ? info.answerFile[answerContentIndex]
+                                : URL.createObjectURL(
+                                    info.answerFile[answerContentIndex]
+                                  )
+                              : null
                           }
                           alt={`optionImage${answerContentIndex}`}
                           rounded
