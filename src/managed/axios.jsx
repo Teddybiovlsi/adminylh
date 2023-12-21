@@ -3,8 +3,12 @@ import _axios from "axios";
 const axios = (baseURL, passType = "multipart/form-data") => {
   // 建立自訂義的axios
   const instance = _axios.create({
-    baseURL: baseURL || "http://140.125.35.8:8079/ntuh_laravel_API/public/", //JSON-Server端口位置
-    headers: { "Content-Type": passType, charset: "utf-8" },
+    baseURL:
+      baseURL || "https://ilchp01.yuntech.edu.tw/ntuh_api/public/index.php/", //JSON-Server端口位置
+    headers: {
+      "Content-Type": passType,
+      charset: "utf-8",
+    },
     timeout: 5000,
   });
 
