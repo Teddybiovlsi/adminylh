@@ -172,7 +172,11 @@ export default function BasicDynamicQuestionAndAnswer({
                         <Image
                           src={
                             info.answerFile &&
-                            info.answerFile[answerContentIndex]
+                            info.answerFile[answerContentIndex] &&
+                            (info.answerFile[answerContentIndex] instanceof
+                              Blob ||
+                              info.answerFile[answerContentIndex] instanceof
+                                File)
                               ? typeof info.answerFile[answerContentIndex] ===
                                   "string" &&
                                 info.answerFile[answerContentIndex].startsWith(
@@ -189,9 +193,14 @@ export default function BasicDynamicQuestionAndAnswer({
                           style={{ width: "100px", cursor: "pointer" }}
                           onClick={() => {
                             setImagePreview(
-                              URL.createObjectURL(
-                                info.answerFile[answerContentIndex]
-                              )
+                              info.answerFile[answerContentIndex] instanceof
+                                Blob ||
+                                info.answerFile[answerContentIndex] instanceof
+                                  File
+                                ? URL.createObjectURL(
+                                    info.answerFile[answerContentIndex]
+                                  )
+                                : null
                             );
                           }}
                         />
