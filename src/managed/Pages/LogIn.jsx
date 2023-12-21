@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Container, Form, Col, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { post } from "../axios";
-import BtnBootstrap from "../../components/BtnBootStrap";
+import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 import { setAdminSession } from "../js/manageAction";
