@@ -105,18 +105,13 @@ export default function VideoRecord({ admin }) {
         datasets: [
           {
             type: "bar",
-            label: "訪客影片觀看次數",
+            label: "影片總觀看次數",
             data: recordData
-              ? recordData.map((item) => item.guestWatchTimes)
+              ? recordData.map(
+                  (item) => item.caregiverWatchTimes + item.guestWatchTimes
+                )
               : [],
             backgroundColor: "rgba(53, 162, 235, 0.5)",
-          },
-          {
-            label: "照顧者影片觀看次數",
-            data: recordData
-              ? recordData.map((item) => item.caregiverWatchTimes)
-              : [],
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
           },
         ],
       });
@@ -151,14 +146,9 @@ export default function VideoRecord({ admin }) {
       labels: filterData.map((item) => item.name),
       datasets: [
         {
-          label: "訪客影片觀看次數",
+          label: "影片總觀看次數",
           data: filterData.map((item) => item.guestWatchTimes),
           backgroundColor: "rgba(53, 162, 235, 0.5)",
-        },
-        {
-          label: "照顧者影片觀看次數",
-          data: filterData.map((item) => item.caregiverWatchTimes),
-          backgroundColor: "rgba(255, 99, 132, 0.5)",
         },
       ],
     });
@@ -181,8 +171,7 @@ export default function VideoRecord({ admin }) {
         <tr>
           <th>名稱</th>
           <th>語言</th>
-          <th>訪客觀看次數</th>
-          <th>用戶觀看次數</th>
+          <th>影片總觀看次數</th>
         </tr>
       </thead>
     );
@@ -207,8 +196,7 @@ export default function VideoRecord({ admin }) {
           {item.name.length > 5 ? item.name.slice(0, 5) + "..." : item.name}
         </td>
         <td>{item.language}</td>
-        <td>{item.guestWatchTimes}</td>
-        <td>{item.caregiverWatchTimes}</td>
+        <td>{item.caregiverWatchTimes + item.guestWatchTimes}</td>
       </tr>
     );
   }
