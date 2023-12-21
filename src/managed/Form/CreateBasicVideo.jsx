@@ -71,6 +71,7 @@ export default function CreateBasicVideo() {
         navigate("/", { replace: true });
       }, 3000);
     } catch (error) {
+      console.log(error.response);
       if (error.code === "ECONNABORTED") {
         toast.update(videoFormID, {
           render: "上傳失敗，請稍後再試",
