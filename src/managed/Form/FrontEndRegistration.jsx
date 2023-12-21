@@ -10,7 +10,6 @@ import * as formik from "formik";
 import * as yup from "yup";
 import Card from "react-bootstrap/Card";
 import PageTitle from "../../components/Title";
-import BtnBootstrap from "../../components/BtnBootStrap";
 import useBoolean from "./shared/useBoolean";
 import FormEmail from "./shared/FormEmail";
 import FormPwd from "./shared/FormPwd";
@@ -26,6 +25,7 @@ import FormIdentity from "./shared/FormIdentity";
 import { Stepper, Step } from "react-form-stepper";
 import styles from "../../styles/Form/ClientRegistration.module.scss";
 import useModal from "../../hooks/useModal";
+import BtnBootstrap from "../../components/BtnBootstrap";
 
 export default function FrontEndRegistration() {
   // check if useLocation.state is null
