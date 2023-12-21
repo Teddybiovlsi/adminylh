@@ -204,6 +204,7 @@ export default function CreateBasicVideo() {
     }
 
     // console.log(formData.getAll("info[]"));
+    console.log(formData.getAll("videoFile"));
     console.log(formData.getAll("answerFile[]"));
     sendVideoData(formData);
   };
