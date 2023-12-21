@@ -15,8 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { Container, Modal, ModalFooter, Stack } from "react-bootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import "react-toastify/dist/ReactToastify.css";
-import BtnBootstrap from "../../components/BtnBootStrap";
 import InputVideoScreenShot from "./shared/InputVideoScreenShot";
+import BtnBootstrap from "../../components/BtnBootstrap";
 
 export default function CreateVideo({ VideoMode = false }) {
   const navigate = useNavigate();

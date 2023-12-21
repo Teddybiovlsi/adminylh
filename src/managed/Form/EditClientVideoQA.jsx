@@ -4,7 +4,6 @@ import PageTitle from "../../components/Title";
 import { CardTitleFunction } from "./shared/CardTitleFunction";
 import { update } from "lodash/fp";
 import DynamicQuestionandAnswer from "./shared/DynamicQuestionAndAnswer";
-import BtnBootstrap from "../../components/BtnBootStrap";
 import styles from "../../styles/Form/FormStyles.module.scss";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import LoadingComponent from "../../components/LoadingComponent";
@@ -13,6 +12,7 @@ import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import { Step, Stepper } from "react-form-stepper";
+import BtnBootstrap from "../../components/BtnBootstrap";
 
 export default function EditClientVideoQA() {
   const location = useLocation();
