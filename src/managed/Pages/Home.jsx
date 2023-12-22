@@ -458,7 +458,7 @@ export default function Home({ admin }) {
           類別
         </th>
         <th className={styles.container_division_table_rowTable_headingType}>
-          練習/測驗
+          資訊類型
         </th>
         <th
           className={
