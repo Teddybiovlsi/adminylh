@@ -15,6 +15,7 @@ import { Step, Stepper } from "react-form-stepper";
 import InputVideoBasicQAFunction from "./shared/InputVideoBasicQAFunction";
 import InputFormBasicPreviewFunction from "./shared/InputFormBasicPreviewFunction";
 import BtnBootstrap from "../../components/BtnBootstrap";
+import InputVideoScreenShot from "./shared/InputVideoScreenShot";
 
 // 基礎測驗的表單
 export default function CreateBasicVideo() {
@@ -44,6 +45,9 @@ export default function CreateBasicVideo() {
     videoSource: "",
     videoTitleName: "",
     videoType: "",
+    imageFile: "",
+    imageFileName: "",
+    imageSource: "",
   });
 
   const [disabledSubmit, setDisabledSubmit] = useState(false);
@@ -104,21 +108,53 @@ export default function CreateBasicVideo() {
     }
   };
 
+  // 上傳圖片事件
+  const handleImageFileIsUpload = (e) => {
+    if (e.target.files.length !== 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        let base64 = reader.result;
+        // Check if the base64 string contains the "data:image/png;base64," prefix
+        if (!base64.startsWith("data:image/png;base64,")) {
+          // If not, replace the existing prefix with "data:image/png;base64,"
+          base64 = "data:image/png;base64," + base64.split(",")[1];
+        }
+        setFormType({
+          ...formType,
+          imageFile: file,
+          imageFileName: file.name,
+          imageSource: base64,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  // 儲存縮圖事件
+  const handleThumbnail = (thumbnail) => {
+    setFormType({
+      ...formType,
+      imageFileName: `${formType.videoFileName}縮圖`,
+      imageSource: thumbnail,
+    });
+  };
+
+  const handleImageFileIsRemove = () => {
+    setFormType({
+      ...formType,
+      imageFile: "",
+      imageFileName: "",
+      imageSource: "",
+    });
+  };
+
   // 上一步
   const prevStep = (e) => {
-    if (formType.formStep === 5) {
-      setFormType((prevState) => ({
-        ...prevState,
-        completedSteps: prevState.completedSteps.map((step, index) =>
-          index === prevState.formStep ? false : step
-        ),
-        isSkipped: true,
-        checkFormQuestion: false,
-        formStep: prevState.formStep - 1,
-      }));
-    } else {
-      setFormType({ ...formType, [e.target.name]: formType.formStep - 1 });
-    }
+    setFormType((prevState) => ({
+      ...prevState,
+      formStep: prevState.formStep - 1,
+    }));
   };
 
   // 下一步
@@ -132,7 +168,7 @@ export default function CreateBasicVideo() {
         formStep: prevState.formStep + 1,
       }));
     } else {
-      if (formType.formStep === 3) {
+      if (formType.formStep === 4) {
         // console.log(formType.formStep);
         setFormType((prevState) => ({
           ...prevState,
@@ -144,7 +180,7 @@ export default function CreateBasicVideo() {
         return;
       }
 
-      if (formType.formStep === 4) {
+      if (formType.formStep === 5) {
         setFormType((prevState) => ({
           ...prevState,
           isSkipped: false,
@@ -186,6 +222,7 @@ export default function CreateBasicVideo() {
     formData.append("videoLanguage", videoLanguage);
     formData.append("videoType", videoType);
     formData.append("videoDuration", videoDuration);
+    formData.append("imageSrc", formType.imageSource);
     formData.append("videoIsBasic", true);
     formData.append("isSkip", isSkipped);
     if (!isSkipped) {
@@ -204,8 +241,6 @@ export default function CreateBasicVideo() {
     }
 
     // console.log(formData.getAll("info[]"));
-    console.log(formData.getAll("videoFile"));
-    console.log(formData.getAll("answerFile[]"));
     sendVideoData(formData);
   };
 
@@ -221,7 +256,19 @@ export default function CreateBasicVideo() {
             GoNextEvent={nextStep}
           />
         );
+
       case 1:
+        <InputVideoScreenShot
+          isBasic={true}
+          VideoSrc={formType.videoSource}
+          ThumbnailSrc={formType.imageSource}
+          ThumbnailChangeEvent={handleThumbnail}
+          ChangeEvent={handleImageFileIsUpload}
+          ResetEvent={handleImageFileIsRemove}
+          GoNextEvent={nextStep}
+          GoPrevEvent={prevStep}
+        />;
+      case 2:
         return (
           <InputVideoTitleFunction
             ChangeEvent={(e) => {
@@ -237,7 +284,7 @@ export default function CreateBasicVideo() {
             GoNextEvent={nextStep}
           />
         );
-      case 2:
+      case 3:
         return (
           <InputVideoLanguageFunction
             ChangeEvent={(e) => {
@@ -253,7 +300,7 @@ export default function CreateBasicVideo() {
             GoNextEvent={nextStep}
           />
         );
-      case 3:
+      case 4:
         return (
           <InputVideoTypeFunction
             ChangeEvent={(e) => {
@@ -267,7 +314,7 @@ export default function CreateBasicVideo() {
             GoNextEvent={nextStep}
           />
         );
-      case 4:
+      case 5:
         return (
           <InputVideoBasicQAFunction
             formType={formType}
@@ -277,7 +324,7 @@ export default function CreateBasicVideo() {
             GoNextEvent={nextStep}
           />
         );
-      case 5:
+      case 6:
         return (
           <InputFormBasicPreviewFunction
             isSkip={formType.isSkipped}
