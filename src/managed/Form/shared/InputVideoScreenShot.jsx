@@ -13,6 +13,7 @@ import BtnBootstrap from "../../../components/BtnBootstrap";
 export default function InputVideoScreenShot({
   // 輸入影片問題的相關變數
   FormMode = false,
+  isBasic = false,
   VideoSrc = "",
   ThumbnailSrc = "",
   ThumbnailChangeEvent = null,
@@ -58,9 +59,13 @@ export default function InputVideoScreenShot({
           <Stack gap={2}>
             <div>
               <h4>
-                <strong>{`請選擇或匯入衛教${
-                  FormMode ? "測驗用" : "練習用"
-                }影片縮圖`}</strong>
+                {isBasic ? (
+                  <strong>請選擇或匯入衛教基礎練習影片縮圖</strong>
+                ) : (
+                  <strong>{`請選擇或匯入${
+                    FormMode === 0 ? "測驗用" : "練習用"
+                  }影片縮圖`}</strong>
+                )}
               </h4>
               <p className="m-0 text-primary">
                 可不選擇，若不選擇則無對應縮圖顯示
