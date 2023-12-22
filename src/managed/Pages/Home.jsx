@@ -25,6 +25,7 @@ import ToastAlert from "../../components/ToastAlert";
 import LoadingComponent from "../../components/LoadingComponent";
 import ErrorMessageComponent from "../../components/ErrorMessageComponent";
 import VideoNavbar from "../../components/VideoNavBar";
+import { MdRestartAlt } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import { GoCheck } from "react-icons/go";
 
@@ -105,6 +106,30 @@ export default function Home({ admin }) {
     useModal(false);
 
   const [showDeleteVideoModal, setShowDeleteVideoModal] = useState(false);
+
+  const handleEditVideoSource = () => {
+    if (selectVideoindex.length === 0) {
+      showErrorAndDisableButton(
+        "請勾選影片，再點選修改原始影片按鍵",
+        true,
+        false
+      );
+    } else if (selectVideoindex.length > 1) {
+      showErrorAndDisableButton("一次僅限勾選一個影片進行修改", true, false);
+    } else {
+      const [video] = videoData.filter((item) =>
+        selectVideoindex.includes(item.id)
+      );
+      navigate("/Admin/Edit/VideoSource", {
+        state: {
+          videoUUID: video.video_id,
+          videoUrl: video.video_path,
+          videoType: video.video_type,
+          videoName: video.video_name,
+        },
+      });
+    }
+  };
 
   const handleEditVideo = () => {
     if (selectVideoindex.length === 0) {
@@ -565,6 +590,7 @@ export default function Home({ admin }) {
       <VideoNavbar
         isAdmin={powerDiscription === "Admin" ? true : false}
         handleShowAddVideoModal={handleShowAddVideoModal}
+        handleEditVideoSource={handleEditVideoSource}
         handleEditVideo={handleEditVideo}
         handleShowDeleteVideoModal={handleShowDeleteVideoModal}
         disabledEditBtn={disabledEditBtn}
