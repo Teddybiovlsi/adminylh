@@ -258,16 +258,18 @@ export default function CreateBasicVideo() {
         );
 
       case 1:
-        <InputVideoScreenShot
-          isBasic={true}
-          VideoSrc={formType.videoSource}
-          ThumbnailSrc={formType.imageSource}
-          ThumbnailChangeEvent={handleThumbnail}
-          ChangeEvent={handleImageFileIsUpload}
-          ResetEvent={handleImageFileIsRemove}
-          GoNextEvent={nextStep}
-          GoPrevEvent={prevStep}
-        />;
+        return (
+          <InputVideoScreenShot
+            isBasic={true}
+            VideoSrc={formType.videoSource}
+            ThumbnailSrc={formType.imageSource}
+            ThumbnailChangeEvent={handleThumbnail}
+            ChangeEvent={handleImageFileIsUpload}
+            ResetEvent={handleImageFileIsRemove}
+            GoNextEvent={nextStep}
+            GoPrevEvent={prevStep}
+          />
+        );
       case 2:
         return (
           <InputVideoTitleFunction
