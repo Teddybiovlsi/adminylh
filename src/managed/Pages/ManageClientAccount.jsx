@@ -594,7 +594,7 @@ export default function ManageClientAccount({ admin }) {
           <ShowLockIcon
             placement="bottom"
             islock={client_is_lock}
-            tooltipText={client_is_lock ? "開放使用中" : "鎖定中"}
+            tooltipText={client_is_lock ? "鎖定中" : "開放使用中"}
           />
           <ShowVideoIcon
             placement="bottom"
