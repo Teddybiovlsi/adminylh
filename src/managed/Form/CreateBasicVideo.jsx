@@ -370,32 +370,39 @@ export default function CreateBasicVideo() {
           completed={formType.completedSteps[0]}
         />
         <Step
-          label="填寫影片標題"
+          label="選擇縮圖"
           onClick={() => {
             setFormType({ ...formType, formStep: 1 });
           }}
           completed={formType.completedSteps[1]}
         />
         <Step
-          label="選擇影片語言"
+          label="填寫影片標題"
           onClick={() => {
             setFormType({ ...formType, formStep: 2 });
           }}
           completed={formType.completedSteps[2]}
         />
         <Step
-          label="選擇影片類別"
+          label="選擇影片語言"
           onClick={() => {
             setFormType({ ...formType, formStep: 3 });
           }}
           completed={formType.completedSteps[3]}
         />
         <Step
-          label="填寫影片問題"
+          label="選擇影片類別"
           onClick={() => {
             setFormType({ ...formType, formStep: 4 });
           }}
           completed={formType.completedSteps[4]}
+        />
+        <Step
+          label="填寫影片問題"
+          onClick={() => {
+            setFormType({ ...formType, formStep: 5 });
+          }}
+          completed={formType.completedSteps[5]}
         />
         <Step label="表單預覽" disabled={true} />
       </Stepper>
