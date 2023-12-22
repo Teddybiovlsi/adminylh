@@ -7,6 +7,7 @@ import BackendRegistration from "./managed/Form/BackendRegistration";
 import CreateBasicVideo from "./managed/Form/CreateBasicVideo";
 import DetailBasicRecord from "./managed/Pages/ClientRecordDetail.jsx/DetailBasicRecord";
 import EditClientBasicVideoQA from "./managed/Form/EditClientBasicVideoQA";
+import EditVideoSource from "./managed/Pages/EditVideoSource";
 import EditClientVideoID from "./managed/Pages/EditClientVideoID";
 import EditClientVideoQA from "./managed/Form/EditClientVideoQA";
 import EditVideoThumbnail from "./managed/Pages/EditVideoThumbnail";
@@ -54,6 +55,11 @@ function App() {
             <Route path="/Home" element={<Home admin={admin} />} />
             <Route path="/Admin/Register" element={<BackendRegistration />} />
             <Route path="/Admin/Edit/Video" element={<EditClientVideoQA />} />
+            <Route
+              path="/Admin/Edit/VideoSource"
+              element={<EditVideoSource />}
+            />
+
             <Route
               path="/Admin/Edit/Tumbnail"
               element={<EditVideoThumbnail />}

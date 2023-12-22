@@ -4,6 +4,7 @@ import ToolTipBtn from "./ToolTipBtn";
 const VideoNavbar = ({
   isAdmin = false,
   handleShowAddVideoModal,
+  handleEditVideoSource,
   handleEditVideo,
   handleShowDeleteVideoModal,
   disabledEditBtn,
@@ -28,6 +29,21 @@ const VideoNavbar = ({
             btnVariant="light"
             tooltipText="新增影片"
           />
+          <ToolTipBtn
+            placement="bottom"
+            btnAriaLabel="修改原始影片"
+            btnDisabled={disabledEditBtn ? true : false}
+            btnOnclickEventName={handleEditVideoSource}
+            btnText={
+              <i
+                className="bi bi-arrow-clockwise"
+                style={{ fontSize: 1.2 + "rem" }}
+              ></i>
+            }
+            btnVariant="light"
+            tooltipText="修改原始影片"
+          />
+
           <ToolTipBtn
             placement="bottom"
             btnAriaLabel="修改影片"
