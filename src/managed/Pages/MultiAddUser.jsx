@@ -156,7 +156,7 @@ export default function MultiAddUser() {
             <thead>
               <tr>
                 <th>姓名</th>
-                <th>身分證字號</th>
+                <th>病歷號</th>
                 <th>電子信箱</th>
               </tr>
             </thead>
