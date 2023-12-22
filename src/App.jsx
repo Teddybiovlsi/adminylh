@@ -1,37 +1,33 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import {
-  GoogleReCaptchaProvider,
-  GoogleReCaptcha,
-} from "react-google-recaptcha-v3";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import AuthProtected from "./AuthProtected";
 import BackendRegistration from "./managed/Form/BackendRegistration";
+import CreateBasicVideo from "./managed/Form/CreateBasicVideo";
+import DetailBasicRecord from "./managed/Pages/ClientRecordDetail.jsx/DetailBasicRecord";
+import EditClientBasicVideoQA from "./managed/Form/EditClientBasicVideoQA";
 import EditClientVideoID from "./managed/Pages/EditClientVideoID";
 import EditClientVideoQA from "./managed/Form/EditClientVideoQA";
+import EditVideoThumbnail from "./managed/Pages/EditVideoThumbnail";
 import Exam from "./managed/Pages/Exam";
 import FrontEndRegistration from "./managed/Form/FrontEndRegistration";
 import Header from "./managed/Header";
 import Home from "./managed/Pages/Home";
 import LogIn from "./managed/Pages/LogIn";
+import ManageAdminAccount from "./managed/Pages/ManageAdminAccount";
 import ManageClientAccount from "./managed/Pages/ManageClientAccount";
 import ManageClientRecord from "./managed/Pages/ManageClientRecord";
+import MultiAddAdmin from "./managed/Pages/MultiAddAdmin";
 import MultiAddUser from "./managed/Pages/MultiAddUser";
 import Pratice from "./managed/Pages/Pratice";
 import RestoreAccount from "./managed/Pages/RestoreAccount";
+import RestoreAdminAccount from "./managed/Pages/RestoreAdminAccount";
 import VideoPlayer from "./managed/Pages/VideoPlayer";
+import VideoRecord from "./managed/Pages/VideoRecord";
 import "./styles/app.css";
 import styles from "./styles/pages/NotFoundPage.module.scss";
-import ManageAdminAccount from "./managed/Pages/ManageAdminAccount";
-import MultiAddAdmin from "./managed/Pages/MultiAddAdmin";
-import RestoreAdminAccount from "./managed/Pages/RestoreAdminAccount";
-import CreateBasicVideo from "./managed/Form/CreateBasicVideo";
-import EditClientBasicVideoQA from "./managed/Form/EditClientBasicVideoQA";
 import { getAdminSession } from "./managed/js/manageAction";
-import VideoRecord from "./managed/Pages/VideoRecord";
-import DetailBasicRecord from "./managed/Pages/ClientRecordDetail.jsx/DetailBasicRecord";
-import EditVideoThumbnail from "./managed/Pages/EditVideoThumbnail";
 
 function App() {
   const location = useLocation();
