@@ -428,7 +428,6 @@ export default function CreateBasicVideo() {
                 setFormType({
                   ...formType,
                   isSkipped: true,
-                  activeStep: 6,
                   completedSteps: formType.completedSteps.map((step, index) =>
                     index === 5 ? false : step
                   ),
@@ -447,7 +446,6 @@ export default function CreateBasicVideo() {
                   completedSteps: formType.completedSteps.map((step, index) =>
                     index === 4 ? false : step
                   ),
-                  activeStep: 5,
                   formStep: formType.formStep + 1,
                 });
                 handleCloseConfirmSkipQuestion();
