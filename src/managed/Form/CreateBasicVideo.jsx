@@ -429,7 +429,7 @@ export default function CreateBasicVideo() {
                   ...formType,
                   isSkipped: true,
                   completedSteps: formType.completedSteps.map((step, index) =>
-                    index === 5 ? false : step
+                    index === 5 ? true : step
                   ),
                   formStep: 6,
                 });
