@@ -429,9 +429,9 @@ export default function CreateBasicVideo() {
                   ...formType,
                   isSkipped: true,
                   completedSteps: formType.completedSteps.map((step, index) =>
-                    index === 4 ? true : step
+                    index === 5 ? true : step
                   ),
-                  formStep: 5,
+                  formStep: 6,
                 });
                 handleCloseConfirmSkipQuestion();
               }}
