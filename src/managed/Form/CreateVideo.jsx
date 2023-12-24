@@ -230,7 +230,6 @@ export default function CreateVideo({ VideoMode = false }) {
       // store the videoInfo in formData  as a array
       formData.append('info[]', JSON.stringify(element));
     });
-    console.log(formData.getAll('imageSrc'));
     setLoadingBtn(true);
     sendVideoData(formData);
   };
