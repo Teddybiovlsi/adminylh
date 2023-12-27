@@ -147,7 +147,9 @@ export default function VideoRecord({ admin }) {
       datasets: [
         {
           label: "影片總觀看次數",
-          data: filterData.map((item) => item.guestWatchTimes),
+          data: filterData.map(
+            (item) => item.caregiverWatchTimes + item.guestWatchTimes
+          ),
           backgroundColor: "rgba(53, 162, 235, 0.5)",
         },
       ],
