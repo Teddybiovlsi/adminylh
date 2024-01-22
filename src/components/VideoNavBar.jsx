@@ -35,10 +35,7 @@ const VideoNavbar = ({
             btnDisabled={disabledEditBtn ? true : false}
             btnOnclickEventName={handleEditVideoSource}
             btnText={
-              <i
-                className="bi bi-arrow-clockwise"
-                style={{ fontSize: 1.2 + "rem" }}
-              ></i>
+              <i className="bi bi-film" style={{ fontSize: 1.2 + "rem" }}></i>
             }
             btnVariant="light"
             tooltipText="修改原始影片"
@@ -46,7 +43,7 @@ const VideoNavbar = ({
 
           <ToolTipBtn
             placement="bottom"
-            btnAriaLabel="修改影片"
+            btnAriaLabel="修改影片問題"
             btnDisabled={disabledEditBtn ? true : false}
             btnOnclickEventName={handleEditVideo}
             btnText={
