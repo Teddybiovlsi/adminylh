@@ -53,7 +53,7 @@ const VideoNavbar = ({
               ></i>
             }
             btnVariant="light"
-            tooltipText="編輯影片"
+            tooltipText="修改影片問題"
           />
 
           {isAdmin && (
