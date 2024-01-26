@@ -65,7 +65,7 @@ export default function ManageClientAccount({ admin }) {
 
   const [searchTextVideo, setSearchTextVideo] = useState("");
 
-  const [searchType, setSearchType] = useState("");
+  const [searchType, setSearchType] = useState("empty");
 
   const [tempCheckedVideo, setTempCheckedVideo] = useState([]);
 
@@ -100,9 +100,6 @@ export default function ManageClientAccount({ admin }) {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
-
-  const [showVideoModal, handleClosedVideoModal, handleShowVideoModal] =
-    useModal();
 
   const [
     showProfileVideoModal,
@@ -438,6 +435,7 @@ export default function ManageClientAccount({ admin }) {
   // 新增影片篩選條件
   useEffect(() => {
     let filteredVideoData = videoData;
+
     if (searchTextVideo !== "") {
       filteredVideoData = filteredVideoData.filter((item) =>
         item.video_name.includes(searchTextVideo)
@@ -466,14 +464,6 @@ export default function ManageClientAccount({ admin }) {
     setPaginationSettings(newPaginationSettings);
   }, [searchTextVideo, searchType, paginationSettings.rowsPerPageVideo]);
 
-  // 將身分證敏感資訊做處理
-  const handleIdAccount = (account) => {
-    if (account.length === 10) {
-      return account.slice(0, 3) + "***" + account.slice(6, 10);
-    } else if (account.length === 11) {
-      return account.slice(0, 3) + "***" + account.slice(7, 11);
-    }
-  };
   // 將姓名敏感資訊做處理
   const handleNameAccount = (name) => {
     if (name.length === 3) {
@@ -692,11 +682,11 @@ export default function ManageClientAccount({ admin }) {
                 if (selectAccount.length === 0) {
                   setIsDisableMultiAddBtn(true);
                   toast.error("請選擇要新增影片的帳號", {
-                    autoClose: 1500,
+                    autoClose: 1000,
                   });
                   setTimeout(() => {
                     setIsDisableMultiAddBtn(false);
-                  }, 2000);
+                  }, 1000);
                 } else {
                   handleMultiAddVideo();
                 }
