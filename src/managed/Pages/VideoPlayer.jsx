@@ -12,8 +12,6 @@ export default function VideoPlayer() {
   const videoPath = location.state?.videoPath;
   const videoType = location.state?.videoType;
 
-  console.log("videoType", videoType);
-
   const [info, setInfo] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -60,7 +58,7 @@ export default function VideoPlayer() {
 
   return (
     <>
-      <VideoJS options={videoJsOptions} info={info} />
+      <VideoJS options={videoJsOptions} type={videoType} info={info} />
     </>
   );
 }

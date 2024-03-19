@@ -10,7 +10,11 @@ import { useLocation } from "react-router-dom";
 export const VideoJS = (props) => {
   const videoRef = useRef(null);
   const playerRef = useRef(null);
-  const { options, info } = props;
+  const { options, type, info } = props;
+
+  console.log("info", info);
+  console.log("options", options);
+  console.log("type", type);
 
   const [sendstate, setSendstate] = useState(false);
   const [optionChecked, setOptionChecked] = useState("");
