@@ -5,7 +5,6 @@ import BtnBootstrap from "./BtnBootstrap";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
-import { useLocation } from "react-router-dom";
 
 export const VideoJS = (props) => {
   const videoRef = useRef(null);
