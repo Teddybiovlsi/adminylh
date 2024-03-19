@@ -25,8 +25,6 @@ export default function EditVideoThumbnail() {
   // 處理loaction.state傳遞過來的資料
   const { videoUUID, videoUrl, videoType } = location.state;
 
-  console.log("videoType", videoType);
-
   const [imageFile, setImageFile] = useState({
     imageFile: "",
     imageFileName: "",

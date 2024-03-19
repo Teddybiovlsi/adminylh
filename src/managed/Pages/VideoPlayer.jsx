@@ -10,6 +10,7 @@ export default function VideoPlayer() {
   const location = useLocation();
   const VideoUUID = location.state?.videoUUID;
   const VideoPath = location.state?.videoPath;
+  const videoType = location.state?.videoType;
 
   const [info, setInfo] = useState({});
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,7 @@ export default function VideoPlayer() {
 
   useEffect(() => {
     let ignore = false;
-    if (!ignore) {
+    if (!ignore && videoType !== 2) {
       async function fetchVideoData({ api }) {
         try {
           setLoading(true);
