@@ -119,15 +119,16 @@ export const VideoJS = (props) => {
       });
       player.on("play", () => {
         console.log("sendState", sendstate);
+        if (type !== 2) {
+          timer = setInterval(() => {
+            lastPlayerTime = player.currentTime();
+            console.log("lastPlayerTime", lastPlayerTime);
+            console.log("player.currentTime()", player.currentTime());
 
-        timer = setInterval(() => {
-          lastPlayerTime = player.currentTime();
-          console.log("lastPlayerTime", lastPlayerTime);
-          console.log("player.currentTime()", player.currentTime());
-
-          // store the current time of the video in the cookie
-          document.cookie = `lastPlayerTime=${lastPlayerTime}`;
-        }, 1000);
+            // store the current time of the video in the cookie
+            document.cookie = `lastPlayerTime=${lastPlayerTime}`;
+          }, 1000);
+        }
 
         // console.log("player is play");
       });
@@ -151,16 +152,18 @@ export const VideoJS = (props) => {
       });
 
       player.on("timeupdate", () => {
-        if (arrayNum < info.length) {
-          if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
-            player.pause();
-            setSendstate(true);
-            setTimeout(() => {
-              setSendstate(false);
-              player.play();
-            }, info[arrayNum].video_duration * 1000);
-            arrayNum++;
-          }
+        if (
+          type !== 2 &&
+          arrayNum < info.length &&
+          player.currentTime() >= info[arrayNum].video_interrupt_time
+        ) {
+          player.pause();
+          setSendstate(true);
+          setTimeout(() => {
+            setSendstate(false);
+            player.play();
+          }, info[arrayNum].video_duration * 1000);
+          arrayNum++;
         }
       });
 
