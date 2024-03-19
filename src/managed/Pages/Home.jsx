@@ -561,7 +561,11 @@ export default function Home({ admin }) {
             <Link
               to={`/Video/`}
               title={video_name}
-              state={{ videoUUID: video_id, videoPath: video_path }}
+              state={{
+                videoUUID: video_id,
+                videoPath: video_path,
+                videoType: video_type,
+              }}
               className="text-decoration-none"
             >
               {video_name.length > 4
