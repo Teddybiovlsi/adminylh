@@ -8,9 +8,11 @@ import "../../components/videoqa.css";
 
 export default function VideoPlayer() {
   const location = useLocation();
-  const VideoUUID = location.state?.videoUUID;
-  const VideoPath = location.state?.videoPath;
+  const videoUUID = location.state?.videoUUID;
+  const videoPath = location.state?.videoPath;
   const videoType = location.state?.videoType;
+
+  console.log();
 
   const [info, setInfo] = useState({});
   const [loading, setLoading] = useState(false);
@@ -23,7 +25,7 @@ export default function VideoPlayer() {
     muted: true,
     sources: [
       {
-        src: VideoPath,
+        src: videoPath,
         type: "video/mp4",
       },
     ],
@@ -43,7 +45,7 @@ export default function VideoPlayer() {
       }
 
       fetchVideoData({
-        api: `videoQA/${VideoUUID}`,
+        api: `videoQA/${videoUUID}`,
       });
     }
 
