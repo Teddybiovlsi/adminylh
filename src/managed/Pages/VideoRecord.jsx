@@ -1,3 +1,4 @@
+import * as XLSX from "xlsx";
 import React, { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
@@ -18,6 +19,8 @@ import styles from "../../styles/pages/VideoRecordPage.module.scss";
 import healthCareType from "../JsonFile/SelectClassTypeList.json";
 import healthCareLanguage from "../JsonFile/SelectLanguageList.json";
 import BtnBootStrap from "../../components/BtnBootstrap";
+import { RiFileExcel2Line } from "react-icons/ri";
+import { BiReset } from "react-icons/bi";
 
 ChartJS.register(
   CategoryScale,
@@ -192,6 +195,7 @@ export default function VideoRecord({ admin }) {
    * 4. 顯示用戶觀看次數
    */
   function TableRow({ item }) {
+    console.log(item);
     return (
       <tr>
         <td title={item.name}>
@@ -245,16 +249,73 @@ export default function VideoRecord({ admin }) {
               ))}
             </Form.Select>
           </Col>
-          <Col xs={12} sm={12} md={4} lg={6}>
+          <Col xs={12} sm={12} md={4} lg={3}>
             <div className="d-grid">
               <BtnBootStrap
                 btnPosition=""
                 btnSize="md"
-                text="重置"
+                text={
+                  <>
+                    <BiReset style={{ fontSize: "1.5rem" }} />
+                    重置
+                  </>
+                }
                 variant="outline-secondary"
                 onClickEventName={() => {
                   setHealthCareTypeValue("請選擇影片類型");
                   setHealthCareLanguageValue("請選擇影片語言");
+                }}
+              />
+            </div>
+          </Col>
+          <Col xs={12} sm={12} md={4} lg={3}>
+            <div className="d-grid">
+              <BtnBootStrap
+                btnPosition=""
+                btnSize="md"
+                text={
+                  <>
+                    <RiFileExcel2Line style={{ fontSize: "1.5rem" }} />
+                    匯出Excel
+                  </>
+                }
+                variant="outline-success"
+                onClickEventName={() => {
+                  // 欄位命名
+                  const header = [
+                    "影片類型",
+                    "影片名稱",
+                    "語言",
+                    "影片總觀看次數",
+                  ];
+
+                  // 產生excel的資料
+                  const excelData = recordData
+                    .filter((item) => item.type === type)
+                    .map((item) => {
+                      return {
+                        影片類型: item.class,
+                        影片名稱: item.name,
+                        語言: item.language,
+                        影片總觀看次數:
+                          item.caregiverWatchTimes + item.guestWatchTimes,
+                      };
+                    });
+
+                  // 先創建一個包含表頭的工作表
+                  const ws = XLSX.utils.json_to_sheet([header], {
+                    skipHeader: true,
+                  });
+
+                  // 然後將數據添加到該工作表
+                  XLSX.utils.sheet_add_json(ws, excelData, {
+                    skipHeader: true,
+                    origin: -1,
+                  });
+
+                  const wb = XLSX.utils.book_new();
+                  XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+                  XLSX.writeFile(wb, `${type}影片觀看紀錄.xlsx`);
                 }}
               />
             </div>

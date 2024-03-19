@@ -5,7 +5,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import AuthProtected from "./AuthProtected";
 import BackendRegistration from "./managed/Form/BackendRegistration";
 import CreateBasicVideo from "./managed/Form/CreateBasicVideo";
-import DetailBasicRecord from "./managed/Pages/ClientRecordDetail.jsx/DetailBasicRecord";
+import DetailBasicRecord from "./managed/Pages/ClientRecordDetail/DetailBasicRecord";
 import EditClientBasicVideoQA from "./managed/Form/EditClientBasicVideoQA";
 import EditVideoSource from "./managed/Pages/EditVideoSource";
 import EditClientVideoID from "./managed/Pages/EditClientVideoID";
