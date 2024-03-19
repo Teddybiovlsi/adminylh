@@ -122,8 +122,8 @@ export const VideoJS = (props) => {
         if (type !== 2) {
           timer = setInterval(() => {
             lastPlayerTime = player.currentTime();
-            console.log("lastPlayerTime", lastPlayerTime);
-            console.log("player.currentTime()", player.currentTime());
+            // console.log("lastPlayerTime", lastPlayerTime);
+            // console.log("player.currentTime()", player.currentTime());
 
             // store the current time of the video in the cookie
             document.cookie = `lastPlayerTime=${lastPlayerTime}`;
