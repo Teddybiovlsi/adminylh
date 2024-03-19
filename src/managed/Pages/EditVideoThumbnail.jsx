@@ -142,7 +142,11 @@ export default function EditVideoThumbnail() {
             <div>
               <h4>
                 <strong>{`請選擇或匯入衛教${
-                  videoType ? "測驗用" : "練習用"
+                  videoType == 2
+                    ? "基礎練習"
+                    : videoType == 1
+                    ? "測驗用"
+                    : "練習用"
                 }影片縮圖`}</strong>
               </h4>
               <p className="m-0 text-primary">
