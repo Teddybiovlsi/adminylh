@@ -11,10 +11,6 @@ export const VideoJS = (props) => {
   const playerRef = useRef(null);
   const { options, type, info } = props;
 
-  console.log("info", info);
-  console.log("options", options);
-  console.log("type", type);
-
   const [sendstate, setSendstate] = useState(false);
   const [optionChecked, setOptionChecked] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -137,8 +133,10 @@ export const VideoJS = (props) => {
         // console.log("tempQuestionNum", tempQuestionNum);
         setTempQuestionNum(arrayNum);
 
-        // unset the interval
-        clearInterval(timer);
+        if (type !== 2) {
+          // unset the interval
+          clearInterval(timer);
+        }
       });
 
       // Add event listener for loadedmetadata
