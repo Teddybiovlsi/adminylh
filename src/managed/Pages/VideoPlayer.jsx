@@ -12,8 +12,6 @@ export default function VideoPlayer() {
   const videoPath = location.state?.videoPath;
   const videoType = location.state?.videoType;
 
-  console.log();
-
   const [info, setInfo] = useState({});
   const [loading, setLoading] = useState(false);
 

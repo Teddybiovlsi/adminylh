@@ -12,6 +12,10 @@ export const VideoJS = (props) => {
   const playerRef = useRef(null);
   const { options, info } = props;
 
+  console.log("info", info);
+  // chcek the video info is empty or not
+  console.log("info.length", info.length);
+
   const [sendstate, setSendstate] = useState(false);
   const [optionChecked, setOptionChecked] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
