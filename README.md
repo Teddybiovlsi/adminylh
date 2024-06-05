@@ -35,8 +35,7 @@ npm run dev
 - **[package-lock.json]**
 - **[package.json]**
 
-## 已完成頁面/元件/功能
-### 頁面
+## 頁面
  - [x] [登入頁面](/src/managed/Pages/Login.jsx)
  - [x] [首頁](/src/managed/Pages/Home.jsx)
  - [x] [使用者紀錄頁面](/src/managed/Pages/ManageClientRecord.jsx)
@@ -52,11 +51,6 @@ npm run dev
 ### 功能
  - [x] [axios](/src/managed/axios.jsx)
  - [x] [密碼強度檢查](/src/managed/Form/shared/PwdStrengthMeter.jsx)
-
-## 代辦事項
-  - [x] [刪除影片功能]
-  - 各頁面重新檢查並優化
-  - 後台使用者管理頁面完成
 
 
 ## 製作團隊
