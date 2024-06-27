@@ -10,7 +10,7 @@ const axios = (baseURL, passType = "multipart/form-data") => {
       "Content-Type": passType,
       charset: "utf-8",
     },
-    timeout: 15000,
+    timeout: 30000,
   });
 
   return instance;
